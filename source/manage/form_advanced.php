@@ -18,7 +18,7 @@ global $_page;
 		</td>
 	</tr>
 	<!--
-	-- removendo tags do form avanÁado
+	-- removendo tags do form avan√ßado
 	--
 	<tr>
 		<td class="pblTextoLabelForm">
@@ -77,13 +77,13 @@ global $_page;
 			
 			/**
 			 * MUDEI - AS VIEWS FORAM ORDENADAS EM ORDEM ALFABETICA 
-			 * AS VIEWS(SCRIPT DE EXIBI«√O) FORAM COLOCADAS DENTRO DE UM ARRAY, O ARRAY FOI ORDENADO E DEPOIS
-			 * FOI FEITO A IMPRESS√O DAS VIEWS DENTRO DAS OPTIONS DO SELECT - RODRIGO 04/05/2009
+			 * AS VIEWS(SCRIPT DE EXIBI√á√ÉO) FORAM COLOCADAS DENTRO DE UM ARRAY, O ARRAY FOI ORDENADO E DEPOIS
+			 * FOI FEITO A IMPRESS√ÉO DAS VIEWS DENTRO DAS OPTIONS DO SELECT - RODRIGO 04/05/2009
 			 */
 			//LISTA VIEWS DA PELE
 			if ($handle = opendir($DirectorioPathwPele)) 
 			{
-				//inicializa vari·vel
+				//inicializa vari√°vel
 				$arrViews = array();
 				while (false !== ($ArquivoNome = readdir($handle))) 
 				{
@@ -127,13 +127,13 @@ global $_page;
 			
 			/**
 			 * MUDEI - AS VIEWS FORAM ORDENADAS EM ORDEM ALFABETICA 
-			 * AS VIEWS(SCRIPT DE EXIBI«√O) FORAM COLOCADAS DENTRO DE UM ARRAY, O ARRAY FOI ORDENADO E DEPOIS
-			 * FOI FEITO A IMPRESS√O DAS VIEWS DENTRO DAS OPTIONS DO SELECT - RODRIGO 04/05/2009
+			 * AS VIEWS(SCRIPT DE EXIBI√á√ÉO) FORAM COLOCADAS DENTRO DE UM ARRAY, O ARRAY FOI ORDENADO E DEPOIS
+			 * FOI FEITO A IMPRESS√ÉO DAS VIEWS DENTRO DAS OPTIONS DO SELECT - RODRIGO 04/05/2009
 			 */
 			//LISTA VIEWS DA PASTA TEMPLATE
 			if ($handle = opendir($DirectorioPathPadrao)) 
 			{	
-				//inicializa vari·vel
+				//inicializa vari√°vel
 				$arrViews = array();
 				while (false !== ($ArquivoNome = readdir($handle))) 
 				{

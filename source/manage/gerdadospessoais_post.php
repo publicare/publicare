@@ -16,7 +16,7 @@ global $_page;
 			}
 			else
 			{
-				$Msg="Senha diferente da confirmação ou muito simples. Digite novamente.";
+				$Msg="Senha diferente da confirmaÃ§Ã£o ou muito simples. Digite novamente.";
 			}
 		
 	}

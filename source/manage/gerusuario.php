@@ -198,6 +198,7 @@ else
 			    <tr>
 				<td class="pblTextoForm" valign="top">
 <?php
+$tmpDisabled = "";
 				    if (isset($tmpArrPerfilObjeto['1']) && ($tmpArrPerfilObjeto['1'] == _PERFIL_ADMINISTRADOR) && ($_page->_objeto->Valor($_page, 'cod_objeto') != _ROOT))
 				    {
 					$tmpPerfilObjetoAtual = _PERFIL_ADMINISTRADOR;
@@ -205,12 +206,15 @@ else
 				    }
 				    else
 				    {
-					$tmpPerfilObjetoAtual = $tmpArrPerfilObjeto[$_page->_objeto->Valor($_page, 'cod_objeto')];
+                                        if (isset($tmpArrPerfilObjeto[$_page->_objeto->Valor($_page, 'cod_objeto')]))
+                                            $tmpPerfilObjetoAtual = $tmpArrPerfilObjeto[$_page->_objeto->Valor($_page, 'cod_objeto')];
+                                        else 
+                                            $tmpPerfilObjetoAtual = null;
 				    }
 ?>
 				    <input type="radio" name="perfil" value="<?=_PERFIL_ADMINISTRADOR?>" <?= ($tmpPerfilObjetoAtual==_PERFIL_ADMINISTRADOR)?'checked':''?> <?=$tmpDisabled;?>>Adminstrador<BR>
 				    <input type="radio" name="perfil" value="<?=_PERFIL_EDITOR?>" <?= ($tmpPerfilObjetoAtual==_PERFIL_EDITOR)?'checked':''?> <?=$tmpDisabled;?>>Editor<BR>
-				    <input type="radio" name="perfil" value="<?=_PERFIL_AUTOR?>" <?= ($tmpArrPerfilObjeto[$_page->_objeto->Valor($_page, 'cod_objeto')]==_PERFIL_AUTOR)?'checked':''?> <?=$tmpDisabled;?>>Autor<BR>
+				    <input type="radio" name="perfil" value="<?=_PERFIL_AUTOR?>" <?= ($tmpPerfilObjetoAtual==_PERFIL_AUTOR)?'checked':''?> <?=$tmpDisabled;?>>Autor<BR>
 				    <input type="radio" name="perfil" value="<?=_PERFIL_RESTRITO?>" <?= ($tmpPerfilObjetoAtual==_PERFIL_RESTRITO)?'checked':''?> <?=$tmpDisabled;?>>Restrito<BR>
 				    <input type="radio" name="perfil" value="<?=_PERFIL_MILITARIZADO?>" <?= ($tmpPerfilObjetoAtual==_PERFIL_MILITARIZADO)?'checked':''?> <?=$tmpDisabled;?>>Militarizado<BR>
 				    <input type="radio" name="perfil" value="<?=_PERFIL_DEFAULT?>" <?= ($tmpPerfilObjetoAtual==_PERFIL_DEFAULT)?'checked':''?> <?=$tmpDisabled;?> >Default<BR>
@@ -242,7 +246,7 @@ else
 	    </table>
 	    </td>
 	</tr>
-	<? if ($GLOBALS['Msg']) {?>
+	<?php if (isset($GLOBALS['Msg'])) {?>
 	<tr>
 	    <td class="pblMensagemForm" colspan="3" align="center">
 		<? echo $GLOBALS['Msg'];?>

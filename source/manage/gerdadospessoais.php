@@ -1,4 +1,4 @@
-<?
+<?php
 global $_page;
 ?>
 	<script>
@@ -8,22 +8,22 @@ global $_page;
 		{
 			if (frm.email.value=='')
 			{
-				alert ("O campo email n„o pode ficar em branco");
+				alert ("O campo email n√£o pode ficar em branco");
 				return false;
 			}
 			if (frm.nome.value=='')
 			{
-				alert ("O campo nome n„o pode ficar em branco");
+				alert ("O campo nome n√£o pode ficar em branco");
 				return false;
 			}
 			if (frm.login.value=='')
 			{
-				alert ("Login n„o pode ficar em branco");
+				alert ("Login n√£o pode ficar em branco");
 				return false;
 			}
 			if (frm.senha.value!=frm.confirma.value)
 			{
-				alert ("Senha diferente da confirmaÁ„o");
+				alert ("Senha diferente da confirma√ß√£o");
 				return false;
 			}
 			return true;
@@ -114,13 +114,6 @@ global $_page;
 				<INPUT class="pblInputForm" type="password" name="confirma" value="<?php echo $_SESSION['usuario']['nome'];?>">
 			</td>
 		</tr>
-		<? if ($GLOBALS['Msg']) {?>
-			<tr>
-				<td class="pblMensagemForm" colspan="2" align="center">
-					<? echo $GLOBALS['Msg'];?>
-				</td>
-			</tr>
-		<? } ?>
 		<tr>
 			<td colspan="3" align="right" class="pblTextoForm">
 				<hr color="#FA9C00" size="2"><br>

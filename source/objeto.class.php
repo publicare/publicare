@@ -152,30 +152,31 @@
 
 		function Propriedade(&$_page, $campo)
 		{
-			$campo=strtolower($campo);
-			if (!isset($this->propriedades) || !is_array($this->propriedades))
-			{
-				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
-			}
-			return $this->propriedades[$campo]['valor'];
+                    $campo = strtolower($campo);
+                    if (!isset($this->propriedades) || !is_array($this->propriedades))
+                    {
+                        $this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
+                    }
+                    if (isset($this->propriedades[$campo])) return $this->propriedades[$campo]['valor'];
+                    else return "";
 		}
 
 		function TamanhoBlob(&$_page, $campo)
 		{
-			if (!isset($this->propriedades) || !is_array($this->propriedades))
-			{
-				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
-			}
-			return ($this->propriedades[$campo]['tamanho_blob']);
+                    if (!isset($this->propriedades) || !is_array($this->propriedades))
+                    {
+                        $this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
+                    }
+                    return ($this->propriedades[$campo]['tamanho_blob']);
 		}
 
 		function TipoBlob(&$_page, $campo)
 		{
-			if (!isset($this->propriedades) || !is_array($this->propriedades))
-			{
-				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
-			}
-			return ($this->propriedades[$campo]['tipo_blob']);
+                    if (!isset($this->propriedades) || !is_array($this->propriedades))
+                    {
+                        $this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
+                    }
+                    return ($this->propriedades[$campo]['tipo_blob']);
 		}
 		
 		function IconeBlob(&$_page, $campo)

@@ -268,9 +268,9 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 						
 						/**
 						 *  MUDEI - foi adicionado o ELSE que verifica se existe propriedades do tipo BLOB (cod_tipodado = 1)
-						 *  Se a mesma estiver vazia ela È adicionada ao array de propriedades obrigatÛrias
-						 *  Quando estiver editando o bjeto e j· existir um arquivo anexado ‡ propriedade, esta n„o
-						 *  ser· adicionada ao array de propriedades obrigatÛrias - RODRIGO - 30/04/2009 
+						 *  Se a mesma estiver vazia ela √© adicionada ao array de propriedades obrigat√≥rias
+						 *  Quando estiver editando o bjeto e j√° existir um arquivo anexado √† propriedade, esta n√£o
+						 *  ser√° adicionada ao array de propriedades obrigat√≥rias - RODRIGO - 30/04/2009 
 						 */
 						
 						if (!($edit && strtolower($prop['cod_tipodado']) == 1))
@@ -281,7 +281,7 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 						}
 						else 
 						{
-							//VERIFICA SE O CAMPO BLOB J¡ POSSUI UM ARQUIVO ANEXADO (CASO DE EDI«√O DO OBJETO)
+							//VERIFICA SE O CAMPO BLOB J√Å POSSUI UM ARQUIVO ANEXADO (CASO DE EDI√á√ÉO DO OBJETO)
 							if(!$_page->_objeto->ValorParaEdicao($_page, $prop['nome']))
 							{
 								$chrtmpProp = "document.getElementById('property:".$prop['nome']."')";
@@ -350,8 +350,8 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 									echo $_page->_objeto->ValorParaEdicao($_page, $prop['nome'])." - ".$_page->_objeto->TamanhoBlob($_page, $prop['nome'])." bytes<BR>";
 							}
 							/**
-							 * MUDEI - Foi adicionado o id nos campos do tipo FILE, por estes campos n„o conter ID È que a validaÁ„o de campos obrigatÛrio
-							 * para eles n„o funcionava - RODRIGO - 30/04/2009 
+							 * MUDEI - Foi adicionado o id nos campos do tipo FILE, por estes campos n√£o conter ID √© que a valida√ß√£o de campos obrigat√≥rio
+							 * para eles n√£o funcionava - RODRIGO - 30/04/2009 
 							 */
 							echo '<input class="pblInputForm" type="file" id="property:'.$prop['nome'].'" name="property:'.$prop['nome'].'" value="">';
 							if (($edit) && ($_page->_objeto->ValorParaEdicao($_page, $prop['nome'])!=''))

@@ -56,7 +56,7 @@ else $ordf = "-".$ord1;
 			Classe
 		</td>
 		<td class="pblTituloLog">
-			Data da exclus„o
+			Data da exclus√£o
 		</td>
 	</tr>
 <?

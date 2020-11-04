@@ -45,7 +45,7 @@ else $ordf = "-".$ord1;
 						Classe
 					</td>
                                         <td class="pblTituloLog" width="10">
-                                                Data da exclus�o
+                                                Data da exclusão
                                         </td>
 				</tr>
 <?
@@ -79,7 +79,7 @@ else $ordf = "-".$ord1;
 							//	$count=0;
 								//foreach ($loglist as $log)
 								//{
-								//	echo "<i>Usu�rio <B>".$log['user']. "</B> realizou a opera��o <strong>" . $log['op_name']."</strong> em <strong>". $log['logdate']."</strong></i><BR>";
+								//	echo "<i>Usuï¿½rio <B>".$log['user']. "</B> realizou a operaï¿½ï¿½o <strong>" . $log['op_name']."</strong> em <strong>". $log['logdate']."</strong></i><BR>";
 								//}
 							?>
 						</td>

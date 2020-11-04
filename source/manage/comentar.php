@@ -7,7 +7,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>C&amp;T Jovem - Comentários</title>
+<title>C&amp;T Jovem - ComentÃ¡rios</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <LINK rel="STYLESHEET" type="text/css" href="/style.css">
 </head>
@@ -34,7 +34,7 @@
 			<form id="comentar" name="comentar" action="/manage/comentar_post.php/<?=$GLOBALS['_page']->Objeto->Valor("cod_objeto")?>.html" method="post">
 				<input type="hidden" name="cod_objeto" id="cod_objeto" value=<?echo $obj_atual;?>>
 				<font CLASS='TextoPreto'>Digite seu email: </font><input type="text" name="email" id="email" value="" maxlength=50 size=50><br>
-				<font CLASS='TextoPreto'>Digite seu Comentário: </font><textarea name="texto" id="texto" cols=50 rows=5></textarea><br>
+				<font CLASS='TextoPreto'>Digite seu ComentÃ¡rio: </font><textarea name="texto" id="texto" cols=50 rows=5></textarea><br>
 				<input class='pblFormButton' type="reset" value="Apagar">&nbsp;<input class='pblFormButton' type="submit" value="Enviar"><br>
 			</form>
 		</td>

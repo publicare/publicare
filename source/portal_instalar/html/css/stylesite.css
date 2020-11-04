@@ -1,0 +1,836 @@
+/**
+	* @name stylesite.css
+	* @desc CSS StyleSheet
+	* @version v3.0 - Brasília, 03 de Março de 2008
+	* @author Thiago Borges
+	* @category CSS
+	* @package Ministério da Ciência e Tecnologia - MCT
+**/
+
+
+
+/* ============================================================= */
+/* ========================== Body ============================= */
+/* ============================================================= */
+
+
+
+
+	
+A {
+	font-family: Arial,Verdana,Sans-Serif; 
+	text-decoration: none;
+	color: blue;
+}
+
+A:hover {
+	font-family: Arial,Verdana,Sans-Serif;
+	text-decoration: none;
+	color: #000000;	
+}
+
+
+
+/* ================================================================================= */
+/* ========================= Título páginas Internas ( conteúdo / view_basic ) =========================== */
+/* ================================================================================= */
+
+
+.tituloConteudo {
+	border-bottom-width: 2px;
+	border-bottom-color: #d5e3b7;
+	border-bottom-style: solid;
+	
+	border-top-width: 2px;
+	border-top-color: #d5e3b7;
+	border-top-style: solid;
+	
+	color:#558002;
+	
+	font-size:18px;
+	
+	font-weight:bold;
+	
+	padding-bottom:6px;
+	padding-top:6px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+
+/* ================================================================================= */
+/* ========================= Título Veja Também ( conteúdo / inc_lista_todos ) =========================== */
+
+.vejaTambem {
+	border-bottom-width: 2px;
+	border-bottom-color: #d5e3b7;
+	border-bottom-style: solid;
+	
+	border-top-width: 2px;
+	border-top-color: #d5e3b7;
+	border-top-style: solid;
+	
+	color:#558002;
+	
+	font-weight:bold;
+	
+	padding-bottom:4px;
+	padding-top:4px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.vejaTambem a {
+	
+	color:#558002;
+	
+	font-weight:bold;
+}
+
+.vejaTambem a:hover {
+	color:#000000;
+	
+	font-weight:bold;
+}
+
+
+
+
+/* ====================================================================== */
+/* ==================== Listagem de todos os filhos====================== */
+/* ====================================================================== */
+
+
+
+/* ============= Listagem primeiro Nível ============= */
+
+.listaTituloNivel1 {
+	border-bottom-width: 1px;
+	border-bottom-color: #dee5c4;
+	border-bottom-style: dotted;
+	
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.listaTituloNivel1 a {
+	
+	color:#000000;
+}
+
+.listaTituloNivel1 a:hover {
+	
+	color:#6b9d50;
+}
+
+/* ============= Listagem segundo Nível ============= */
+
+.listaTituloNivel2 {
+	border-bottom-width: 1px;
+	border-bottom-color: #dee5c4;
+	border-bottom-style: dotted;
+	
+	padding-left: 28px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.listaTituloNivel2 a {
+	
+		
+	color:#000000;
+}
+
+.listaTituloNivel2 a:hover {
+	
+		
+	color:#6b9d50;
+}
+
+/* ============= Listagem terceiro Nível ============= */
+
+.listaTituloNivel3 {
+	border-bottom-width: 1px;
+	border-bottom-color: #dee5c4;
+	border-bottom-style: dotted;
+	
+	padding-left: 54px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+.listaTituloNivel3 a {	
+	
+	color:#000000;
+}
+
+.listaTituloNivel3 a:hover {
+	
+	color:#6b9d50;
+}
+
+
+
+/* ====================================================================*/
+/* ======================== Campo Formulário ==========================*/
+/* ====================================================================*/
+
+/* tamanho do campo formulário quando precisar */
+
+.tamanhoForm {
+	width:100%;
+}
+
+/* Campo formulário */
+
+.formulario {
+
+	background-color: #ffffff;
+	
+	border-width: 1px;
+	border-color: #7cb04e;
+	border-style: solid;
+
+	font-family: Arial,Sans-Serif;
+	font-size: 12px; 
+	text-decoration: none;
+	
+	height:20px;
+	*height:20px;
+	_height:20px;
+
+}
+
+/* Campo formulário de text area */
+
+.formularioTextArea {
+
+	background-color: #ffffff;
+	
+	border-width: 1px;
+	border-color: #d0d0ce;
+	border-style: solid;
+
+	font-family: Arial,Sans-Serif;
+	font-size: 12px; 
+	text-decoration: none;
+}
+
+/* Botão Campo formulário */
+
+.botao a {
+
+	background-color: #d9d2b6;
+	
+	border-width: 2px;
+	border-color: #c3ba97;
+	border-style: solid;
+
+	font-family: Arial,Sans-Serif;
+	font-size: 12px; 
+	text-decoration: none;
+	
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 3px;
+	padding-bottom:3px;
+}
+
+.botao a:hover {
+
+	background-color: #c3ba97;
+	
+	border-width: 2px;
+	border-color: #c3ba97;
+	border-style: solid;
+
+	font-family: Arial,Sans-Serif;
+	font-size: 12px; 
+	text-decoration: none;
+	
+	padding-left: 30px;
+	padding-right: 10px;
+	padding-top: 3px;
+	padding-bottom:3px;
+}
+
+
+
+/* ======================================================================== */
+/* ================= Cores ( Backgrounds e cor de Fonte ) ================= */
+/* ======================================================================== */
+
+
+/* ============== background do fundo do caminho ( Bege ) ============== */
+
+.bgNeturno {
+	background-color: #d5e3b7;
+}
+
+/* ============== background do fundo da contagem de destaques ( Verde escuro ) ============== */
+
+.bgPlutao {
+	background-color: #c7d99f;
+}
+
+/* ============== background do fundo do Destaque de Abas ( Verde Claro ) ============== */
+
+.bgJupter {
+	background-color: #f3f6eb;
+}
+
+/* ============== background do fundo do Menu Vertical ( Verde Claro ) ============== */
+
+.bgSaturno {
+	background-color: #d5e7c1;
+}
+
+/* ============== Background de cor Branca ============== */
+
+/* Branca do fundo do site */
+
+.bg_mercurio {
+	background-color: #ffffff;
+}
+
+
+
+/* ========================================================== */
+/* ================= Cores ( cor de Fonte ) ================= */
+
+/* ============== Cor da Fonte de acordo com a folha de estilo selecionada ( Verde escuro ) ============== */
+
+.terra {
+	color: #435703;
+}
+
+.terra a {
+	color: #435703;
+}
+
+.terra a:hover {
+	color: #000000;
+}
+
+/* ============== Cor de Font branca ( texto e link ) ============== */
+
+.mercurio {
+	color: #FFFFFF;
+}
+
+.mercurio a {
+	color: #FFFFFF;
+}
+
+.mercurio a:hover {
+	color: #ffffff;
+}
+
+
+
+/* ================================================================= */
+/* ============================ APUBLICAR ========================== */
+/* ================================================================= */
+   
+ .apublicar {
+ 	color: red;
+ }
+ 
+ .apublicar a {
+ 	color: red;
+ 	text-decoration: underline;
+ }
+ 
+ .apublicar a:hover {
+ 	color: red;
+ 	text-decoration: none;
+ }
+
+
+/* ============================================================== */
+/* ======================== Paddings ============================ */
+/* ============================================================== */
+
+/* ================== Paddings  de 3 px =================== */
+
+/* Padding Left de 3px */
+
+.paddingLeft3 {
+	padding-left: 3px;
+}
+
+/* Padding Right de 3px */
+
+.paddingRight3 {
+	padding-right: 3px;
+}
+
+/* Padding Bottom de 3px */
+
+.paddingBottom3 {
+	padding-bottom: 3px;
+}
+
+/* Padding Top de 3px */
+
+.paddingTop3 {
+	padding-Top: 3px;
+}
+
+/* ================== Paddings  de 5 px =================== */
+
+/* Padding Left de 5px */
+
+.paddingLeft {
+	padding-left: 5px;
+}
+
+/* Padding Right de 5px */
+
+.paddingRight {
+	padding-right: 5px;
+}
+
+/* Padding Bottom de 5px */
+
+.paddingBottom {
+	padding-bottom: 5px;
+}
+
+/* Padding Top de 5px */
+
+.paddingTop {
+	padding-Top: 5px;
+}
+
+/* ================== Paddings  de 6 px =================== */
+
+/* Padding Left de 6px */
+
+.paddingLeft6 {
+	padding-left: 6px;
+}
+
+/* Padding Right de 6px */
+
+.paddingRight6 {
+	padding-right: 6px;
+}
+
+/* Padding Bottom de 6px */
+
+.paddingBottom6 {
+	padding-bottom: 6px;
+}
+
+/* Padding Top de 6px */
+
+.paddingTop6 {
+	padding-Top: 6px;
+}
+
+/* ================== Paddings  de 8 px =================== */
+
+/* Padding Left de 8px */
+
+.paddingLeft8 {
+	padding-left: 8px;
+}
+
+/* Padding Right de 8px */
+
+.paddingRight8 {
+	padding-right: 8px;
+}
+
+/* Padding Bottom de 8px */
+
+.paddingBottom8 {
+	padding-bottom: 8px;
+}
+
+/* Padding Top de 8px */
+
+.paddingTop8 {
+	padding-Top: 8px;
+}
+
+/* ================== Paddings  de 10 px =================== */
+
+/* Padding Left de 10px */
+
+.paddingLeft10 {
+	padding-left: 10px;
+}
+
+/* Padding Right de 10px */
+
+.paddingRight10 {
+	padding-right: 10px;
+}
+
+/* Padding Bottom de 10px */
+
+.paddingBottom10 {
+	padding-bottom: 10px;
+}
+
+/* Padding Top de 10px */
+
+.paddingTop10 {
+	padding-Top: 10px;
+}
+
+/* ================== Paddings  de 12 px =================== */
+
+/* Padding Left de 12px */
+
+.paddingLeft12 {
+	padding-left: 12px;
+}
+
+/* Padding Right de 12px */
+
+.paddingRight12 {
+	padding-right: 12px;
+}
+
+/* Padding Bottom de 12px */
+
+.paddingBottom12 {
+	padding-bottom: 12px;
+}
+
+/* Padding Top de 12px */
+
+.paddingTop12 {
+	padding-Top: 12px;
+}
+
+/* ================== Paddings  de 15 px =================== */
+
+/* Padding Left de 15px */
+
+.paddingLeft15 {
+	padding-left: 15px;
+}
+
+/* Padding Right de 15px */
+
+.paddingRight15 {
+	padding-right: 15px;
+}
+
+/* Padding Bottom de 15px */
+
+.paddingBottom15 {
+	padding-bottom: 15px;
+}
+
+/* Padding Top de 15px */
+
+.paddingTop15 {
+	padding-Top: 15px;
+}
+
+
+/* ================== Paddings  de 20 px =================== */
+
+/* Padding Left de 20px */
+
+.paddingLeft20 {
+	padding-left: 20px;
+}
+
+/* Padding Right de 20px */
+
+.paddingRight20 {
+	padding-right: 20px;
+}
+
+/* Padding Bottom de 20px */
+
+.paddingBottom20 {
+	padding-bottom: 20px;
+}
+
+/* Padding Top de 20px */
+
+.paddingTop20 {
+	padding-Top: 20px;
+}
+
+/* ================== Paddings  de 25 px =================== */
+
+/* Padding Left de 25px */
+
+.paddingLeft25 {
+	padding-left: 25px;
+}
+
+/* Padding Right de 25px */
+
+.paddingRight25 {
+	padding-right: 25px;
+}
+
+/* Padding Bottom de 25px */
+
+.paddingBottom25 {
+	padding-bottom: 25px;
+}
+
+/* Padding Top de 25px */
+
+.paddingTop25 {
+	padding-Top: 25px;
+}
+
+
+/* ================== Paddings  de 30 px =================== */
+
+/* Padding Left de 30px */
+
+.paddingLeft30 {
+	padding-left: 30px;
+}
+
+/* Padding Right de 30px */
+
+.paddingRight30 {
+	padding-right: 30px;
+}
+
+/* Padding Bottom de 30px */
+
+.paddingBottom30 {
+	padding-bottom: 30px;
+}
+
+/* Padding Top de 30px */
+
+.paddingTop30 {
+	padding-Top: 30px;
+}
+
+/* ================== Paddings  de 35 px =================== */
+
+/* Padding Left de 30px */
+
+.paddingLeft35 {
+	padding-left: 35px;
+}
+
+/* Padding Right de 30px */
+
+.paddingRight35 {
+	padding-right: 35px;
+}
+
+/* Padding Bottom de 30px */
+
+.paddingBottom35 {
+	padding-bottom: 35px;
+}
+
+/* Padding Top de 30px */
+
+.paddingTop35 {
+	padding-Top: 35px;
+}
+
+/* ================== Paddings  de 38 px =================== */
+
+/* Padding Left de 30px */
+
+.paddingLeft38 {
+	padding-left: 38px;
+}
+
+/* Padding Right de 30px */
+
+.paddingRight38 {
+	padding-right: 38px;
+}
+
+/* Padding Bottom de 30px */
+
+.paddingBottom38 {
+	padding-bottom: 38px;
+}
+
+/* Padding Top de 30px */
+
+.paddingTop38 {
+	padding-Top: 38px;
+}
+
+/* ================== Paddings em todos os lados de 10px, 5px e 2px =================== */
+
+/* Padding Total de 10px */
+
+.paddingTotal10 {
+	padding: 10px;
+}
+
+
+/* Padding Total de 5px */
+
+.paddingTotal5 {
+	padding: 5px;
+}
+
+/* Padding Total de 3px */
+
+.paddingTotal3 {
+	padding: 3px;
+}
+
+/* Padding Total de 2px */
+
+.paddingTotal2 {
+	padding: 2px;
+}
+
+/* ================== Cursor do mouse como se fosse link =================== */
+
+.mouseHand {
+  cursor:pointer;
+}
+
+/* =====================================================================================*/
+/* =============================== Tamanhos de Fonts ===================================*/
+/* =====================================================================================*/
+
+/* ============= italic  ============= */
+
+.italic {
+	font-style: italic;
+}
+
+.italic a {
+	font-style: italic;
+}
+
+.italic a:hover {
+	font-style: italic;
+}
+
+/* ============= Bold ( negrito ) ============= */
+
+.bold {
+	font-weight: bold;
+}
+
+.bold a {
+	font-weight: bold;
+}
+
+.bold a:hover {
+	font-weight: bold;
+}
+
+/* ============= Tamanho da Fonte de 10 px ============= */
+
+.brod {
+	font-size: 10px; 
+}
+
+.brod a {
+	font-size: 10px; 
+}
+
+.brod a:hover {
+	font-size: 10px; 
+}
+
+/* ============= Tamanho da Fonte de 12 px ============= */
+
+.alpha {
+	font-size: 12px; 
+}
+
+/* ============= Tamanho da Fonte de 13 px ============= */
+
+.beta {
+	font-size: 13px; 
+}
+
+.beta a {
+	font-size: 13px; 
+}
+
+.beta a:hover {
+	font-size: 13px; 
+}
+
+/* ============= Tamanho da Fonte de 14 px ============= */
+
+.gama {
+	font-size: 14px; 
+}
+
+.gama a {
+	font-size: 14px; 
+}
+
+.gama a:hover {
+	font-size: 14px; 
+}
+
+/* ============= Tamanho da Fonte de 15 px ============= */
+
+.zeta {
+	font-size: 15px; 
+}
+
+.zeta a {
+	font-size: 15px; 
+}
+
+.zeta a:hover {
+	font-size: 15px; 
+}
+
+/* ============= Tamanho da Fonte de 16 px ============= */
+
+.jeta {
+	font-size: 16px; 
+}
+
+.jeta a {
+	font-size: 16px; 
+}
+
+.jeta a:hover {
+	font-size: 16px; 
+}
+
+
+/* ============= Tamanho da Fonte de 22 px ============= */
+
+.titulo {
+	font-size: 22px; 
+}
+
+.titulo a {
+	font-size: 22px; 
+}
+
+.titulo a:hover {
+	font-size: 22px; 
+}
+
+/* ============= Efeito de underline na fonte ============= */
+
+.underline {
+	text-decoration: underline;
+}
+
+.underline a {
+	text-decoration: underline;
+}
+
+.underline a:hover {
+	text-decoration: none;
+}

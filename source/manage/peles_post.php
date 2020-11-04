@@ -1,4 +1,4 @@
-<?
+<?php
 global $_page;
 
 	//Checa se o nome enviado � valido

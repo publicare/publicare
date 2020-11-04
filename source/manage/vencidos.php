@@ -39,7 +39,7 @@ trMouseAction1:hover {
 
 </style>
 <form action="/index.php/do/vencidos_post.php/<?=$_page->_objeto->Valor($_page, "cod_objeto")?>.html" name="listcontent" id="listcontent" method="POST">
-		<input type="hidden" name="return_obj" value="<? echo $_page->_objeto->Valor($_page, "cod_objeto")?>">
+		<input type="hidden" name="return_obj" value="<?php echo $_page->_objeto->Valor($_page, "cod_objeto")?>">
 		<? //BoxPublicareTop('listar','exibir,pai,voltar');?>
 		<div class="pblAlinhamentoTabelas">
 		
@@ -64,13 +64,13 @@ trMouseAction1:hover {
 					<img border=0 src="/html/imagens/portalimages/peca3.gif" ALT="" align="left"><font class="pblTituloBox">Objeto Vencidos</font><br>
 				</TD>
 				<TD width="120" class="pblAlinhamentoBotoes">
-					<a class="ABranco" href="/index.php/content/view/<? echo $_page->_objeto->Valor($_page, "cod_objeto")?>.html"><img border=0 src="/html/imagens/portalimages/exibir.png" ALT="Exibir Objeto" hspace="2"></a>
-				<?
+					<a class="ABranco" href="/index.php/content/view/<?php echo $_page->_objeto->Valor($_page, "cod_objeto")?>.html"><img border=0 src="/html/imagens/portalimages/exibir.png" ALT="Exibir Objeto" hspace="2"></a>
+				<?php
 					if ($_page->_objeto->Valor($_page, "cod_objeto")!=_ROOT) {
 				?>
 				
 					<a class="ABranco" href="/index.php/do/vencidos/<? echo $_page->_objeto->Valor($_page, "cod_pai")?>.html"><img border=0 src="/html/imagens/portalimages/parent.gif" ALT="Listar Conte&uacute;do do Pai"></a>
-				<?
+				<?php
 					}
 				?>
 					
@@ -80,7 +80,7 @@ trMouseAction1:hover {
 
 			<TR>
 			<TD COLSPAN="3">
-<?
+<?php
 if ($total>0)
 {
 ?>
@@ -125,8 +125,8 @@ if ($total>0)
 					<td width="25" class="pblTextoForm" align="center" nowrap><strong>Validade</strong></td>
 					<td class="pblTextoForm" width="14"><strong>Editar</strong></td>
 				</tr>
-				<?
-				$arrListaObjetoVencidos = $_page->_administracao->PegaListaDeVencidos($_page, $_SESSION["usuario"]["cod_usuario"], $ord1, $ord2, $inicio, $tam, $cod_objeto);		
+				<?php
+				$arrListaObjetoVencidos = $_page->_administracao->PegaListaDeVencidos($_page, $ord1, $ord2, $inicio, $tam, $cod_objeto);
 				$cont = $inicio;
 				foreach ($arrListaObjetoVencidos as $ListaChave => $ListaTexto)
 				{
@@ -159,22 +159,22 @@ if ($total>0)
 					<td align="center"><?=ConverteData($ListaTexto['data_validade'],5)?>&nbsp;</td>
 					<td align="center"><? if ($show){ ?><a href="/index.php/manage/edit/<?=$ListaTexto['cod_objeto']?>.html"><img src="/html/imagens/portalimages/icone_editar.gif" border="0" alt="Editar Objeto"></a><? } ?></td>
 				</tr>
-				<?
+				<?php
 				}
 				?>
 				
 				</table>
 <center><font color="Black">
-				<?
+				<?php
 				if ($pag > 1)
 				{
 				?>
 				<a href="/index.php/do/vencidos/<?=$cod_objeto?>.html?pag=1&ord1=<?=$ord1?>&ord2=<?=$ord2?>"><b>|primeira|</b></a> <a href="/index.php/do/vencidos/<?=$cod_objeto?>.html?pag=<?=($pag-1)?>&ord1=<?=$ord1?>&ord2=<?=$ord2?>"><b>|anterior|</b></a>
-				<?
+				<?php
 				} else {				
 				?>
 				|primeira| |anterior|
-				<?				
+				<?php
 				}
 				for ($i=$min; $i<=$max; $i++)
 				{
@@ -187,14 +187,14 @@ if ($total>0)
 				{
 				?>
 				<a href="/index.php/do/vencidos/<?=$cod_objeto?>.html?pag=<?=($pag+1)?>&ord1=<?=$ord1?>&ord2=<?=$ord2?>"><b>|pr&oacute;xima|</b></a> <a href="/index.php/do/vencidos/<?=$cod_objeto?>.html?pag=<?=$num_pags?>&ord1=<?=$ord1?>&ord2=<?=$ord2?>"><b>|&uacute;ltima|</b></a>
-				<?
+				<?php
 				} else {				
 				?>
 				|pr&oacute;xima| |&uacute;ltima|
-				<?				
+				<?php				
 				}
 				?></font></center>
-<?
+<?php
 }
 else
 {

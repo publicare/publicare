@@ -122,7 +122,7 @@ class ideias_graph
 	**************************/
 	function SetSQLChart($con,$database,$sql,$x_axis_field,$y_axis_field,$num_series)
 	{
-		//PAREI AQUI DESENVOLVER INTERFACE SQL - PROBLEMA: COMO SABER O NÚMERO DE SÉRIES
+		//PAREI AQUI DESENVOLVER INTERFACE SQL - PROBLEMA: COMO SABER O NÃšMERO DE SÃ‰RIES
 		$res = mysql_db_query($database,$sql,$con);
 
 	}			

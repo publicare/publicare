@@ -245,6 +245,7 @@ class Parse
 									'regex' => '|(.*)|',
 									'output' => '<?
 													if (<#P:nome#>_max = $_OBJ_->PegaListaDeFilhos($_page, <#P:classes#>, <#P:ordem#>, <#P:inicio#>, <#P:limite#>)) {'."\n"
+                                                                                                        .'if (!isset($_LOOP_)) $_LOOP_=array();'."\n"
 													.'array_push($_LOOPSTACK_,$_LOOP_);'."\n"
 													.'$_LOOP_=array();'."\n"
 													.'$_LOOP_["array"]=array();'."\n"
@@ -309,6 +310,7 @@ class Parse
 									'output' => '<?
 													if (<#P:nome#>_max = $_OBJ_->PegaListaDeFilhos($_page, <#P:classes#>,<#P:ordem#>))
 													{
+                                                                                                                if (!isset($_LOOP_)) $_LOOP_=array();
 														array_push($_LOOPSTACK_,$_LOOP_);
 														$_LOOP_=array();
 														$_LOOP_["array"]=array();
@@ -376,6 +378,7 @@ class Parse
 									'regex' => '|(.*)|',
 									'output' => '<? <#P:nome#>_array = $_page->_adminobjeto->LocalizarObjetos($_page, <#P:classes#>,<#P:condicao#>,<#P:ordem#>,<#P:inicio#>,<#P:limite#>,<#P:pai#>,<#P:niveis#>,false,<#P:like#>,<#P:ilike#>,<#P:tags#>);
 													if (<#P:nome#>_max = count(<#P:nome#>_array)) {'."\n"
+                                                                                                        .'if (!isset($_LOOP_)) $_LOOP_=array();'."\n"
 													.'array_push($_LOOPSTACK_,$_LOOP_);'."\n"
 													.'$_LOOP_=array();'."\n"
 													.'$_LOOP_["array"]=array();'."\n"
@@ -447,6 +450,7 @@ class Parse
 													<#P:nome#>_array = $_page->_adminobjeto->LocalizarObjetos($_page, <#P:classes#>,<#P:condicao#>,<#P:ordem#>,-1,-1,<#P:pai#>,<#P:niveis#>);
 													if (<#P:nome#>_max = count(<#P:nome#>_array))
 													{
+                                                                                                                if (!isset($_LOOP_)) $_LOOP_=array();
 														array_push($_STACK_,$_OBJ_);
 														array_push ($_LOOPSTACK_,$_LOOP_);
 														$_LOOP_=array();
@@ -596,9 +600,12 @@ class Parse
 									
 							"protegido" => array (
 									'regex' => '|(.*)|',
+									//'output' => '<? (<#P:pele#>) ? $tmpDir = "/html/skin/".<#P:pele#> : $tmpDir = "/html/template"; '."\n"
+									//.'$extensao=(file_exists($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".php"))?"php":"pbl";'."\n"
+									//.'($_page->_usuario->EstaLogadoMilitarizado()===true) ? $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".".$extensao) : $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"]."/html/template/view_protegido.pbl");',
 									'output' => '<? (<#P:pele#>) ? $tmpDir = "/html/skin/".<#P:pele#> : $tmpDir = "/html/template"; '."\n"
 									.'$extensao=(file_exists($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".php"))?"php":"pbl";'."\n"
-									.'($_page->_usuario->EstaLogadoMilitarizado()) ? $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".".$extensao) : $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"]."/html/template/view_protegido.pbl");?>',								
+									.'($_page->_usuario->EstaLogadoMilitarizado()===true) ? $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".".$extensao) : $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"]."/html/template/view_protegido.php"); ?>',
 									'parameters'=> 1,
 									'helptext' => 'O comando <strong>protegido</strong> deve ser escrito assim: <strong>&lt;@protegido view=[{nome_de_arquivo}] pele=[{prefixo_pele}]@&gt;</strong>',
 									'paramitens' => array (
@@ -679,14 +686,9 @@ class Parse
 									),
 
 							"srcblob" => array (
-									'regex' => '|(.*)|',
-									'output' => '<? echo $_BLOBVIEW."?w=<#P:largura#>&h=<#P:altura#>"; ?>'."\n",
-									'parameters'=> 1,
-									'paramitens' => array ('largura' => 'n',
-										'altura' => 'n'),
-									'paramforce' => false,
-									'paramdefault' => array('largura' => '0',
-										'altura' => '0')
+									'regex' => '',
+									'output' => '<? echo $_BLOBVIEW; ?>'."\n",
+									'parameters'=> false,
 									),
 
 							"iconeclasse" => array (

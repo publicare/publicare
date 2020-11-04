@@ -17,7 +17,7 @@ function PegaExtensaoArquivo($nome)
 	$filetype = "";
 	if ($nome && !empty($nome) && $nome!="")
 	{
-		$arrNome = split("[.]", $nome);
+		$arrNome = preg_split("[\.]", $nome);
 		$filetype = strtolower($arrNome[count($arrNome)-1]);
 	}
 	
@@ -25,7 +25,7 @@ function PegaExtensaoArquivo($nome)
 }
 
 /**
- * Funcao usada para redirecionar p·ginas quando j· tem saida de informaÁ„o
+ * Funcao usada para redirecionar p√°ginas quando j√° tem saida de informa√ß√£o
  *
  * @param unknown_type $url
  */
@@ -38,7 +38,7 @@ function redirecionar($url)
 
 
 /**
- * Retorna texto cortado. N„o corta as palavras no meio.
+ * Retorna texto cortado. N√£o corta as palavras no meio.
  *
  * @param unknown_type $txt
  * @param unknown_type $tam
@@ -64,7 +64,7 @@ function cortaTexto($txt, $tam){
 }
  
 /**
- * Recebe o cÛdigo do blob e retorna o nome da pasta onde ficar·
+ * Recebe o c√≥digo do blob e retorna o nome da pasta onde ficar√°
  *
  * @param unknown_type $cod_blob
  * @return unknown
@@ -84,9 +84,9 @@ function identificaPasta($cod_blob){
 }
 
 /**
- * Calend·rio
+ * Calend√°rio
  */
-$dias_da_semana=array('Dom','Seg','Ter','Qua','Qui','Sex','S·b');
+$dias_da_semana=array('Dom','Seg','Ter','Qua','Qui','Sex','S√°b');
 $nome_do_mes=array("", "janeiro", "fevereiro", "mar&ccedil;o", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro");
 
 /**
@@ -270,13 +270,13 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	       if (is_array($arg)) {
 	           foreach ($arg as $key => $value) {
 	               $arr[$key] = $value;
-	               $ret++;
+	               //$ret++;
 	           }
 	       }else{
 	           $arr[$arg] = "";
 	       }
 	   }
-	   return $ret;
+	   //return $ret;
 	}
 	
 
@@ -392,7 +392,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	}
 	
 	
-	/*FUN«√O ⁄TIL PARA DEBUG*/
+	/*FUN√á√ÉO √öTIL PARA DEBUG*/
 	function xd($obj)
 	{
 		echo "<div style='background-color:#DFDFDF; border:1px #666666 solid'>";
@@ -403,7 +403,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 		die();
 	}
 	
-	/*FUN«√O ⁄TIL PARA DEBUG SEM  DIE*/
+	/*FUN√á√ÉO √öTIL PARA DEBUG SEM  DIE*/
 	function x($obj)
 	{
 		echo "<div style='background-color:#DFDFDF; border:1px #666666 solid'>";
@@ -415,11 +415,11 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	
 	
 	/**
-    * Retira acentos, espaÁos e caracteres especiais da string
+    * Retira acentos, espa√ßos e caracteres especiais da string
     * @param  string $str - string que ira ser tratada
     * @return string
     */
-    function limpaString($str)
+    function limpaString($str, $caracterTraco="-")
 	{
 		
 		$acentos = array(
@@ -439,8 +439,9 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 					'u' => '/&ugrave;|&uacute;|&ucirc;|&uuml;/',
 					'Y' => '/&Yacute;/',
 					'y' => '/&yacute;|&yuml;/',
-					'-' => '/ |&amp;|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|&sup1;|&sup2;|&sup3;|&quot;|\/|\ñ|_/',
-					'' => '/\.|,|\$|\?|\"|\'|\*|\:|\!|\ì|\î|\(|\)|\||\+|\π|\?|&ldquo;|&rdquo;/');
+					$caracterTraco => '/ |&amp;|&uml;|&ordf;|&ordm;|&deg;|&ndash;|&mdash;|&gt;|&lt;|&nbsp;|&sup1;|&sup2;|&sup3;|&quot;|\/|\‚Äì|_/',
+					'' => '/\.|,|\$|\?|\"|\'|\*|\:|\!|\‚Äú|\‚Äù|\(|\)|\||\+|\¬π|\?|&ldquo;|&rdquo;/');
+
 
 		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_QUOTES, "UTF-8"));
 		$palavra = str_replace("--", "-", $palavra);
@@ -482,11 +483,11 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	}
 
 	/**
-	* LÍ arquivo em byte streaming
+	* L√™ arquivo em byte streaming
 	*/
 	function readfile_chunked($filename, $retbytes=true)
 	{
-		$chunksize = 1*(1024*1024); // tamanho dos pedaÁos
+		$chunksize = 1*(1024*1024); // tamanho dos peda√ßos
 		$buffer = '';
 		$cnt = 0;
 		$handle = fopen($filename, 'rb');

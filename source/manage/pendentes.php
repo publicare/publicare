@@ -45,7 +45,7 @@ trMouseAction1:hover {
 		<TABLE width="570" border="0" cellpadding=0 cellspacing=8 class="pblTabelaGeral">
 		<tr id="trGravarTop1">
 			<td class="pblTextoForm" colspan=3 align="right">
-			<input class="pblBotaoForm" type="button" name="purge" value="Inverter Seleção" onclick="javascript:toggle('listcontent')">&nbsp;
+			<input class="pblBotaoForm" type="button" name="purge" value="Inverter SeleÃ§Ã£o" onclick="javascript:toggle('listcontent')">&nbsp;
 		<input class="pblBotaoForm" type="submit" name="publicar_pendentes" value="Publicar Objeto" onclick="trGravarTop2.style.display='';trGravarTop1.style.display='none';">&nbsp;
 			</TD>
 		</tr>
@@ -149,7 +149,7 @@ if ($total>0){
 					<td><?=$obj["titulo"]?></td>
 					<td align="center"><? if ($show){ ?><a href="/index.php/manage/edit/<?=$obj["cod_objeto"]?>.html"><img src="/html/imagens/portalimages/icone_editar.gif" border="0" title="Editar Objeto" alt="Editar Objeto"></a><? } ?></td>
 					<td><a href="/index.php/content/view/<?=$obj['cod_objeto']?>.html"><img src="/html/imagens/portalimages/icone_exibir.gif" border="0" title="Exibir Objeto" alt="Exibir Objeto"></a></td>
-					<td><a href="JavaScript:JSMostraeOculta(idHistorico<?=$ContagemdeItens?>x);"><img src="/html/imagens/portalimages/icn_down.jpg" border="0" title="Ver Histórico" alt="Ver Histórico"></a></td>
+					<td><a href="JavaScript:JSMostraeOculta(idHistorico<?=$ContagemdeItens?>x);"><img src="/html/imagens/portalimages/icn_down.jpg" border="0" title="Ver HistÃ³rico" alt="Ver HistÃ³rico"></a></td>
 				</tr>
 		<tr>
 			<td colspan="6">

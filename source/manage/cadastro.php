@@ -25,7 +25,7 @@ include('cadastro.class.pinc');
 	<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=8 class="pblTabelaGeral">
 	<TR>
 		<TD>
-			<img border=0 src="/html/imagens/portalimages/peca3.gif" ALT="" align="left"><font class="pblTituloBox">Banco de dados de usu·rios</font>
+			<img border=0 src="/html/imagens/portalimages/peca3.gif" ALT="" align="left"><font class="pblTituloBox">Banco de dados de usu√°rios</font>
 		</td>
 		
 		<TD>
@@ -59,7 +59,7 @@ include('cadastro.class.pinc');
 			<hr style="pblLinha" size="1">
 <?
 	if ($_GET['acao']=='Selecionar') {
-		//Dar a opÁ„o de pesquisar ou gerar o CSV
+		//Dar a op√ß√£o de pesquisar ou gerar o CSV
 		
 		if ($_GET['consulta']=='pesquisar') {
 			$cad->GerarPesquisa(intval($_GET['cod_form']));
@@ -126,7 +126,7 @@ include('cadastro.class.pinc');
 				echo '<p style="margin-left: 7px; margin-top: 7px;">
 	<table width="480" cellspacing="0" cellpadding="4" border="0">
 		<tr>
-			<td><p class="pblTextoForm"><strong>CÛdigo</strong></p></td>
+			<td><p class="pblTextoForm"><strong>C√≥digo</strong></p></td>
 			<td><p class="pblTextoForm"><strong>Nome</strong></p></td>
 			<td><p class="pblTextoForm"><strong>E-mail</strong></p></td>
 			<td><p class="pblTextoForm"><strong>Data de registro</strong></p></td>
@@ -155,7 +155,7 @@ include('cadastro.class.pinc');
 <font class="pblTextoForm"><P>';
 		}
 		else {
-			echo '<p class="pblTextoForm">N„o h· resultados para a pesquisa.</P><br>';
+			echo '<p class="pblTextoForm">N√£o h√° resultados para a pesquisa.</P><br>';
 		}
 		
 		$cad->GerarPesquisa(intval($_GET['cod_form']),$_GET);

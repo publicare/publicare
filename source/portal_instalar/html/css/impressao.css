@@ -1,0 +1,11 @@
+.nao_imprimir{ 
+	visibility:hidden;
+} 
+
+.imprimir{
+	visibility: visible;
+}
+
+.retirar{
+	visibility: collapse;
+}

@@ -45,7 +45,6 @@ class Pagina
 	{
 		include_once ('administracao.class.php');
 		include_once ('classelog.class.php');
-		include_once ('index2.class.php');
 		$this->_administracao = new Administracao($this);
 		$this->_log = new ClasseLog($this);
 	}
@@ -53,6 +52,7 @@ class Pagina
 	function Executar($acao,$incluirheader=false, $irpararaiz=false)
 	{
 
+            $acaoCompleta = "";
 //   echo "<pre>";
 //var_dump($acao);
 //exit();
@@ -94,7 +94,7 @@ class Pagina
 				{
 					include("header_publicare.php");
 				}
-				$path = split("/",$acao);
+				$path = preg_split("[\/]",$acao);
 				$acaoSistema=$path[count($path)-1];
 				
 				if (strpos($acaoSistema,'.php')!==false){
@@ -170,7 +170,7 @@ class Pagina
 					break;
 			}
 
-			$path = split("/",$acao);
+			$path = preg_split("[\/]",$acao);
 			$acaoSistema=$path[count($path)-1];
 
 			switch ($acao)
@@ -203,89 +203,98 @@ class Pagina
 					else $incluirheader = true;
 					$tmpScriptAtual = $this->_objeto->metadados['script_exibir'];
 					
+					if ($this->_adminobjeto->estaSobAreaProtegida($this, $this->_objeto->metadados['cod_objeto']))
+					{
+					
 			//Configurado um script para exibicao
-					if ((isset($_GET['execview'])) && (!preg_match("/_protegido.*/",$tmpScriptAtual))){
-						
-						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".php"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".php";
-							$incluir[1] = 1;
-							break;
+						if ((isset($_GET['execview'])) && (!preg_match("/_protegido.*/",$tmpScriptAtual))){
+							
+							if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".php"))
+							{
+								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".php";
+								$incluir[1] = 1;
+								break;
+							}
+							elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".pbl"))
+							{
+								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".pbl";
+								$incluir[1] = 1;
+								break;
+							} 
+							
+							
+							if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".php"))
+							{
+								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".php";
+								$incluir[1] = 1;
+								break;
+							}
+							elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".pbl"))
+							{
+								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".pbl";
+								$incluir[1] = 1;
+								break;
+							}
 						}
-						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".pbl"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".pbl";
-							$incluir[1] = 1;
-							break;
-						} 
-						
-						
-						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".php"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".php";
-							$incluir[1] = 1;
-							break;
-						}
-						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".pbl"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".pbl";
-							$incluir[1] = 1;
-							break;
-						}
-					}
 
-					if ($this->_objeto->metadados['script_exibir'] && file_exists($_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir']))
-					{
-						$incluir[0] = $_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir'];
-						$incluir[1] = 1;
-						break;
-					}
-
-			//Nao esta configurado um script para exibicao - Existe um skin?
-					if ($this->_objeto->metadados['cod_pele'])
-					{
-
-						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
+						if ($this->_objeto->metadados['script_exibir'] && file_exists($_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir']))
 						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php";
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir'];
 							$incluir[1] = 1;
 							break;
-							//Script de pele incluido - Finalizar
 						}
-						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
+
+				//Nao esta configurado um script para exibicao - Existe um skin?
+						if ($this->_objeto->metadados['cod_pele'])
 						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
+
+							if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
+							{
+								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php";
+								$incluir[1] = 1;
+								break;
+								//Script de pele incluido - Finalizar
+							}
+							elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
+							{
+								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
+								$incluir[1] = 1;
+								break;
+								//Script de pele incluido - Finalizar
+							}
+						}
+							
+				//Nao esta configurado uma skin. Incluir arquivos padrao
+						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php";
 							$incluir[1] = 1;
-							break;
-							//Script de pele incluido - Finalizar
+						}
+						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
+							$incluir[1] = 1;
+						}
+						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php";
+							$incluir[1] = 1;
+						}
+						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl";
+							$incluir[1] = 1;
+							
+						}
+						else 
+						{
+							echo "<span class=\"txtErro\">N&atilde;o foram encontrados os arquivos de SCRIPT DE EXIBI&Ccedil;&Atilde;O.</span>";
 						}
 					}
-						
-			//Nao esta configurado uma skin. Incluir arquivos padrao
-					if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
+					else
 					{
-						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php";
+						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_protegido.php";
 						$incluir[1] = 1;
-					}
-					elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
-					{
-						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
-						$incluir[1] = 1;
-					}
-					elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php"))
-					{
-						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php";
-						$incluir[1] = 1;
-					}
-					elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl"))
-					{
-						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl";
-						$incluir[1] = 1;
-						
-					}
-					else 
-					{
-						echo "<span class=\"txtErro\">N&atilde;o foram encontrados os arquivos de SCRIPT DE EXIBI&Ccedil;&Atilde;O.</span>";
 					}
 					break;
 					

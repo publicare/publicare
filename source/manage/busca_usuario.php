@@ -6,7 +6,7 @@ $busca = isset($_POST["busca"])?$_POST["busca"]:"";
 ?>
 <html>
 <head>
-<title> <? echo $PORTAL_NAME ;?> -- Busca de usu·rios</title>
+<title> <? echo $PORTAL_NAME ;?> -- Busca de usu√°rios</title>
 <?
 $recebeBrowser = DetectaBrowser();
 if ($recebeBrowser[0]!="firefox" && $recebeBrowser[0]!="msie") $recebeBrowser[0] = "firefox";
@@ -88,7 +88,7 @@ if ($acao=="buscar")
 </table>
 <?
 	} else {
-		echo "<center><b><br><br><br>Nenhum usu·rio encontrado<br><br><br></b></center>";
+		echo "<center><b><br><br><br>Nenhum usu√°rio encontrado<br><br><br></b></center>";
 	}
 }
 ?>

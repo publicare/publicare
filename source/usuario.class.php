@@ -25,8 +25,10 @@ class Usuario
 			$this->PegaPerfil($_page);
 		else
 		{
-			$this->cod_perfil=_PERFIL_DEFAULT;
+			$this->cod_perfil = _PERFIL_DEFAULT;
+                        //$this->cod_usuario = 0;
 			$_SESSION['usuario']['perfil'] = _PERFIL_DEFAULT;
+                        //$_SESSION['usuario']['cod_usuario'] = 0;
 		}
 			
 	}
@@ -63,14 +65,14 @@ class Usuario
 			chefia,
 			secao,
 			ramal,
+                        login,
 			data_atualizacao 
 			from usuario 
 			where valido=1 
 			and login='$usuario' 
 			and senha='".md5($senha)."'";
-			
-		$rs = $_page->_db->ExecSQL($sql, -1, -1, 1);
-		
+
+		$rs = $_page->_db->ExecSQL($sql);
 		if ($rs->_numOfRows>0){
 			if((int)$rs->fields['data_atualizacao'] < (int)date("Ymd")) {
 				return false;
@@ -147,22 +149,24 @@ class Usuario
 		
 	}
 		
-	function PegaPerfil(&$_page)
+	function PegaPerfil(&$_page, $cod_objeto=0)
 	{
-		if (!$_page->_objeto->Valor($_page, 'cod_objeto')) return false;
-		$caminho[]=$_page->_objeto->Valor($_page, 'cod_objeto');
-		$caminho = array_merge($caminho, array_reverse($_page->_objeto->CaminhoObjeto));
-		foreach ($caminho as $cod_objeto)
+		if ($cod_objeto==0 && !$_page->_objeto->Valor($_page, 'cod_objeto')) return false;
+                if ($cod_objeto==0) $cod_objeto = $_page->_objeto->Valor($_page, 'cod_objeto');
+		$caminho[] = $cod_objeto;
+                $objeto = new Objeto($_page, $cod_objeto);
+		$caminho = array_merge($caminho, array_reverse($objeto->CaminhoObjeto));
+		foreach ($caminho as $cod_obj)
 		{
-			if (isset($_SESSION['usuario']['direitos'][$cod_objeto]))
+			if (isset($_SESSION['usuario']['direitos'][$cod_obj]))
 			{
-				$this->cod_perfil = $_SESSION['usuario']['direitos'][$cod_objeto];
+				$this->cod_perfil = $_SESSION['usuario']['direitos'][$cod_obj];
 				$_SESSION['usuario']['perfil'] = $this->cod_perfil;
 				return $this->cod_perfil;
 			}
 		}
 		$this->cod_perfil=0;
-		return false;
+		return _PERFIL_DEFAULT;
 	}
 		
 	function PodeExecutar(&$_page, $script)
