@@ -3,9 +3,6 @@ if (!isset($_SESSION)) session_start();
 
 include("funcoes.php");
 
-//$_POST = _antiSqlInjection($_POST);
-//$_GET = _antiSqlInjection($_GET);
-
 // Definindo timezone
 date_default_timezone_set("America/Sao_Paulo");
 

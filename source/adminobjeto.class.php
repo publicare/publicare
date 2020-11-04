@@ -307,7 +307,7 @@ class AdminObjeto
                             $result[$array_nomes[$key]]['valor']=$dados[$array_nomes[$key].'_arquivo'];
 							$result[$array_nomes[$key]]['cod_blob']=$dados[$array_nomes[$key].'_cod_blob'];
 							$result[$array_nomes[$key]]['tamanho_blob']=$dados[$array_nomes[$key].'_tamanho'];
-							$result[$array_nomes[$key]]['tipo_blob']=PegaExtensaoArquivo($dados[$array_nomes[$key].'_arquivo']);
+							$result[$array_nomes[$key]]['tipo_blob']=preg_replace('/\A.*?\./is','',$dados[$array_nomes[$key].'_arquivo']);
 							break;
 						case 'date':
 							$result[$array_nomes[$key]]['valor']=ConverteData($dados[$array_nomes[$key]],5);

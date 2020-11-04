@@ -309,8 +309,8 @@ class DBLayer
 		{
 			$field['field']=substr($field['field'],0,strpos($field['field'],'.'));
 		}
-				
-		switch (trim($field['type']))
+		
+		switch ($field['type'])
 		{
 			case 'data':
 			case 'Data':
@@ -340,9 +340,6 @@ class DBLayer
 				break;
 							
 		}
-		
-//		x($field['type']);
-//		x($txt);
 		//$sql = "alter table ".$tbl." add ".$this->tipodados["coluna"]." ".$txt;
 		/*
 		echo "<pre>";

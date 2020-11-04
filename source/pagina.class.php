@@ -22,6 +22,7 @@ class Pagina
 	public $cod_objeto;
 	public $inicio;
 	public $TempoDeExecucao;
+	
 
 	function __construct(&$_db, $cod_objeto=_ROOT)
 	{
@@ -50,14 +51,18 @@ class Pagina
 		$this->_log = new ClasseLog($this);
 	}
 
-	function Executar($acao,$incluirheader=false, $irpararaiz=false)
+	function Executar($acao, $incluirheader=false, $irpararaiz=false)
 	{
-
-//   echo "<pre>";
-//var_dump($acao);
-//exit();
-		if (strpos($acao,"/do/")!==false)
+	
+		if (strpos($acao,"/inc/")!==false)
 		{
+			$vAcao = split("/", $acao);
+			include("include/".$vAcao[2].".php");
+			exit(0);
+		}
+		elseif (strpos($acao,"/do/")!==false)
+		{
+		
 			if ($this->_usuario->PodeExecutar($this, $acao))
 			{
 				$this->IncluirAdmin();
@@ -92,38 +97,43 @@ class Pagina
 
 				if (!strpos($acao,'_post') && !isset($_GET["naoincluirheader"]))
 				{
+//					echo "inclui header<br>";
 					include("header_publicare.php");
 				}
+				
 				$path = split("/",$acao);
 				$acaoSistema=$path[count($path)-1];
 				
-				if (strpos($acaoSistema,'.php')!==false){
-					include ('manage/'.$acaoSistema);
-				}
-				else{
-					include ('manage/'.$acaoSistema.'.php');
+				if (isset($_GET["exibir"]))
+				{
+				
+					if (strpos($acaoSistema,'.php')!==false){
+						include ('manage/'.$acaoSistema);
+					}
+					else{
+						include ('manage/'.$acaoSistema.'.php');
+					}
+				
 				}
 
-				if (!strpos($acao,'_post'))
-				{
-					include ("footer_publicare.php");
-				}
 			}
 			else
 			{
 				$this->ExibirMensagemProibido($acao);
 			}
-			
-//			$this->TempoDeExecucao=$this->getmicrotime()-$this->inicio;
-//			echo ">>> TEMPO DE EXECUCAO: ".$this->TempoDeExecucao." <<<";
+
 			return true;
 		}
+		
+//		exit(0);
 
+/*		
 		if ($irpararaiz)
 		{
 			$this->_objeto = new Objeto($this, _ROOT);
 		}
 
+/*		
 		if (isset($ucode))
 		{
 			$sql = "Select cod_objeto from unlock_table where cod_unlock=".$ucode;
@@ -139,6 +149,7 @@ class Pagina
 				}
 			}
 		}
+*/		
 		
 		if (($this->_usuario->PodeExecutar($this, $acao)) || (isset($unlock)))
 		{

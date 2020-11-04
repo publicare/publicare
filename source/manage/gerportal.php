@@ -1,5 +1,7 @@
 <?php
 global $PORTAL_EMAIL, $_DBSERVERTYPE, $_DBHOST, $_DB;
+header("Content-Type: text/html; charset=ISO-8859-1",true);
+
 ?>
 	<div class="pblAlinhamentoTabelas">
 	<TABLE WIDTH=570 BORDER=0 CELLPADDING=0 CELLSPACING=8 class="pblTabelaGeral">

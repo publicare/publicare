@@ -76,7 +76,7 @@ class Usuario
 			} else {
 				$_SESSION["usuario"] = $rs->fields;
 				
-				$data_validade = strftime("%Y%m%d", strtotime("+6 month"));
+				$data_validade = strftime("%Y%m%d", strtotime("+12 month"));
 				$sql = "update usuario set data_atualizacao = ".ConverteData($data_validade,16)." where cod_usuario = ".$_SESSION["usuario"]["cod_usuario"];
 				$rs2 = $_page->_db->ExecSQL($sql);
 				

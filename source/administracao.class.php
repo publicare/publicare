@@ -335,7 +335,7 @@
 
 						for ($j=0; $j<sizeof($row_blob); $j++)
 						{
-							$file_ext=PegaExtensaoArquivo($row_blob[$j]['arquivo']);
+							$file_ext=$this->PegaExtensaoArquivo($row_blob[$j]['arquivo']);
 							if (file_exists(_BLOBDIR."/".identificaPasta($row_blob[$j]['cod_blob'])."/".$row_blob[$j]['cod_blob'].'.'.$file_ext))
 							{
 								$checkDelete = unlink(_BLOBDIR."/".identificaPasta($row_blob[$j]['cod_blob'])."/".$row_blob[$j]['cod_blob'].'.'.$file_ext);
@@ -460,7 +460,7 @@
 
 						    while ($row = $rs->FetchRow())
 						    {
-								$file_ext = PegaExtensaoArquivo($row['arquivo']);
+								$file_ext = $this->PegaExtensaoArquivo($row['arquivo']);
 								if (file_exists(_BLOBDIR."/".identificaPasta($row['cod_blob'])."/".$row['cod_blob'].'.'.$file_ext))
 								{
 									$checkDelete = unlink(_BLOBDIR."/".identificaPasta($row['cod_blob'])."/".$row['cod_blob'].'.'.$file_ext);
@@ -511,7 +511,7 @@
 								$campos['arquivo'] = strtolower($valor['name']);
 								$campos['tamanho'] = filesize($valor['tmp_name']);
 								$name = $_page->_db->Insert($info['tabela'],$campos);
-								$filetype=PegaExtensaoArquivo($valor['name']);
+								$filetype=$this->PegaExtensaoArquivo($valor['name']);
 
 								$subpasta = identificaPasta($name);  //Pega o nome da subpasta
 								if (!$resultado=is_dir(_BLOBDIR."/".$subpasta."/"))
@@ -551,6 +551,12 @@
 					}
 				}
 			}
+		}
+
+		function PegaExtensaoArquivo($nome)
+		{
+			if (preg_match('/\.(.+?)$/is',$nome,$matches)) return strtolower($matches[1]);
+			else return '';	
 		}
 
 		function CriarObjeto(&$_page, $dados, $log=true, $array_files='')

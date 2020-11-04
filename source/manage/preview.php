@@ -1,8 +1,9 @@
 <?
 global $_page;
+
+header("Content-Type: text/html; charset=ISO-8859-1",true);
 ?>
-<div id="divGuiaA" style="height: 0%; visibility: hidden;">
-	<div class="pblAlinhamentoTabelas">
+<div class="pblAlinhamentoTabelas">
 	<TABLE WIDTH=570 BORDER=0 CELLPADDING=0 CELLSPACING=8 class="pblTabelaGeral">
 	<TR>
 		<TD colspan="2">
@@ -10,22 +11,19 @@ global $_page;
 		</td>
 	</TR>
 	<tr>
-		<td width="130" class="pblFormTitle" valign="top" align="left">Objeto:</td>
-		<td class="pblFormText" valign="top" align="left">
+		<td width="130" class="pblTextoLabelForm" valign="top" align="left">Objeto:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		 echo "<b>".$_page->_objeto->Valor($_page, "titulo")."</b>";
 		 echo " <i>[cod: ".$_page->_objeto->Valor($_page, "cod_objeto")."]</i>";
-
 		 ?>
 		 </td>
 	</tr>
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Hierarquia:</td>
-		<td class="pblFormText" valign="top" align="left">
+		<td width="" class="pblTextoLabelForm" valign="top" align="left">Hierarquia:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 	<?php
-//	echo "<pre>";
-//	var_dump($_page->_objeto);
-//	exit();
+
 	$tmpCaminhoObjeto=$_page->_objeto->PegaCaminhoComTitulo($_page);
 	foreach ($tmpCaminhoObjeto as $item)
 	{
@@ -34,16 +32,16 @@ global $_page;
 	?>
 	</tr>
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Classe:</td>
-		<td class="pblFormText" valign="top" align="left">
+		<td width="" class="pblTextoLabelForm" valign="top" align="left">Classe:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		echo $_page->_objeto->Valor($_page, "classe")." [".$_page->_objeto->Valor($_page, "prefixoclasse")."]";
 		?>
 		</td>
 	</tr>	
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Pele:</td>
-		<td class="pblFormText" valign="top" align="left">
+		<td width="" class="pblTextoLabelForm" valign="top" align="left">Pele:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		if ($_page->_objeto->metadados['cod_pele'])
 		{
@@ -56,8 +54,8 @@ global $_page;
 		</td>
 	</tr>	
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Script:</td>
-		<td class="pblFormText" valign="top" align="left">
+		<td width="" class="pblTextoLabelForm" valign="top" align="left">Script:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		if ($_page->_objeto->metadados['script_exibir']) {
 		 if (file_exists($_SERVER['DOCUMENT_ROOT'].$_page->_objeto->metadados['script_exibir']))
@@ -71,8 +69,8 @@ global $_page;
 	</tr>	
 		<!--TESTAR SE O OBJETO TEM FILHOS -->
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Objeto pode ter filhos:</td>
-		<td class="pblFormText" valign="top" align="left">
+		<td width="" class="pblTextoLabelForm" valign="top" align="left">Objeto pode ter filhos:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		if ($_page->_objeto->Valor($_page, "temfilhos"))
 			echo "Sim";
@@ -84,8 +82,8 @@ global $_page;
 		<!--TESTAR SE O OBJETO ESTA PUBLICADO -->
 		
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Status do objeto:</td>
-		<td class="pblFormText" valign="top" align="left">
+		<td width="" class="pblTextoLabelForm" valign="top" align="left">Status do objeto:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		if ($_page->_objeto->Valor($_page, "cod_status")!=_STATUS_PUBLICADO)
 			echo "<b>N&atilde;o publicado</b>";
@@ -94,23 +92,23 @@ global $_page;
 		?>
 		</td>
 	</tr>
-	<tr>	<td width="" class="pblFormTitle" valign="top" align="left">Publica&ccedil;&atilde;o:</td>
-		<td class="pblFormText" valign="top" align="left">
+	<tr>	<td width="" class="pblTextoLabelForm" valign="top" align="left">Publica&ccedil;&atilde;o:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		echo $_page->_objeto->Valor($_page, "data_publicacao");
 		?>
 		</td>
 	</tr>
-	<tr>	<td width="" class="pblFormTitle" valign="top" align="left">Validade:</td>
-		<td class="pblFormText" valign="top" align="left">
+	<tr>	<td width="" class="pblTextoLabelForm" valign="top" align="left">Validade:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		echo $_page->_objeto->Valor($_page, "data_validade");
 		?>
 		</td>
 	
 	</tr>
-	<tr>	<td width="" class="pblFormTitle" valign="top" align="left">Navegador:</td>
-		<td class="pblFormText" valign="top" align="left">
+	<tr>	<td width="" class="pblTextoLabelForm" valign="top" align="left">Navegador:</td>
+		<td class="pblTextoForm" valign="top" align="left">
 		<?php
 		$arrRecebeNomeBrowser = DetectaBrowser();
 		echo $arrRecebeNomeBrowser[1];
@@ -161,11 +159,11 @@ global $_page;
 		
 	</table>
 	</div>
-	</div>
 <?php
 	/* =============
 	Inserindo Guias
 	================*/
+	/*
 	echo "<div id=\"divGuiaB\" style=\"height: 0%; visibility: hidden;\">";
 	include ("log_workflow.php");
 	echo "</div>";
@@ -173,4 +171,5 @@ global $_page;
 	echo "<div id=\"divGuiaC\" style=\"height: 0%; visibility: hidden;\">";
 	include ("log_objeto.php");
 	echo "</div>";
+	*/
 ?>

@@ -1,29 +1,5 @@
 <?php
 
-function _antiSqlInjection($Target){
-    $sanitizeRules = array('FROM','SELECT','INSERT','DELETE','WHERE','DROP TABLE','SHOW TABLES','*','--','=','SCRIPT','EVAL');
-    foreach($Target as $key => $value):
-        if(is_array($value)): $arraSanitized[$key] = _antiSqlInjection($value);
-        else:
-            $arraSanitized[$key] = (!get_magic_quotes_gpc()) ? addslashes(str_ireplace($sanitizeRules,"",$value)) : str_ireplace($sanitizeRules,"",$value);
-        endif;
-    endforeach;
-    return $arraSanitized;
-}
-
-
-function PegaExtensaoArquivo($nome)
-{
-	$filetype = "";
-	if ($nome && !empty($nome) && $nome!="")
-	{
-		$arrNome = split("[.]", $nome);
-		$filetype = strtolower($arrNome[count($arrNome)-1]);
-	}
-	
-	return $filetype;
-}
-
 /**
  * Funcao usada para redirecionar páginas quando já tem saida de informação
  *
@@ -354,8 +330,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 					'u' => '/&ugrave;|&uacute;|&ucirc;|&uuml;/',
 					'Y' => '/&Yacute;/',
 					'y' => '/&yacute;|&yuml;/',
-					'_' => '/ |&amp;|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|&sup1;|&sup2;|&sup3;|&quot;|–|-|\-/',
-					'' => '/\.|,|\$|\?|\"|\“|\”|\'|\*|\:|\!|\/|\–|\(|\)|\||\+|\¹|\?|&ldquo;|&rdquo;/');
+					'_' => '/&amp;| |-|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|\.|,|\$|\?|\"|\'|\*|\:|\!|\/|\–|\(|\)|&ldquo;|&rdquo;/');
 
 		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_QUOTES, "ISO-8859-1"));
 		
@@ -366,29 +341,4 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 		return $palavra;
 
 	}
-
-	function readfile_chunked($filename,$retbytes=true) {
-	   $chunksize = 1*(1024*1024); // how many bytes per chunk
-	   $buffer = '';
-	   $cnt =0;
-	   // $handle = fopen($filename, 'rb');
-	   $handle = fopen($filename, 'rb');
-	   if ($handle === false) {
-		   return false;
-	   }
-	   while (!feof($handle)) {
-		   $buffer = fread($handle, $chunksize);
-		   echo $buffer;
-		   ob_flush();
-		   flush();
-		   if ($retbytes) {
-			   $cnt += strlen($buffer);
-		   }
-	   }
-		   $status = fclose($handle);
-	   if ($retbytes && $status) {
-		   return $cnt; // return num. bytes delivered like readfile() does.
-	   }
-	   return $status;
 	
-	} 	

@@ -1,8 +1,7 @@
 <?php
 global $_page, $action;
 
-include_once ($_SERVER['DOCUMENT_ROOT']."/ckeditor/ckeditor.php");
-include_once ($_SERVER['DOCUMENT_ROOT']."/ckfinder/ckfinder.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/FCKeditor/fckeditor.php");
 		
 // Variaveis de definicao para estrutura de formulario
 $DatadeHoje = date("j/n/Y"); 
@@ -311,22 +310,11 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 						case 8:
 							if ($prop['seguranca'] >= $_SESSION['usuario']['perfil'])
 							{
-								$f = new CKEditor();
-								$nomeCk = 'property:'. $prop['nome'];
-								$valorCk = ($edit)?$_page->_objeto->ValorParaEdicao($_page, $prop['nome']):"";
-								$f->returnOutput = true;
-								$f->basePath = '/ckeditor/';
-								$f->config['width'] = 520;
-								$f->config['height'] = 350;
-								CKFinder::SetupCKEditor($f, '/ckfinder/');
-								//$f->textareaAttributes = array("cols" => 60, "rows" => 20);
-								$campo = $f->editor($nomeCk, $valorCk);
-								echo $campo;
-								//$f = new FCKeditor('property:'. $prop['nome']);
-								//if ($edit)
-								//$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
-								//$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
-								//$f->Create();
+								$f = new FCKeditor('property:'. $prop['nome']);
+								if ($edit)
+								$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
+								$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
+								$f->Create();
 							}
 							break;
 						case 6: // CAMPO REFERENCIA A UM OBJETO (RefObj)
