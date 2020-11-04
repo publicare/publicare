@@ -78,9 +78,9 @@ function quickcache_varkey() {
 function quickcache_scriptkey() {
   // These should be available, unless running commandline
   if ($GLOBALS["QUICKCACHE_IGNORE_DOMAIN"]) {
-    $name=$_SERVER["PHP_SELF"];
+    $name = $_SERVER["REQUEST_URI"]; //$_SERVER["PHP_SELF"];
   } else {
-    $name=$_SERVER["SCRIPT_URI"];
+    $name = $_SERVER["SERVER_NAME"]."/".$_SERVER["REQUEST_URI"];
   }
 
   // Commandline mode will also fail this one, I'm afraid, as there is no
@@ -88,7 +88,7 @@ function quickcache_scriptkey() {
   if ($name=="") {
     $name="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"];
   }
-
+  
   quickcache_debug("Cache scriptkey is set to $name");
   return $name;
 }

@@ -1,14 +1,12 @@
 <?php
 global $PORTAL_EMAIL, $_DBSERVERTYPE, $_DBHOST, $_DB;
-header("Content-Type: text/html; charset=ISO-8859-1",true);
-
 ?>
 	<div class="pblAlinhamentoTabelas">
 	<TABLE WIDTH=570 BORDER=0 CELLPADDING=0 CELLSPACING=8 class="pblTabelaGeral">
 	<TR>
 		<TD colspan="2">
 			<img border=0 src="/html/imagens/portalimages/peca3.gif" ALT="" align="left">
-			<font class="pblTituloBox">Informações do Publicare</font><br>
+			<font class="pblTituloBox">InformaÃ§Ãµes do Publicare</font><br>
 		</td>
 	</TR>
 	<tr>
@@ -36,7 +34,7 @@ header("Content-Type: text/html; charset=ISO-8859-1",true);
 		</td>
 	</tr>	
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Diretório Principal:</td>
+		<td width="" class="pblFormTitle" valign="top" align="left">DiretÃ³rio Principal:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
 		echo $_SERVER['DOCUMENT_ROOT'];
@@ -44,7 +42,7 @@ header("Content-Type: text/html; charset=ISO-8859-1",true);
 		</td>
 	</tr>
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Diretório de Blob:</td>
+		<td width="" class="pblFormTitle" valign="top" align="left">DiretÃ³rio de Blob:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
 		echo _BLOBDIR;
@@ -52,7 +50,7 @@ header("Content-Type: text/html; charset=ISO-8859-1",true);
 		</td>
 	</tr>	
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">Diretório de Thumb:</td>
+		<td width="" class="pblFormTitle" valign="top" align="left">DiretÃ³rio de Thumb:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
 			echo _THUMBDIR;

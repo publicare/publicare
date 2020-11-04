@@ -210,7 +210,7 @@ class AdminObjeto
 		$tipo=array();
 		//Primeiro SQL
 //		echo "<pre>";
-//		echo "1� SQL >>".$sql."<BR><BR>";
+//		echo "1ï¿½ SQL >>".$sql."<BR><BR>";
 //		echo "</pre>";
 		$row = $res->GetRows();
 		
@@ -307,7 +307,7 @@ class AdminObjeto
                             $result[$array_nomes[$key]]['valor']=$dados[$array_nomes[$key].'_arquivo'];
 							$result[$array_nomes[$key]]['cod_blob']=$dados[$array_nomes[$key].'_cod_blob'];
 							$result[$array_nomes[$key]]['tamanho_blob']=$dados[$array_nomes[$key].'_tamanho'];
-							$result[$array_nomes[$key]]['tipo_blob']=preg_replace('/\A.*?\./is','',$dados[$array_nomes[$key].'_arquivo']);
+							$result[$array_nomes[$key]]['tipo_blob']=PegaExtensaoArquivo($dados[$array_nomes[$key].'_arquivo']);
 							break;
 						case 'date':
 							$result[$array_nomes[$key]]['valor']=ConverteData($dados[$array_nomes[$key]],5);
@@ -447,14 +447,18 @@ class AdminObjeto
 			$ordem = explode (",",$ordem);
 		}
 
+			//xd($_page->_db->server);
 		if(!$likeas=='')
 		{
 			$like_as = " and ".$_page->_db->nomes_tabelas['objeto'].".titulo LIKE '".$likeas."'";
 		}
-      // Al�m de perguntar sobre 'ilike', tamb�m garante que s� um LIKE ser� usado na Query (caso programador tente usar LIKE e iLIKE na mesma chamada)
+      // Além de perguntar sobre 'ilike', também garante que só um LIKE será usado na Query (caso programador tente usar LIKE e iLIKE na mesma chamada)
 		if((!$likenocase=='') || ((!$likeas=='') && (!$likenocase=='')))
 		{
-			$like_as = " and ".$_page->_db->nomes_tabelas['objeto'].".titulo ILIKE '".strtolower($likenocase)."'";
+			$like_as = " and ".$_page->_db->nomes_tabelas['objeto'].".titulo ";
+			if ($_page->_db->server=="postgres") $like_as .= "ILIKE";
+			else $like_as .= "LIKE";
+			$like_as .= " '".strtolower($likenocase)."'";
 		}
 
 		/******** TESTA SE TEM PROPRIEDADE NA ORDEM ***********/
@@ -494,7 +498,7 @@ class AdminObjeto
 
 
 		/************** PREPARA SQL PARA CLASSES ***************/
-		$multiclasse=false; //Classe �nica � true. Nesse caso N�O � preciso cria a temp table
+		$multiclasse=false; //Classe ï¿½nica ï¿½ true. Nesse caso Nï¿½O ï¿½ preciso cria a temp table
 		$todas_as_classes=false;
 		if ($classe=='*')
 		{
@@ -512,7 +516,6 @@ class AdminObjeto
 				$multiclasse=true; //Classe unica e falso. Nesse caso e preciso cria a temp table
 		}
 		$classes = $this->CodigoDasClasses($_page, $classe);
-
 
 		////////////////// ATE AQUI O CODIGO ESTA CERTO SEM DUVIDA ////////////////
 
@@ -667,7 +670,7 @@ class AdminObjeto
 						if (preg_match('/floor/',$condicao[0])) {
 							$condicao[0]=str_replace('objeto.','',$condicao[0]);
 						}
-	                    $temp_where[]=' ('.$condicao[0].$condicao[1]."'".$condicao[2]."')";
+	                    $temp_where[]=' ('.$condicao[0]." ".$condicao[1]." '".$condicao[2]."')";
 	                }
 	                else
 	                {
@@ -737,7 +740,7 @@ class AdminObjeto
 		{
 			$input=array();
 			$input = $this->CriaSQLParaCondicao($_page, $array_qry, $cod_classe);
-			if (isset($input) && is_array($input))
+			if (isset($input) && is_array($input) && count($input)>0)
 			{
 				$result['where'][] = $input['where'];
 				$result['from'][] = $input['from'];
@@ -778,7 +781,7 @@ class AdminObjeto
 
 	function CriaSQLParaCondicao(&$_page, $array_qry, $cod_classe)
 	{
-		$out="";
+		$out=array();
 		/***************** 	GERA SQL PARA CONDICAO *******************/
 		foreach ($array_qry as $condicao)
 		{
@@ -796,15 +799,16 @@ class AdminObjeto
 				if ($this->EMetadado($_page, $condicao[0]))
 				{
 					$condicao[0] = str_replace($_page->_db->nomes_tabelas["objeto"].'.(','(',$condicao[0]);
-					$out['where'].=' '.$condicao[0].$condicao[1]."'".$condicao[2]."'";
+					$out['where'].=' '.$condicao[0].' '.$condicao[1]." '".$condicao[2]."'";
 				}
 				else
 				{
 
 					$temp = $this->CriaSQLPropriedade($_page, $condicao[0],"", $cod_classe);
 					if (!strpos($out['from'],$temp['from'])) $out['from'] .= ' '.$temp['from'];
+					
 					$out['condicao'][]=$condicao[0];
-					/*	MUDEI - COLOQUEI UM ESPA�O ENTRE OS OS CAMPOS E O DELIMITADOR - RODRIGO 20/03/2009 */
+					/*	MUDEI - COLOQUEI UM ESPAÇO ENTRE OS OS CAMPOS E O DELIMITADOR - RODRIGO 20/03/2009 */
 					//original - $out['where'] .= ' ('.$temp['where'].' AND '.$temp['field'].$condicao[1].$temp['delimitador'].$condicao[2].$temp['delimitador'].')';
 
 					$out['where'] .= ' ('.$temp['where'].' AND '.$temp['field']." ".$condicao[1]." ".$temp['delimitador'].$condicao[2].$temp['delimitador'].')';
@@ -1271,7 +1275,7 @@ class AdminObjeto
 	  
 	  $email = new Email($remetente ,$destinatario, "Solicitacao de Publicacao" , $conteudoCompleto);
 	
-	//** send a copy of this file in the email. (n�o nescess�rio)
+	//** send a copy of this file in the email. (nï¿½o nescessï¿½rio)
 	  //$email->Attach(__FILE__, "text/plain");
 	
 	
@@ -1326,7 +1330,7 @@ class AdminObjeto
             // pegando permissao do usuario no objeto
             $permissao = $_page->_administracao->PegaPerfilDoUsuarioNoObjeto($_page, $_SESSION['usuario']["cod_usuario"], $cod_objeto);
 
-            // verificando se o objeto est� publicado
+            // verificando se o objeto está publicado
             if ($objBlob->metadados["cod_status"]!="2" && !$permissao)
             {
                return false;

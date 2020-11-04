@@ -1,8 +1,5 @@
-<?php
+<?
 global $_page;
-header("Content-Type: text/html; charset=ISO-8859-1",true);
-
-$cod_objeto = $_page->_objeto->Valor($_page, "cod_objeto");
 
 $sql = "select count(cod_objeto) as total from objeto where apagado=0 and cod_pai=".$cod_objeto;
 $rs = $_page->_db->ExecSQL($sql);

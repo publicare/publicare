@@ -1,5 +1,29 @@
 <?php
 
+function _antiSqlInjection($Target){
+    $sanitizeRules = array('FROM','SELECT','INSERT','DELETE','WHERE','DROP TABLE','SHOW TABLES','*','--','=','SCRIPT','EVAL');
+    foreach($Target as $key => $value):
+        if(is_array($value)): $arraSanitized[$key] = _antiSqlInjection($value);
+        else:
+            $arraSanitized[$key] = (!get_magic_quotes_gpc()) ? addslashes(str_ireplace($sanitizeRules,"",$value)) : str_ireplace($sanitizeRules,"",$value);
+        endif;
+    endforeach;
+    return $arraSanitized;
+}
+
+
+function PegaExtensaoArquivo($nome)
+{
+	$filetype = "";
+	if ($nome && !empty($nome) && $nome!="")
+	{
+		$arrNome = split("[.]", $nome);
+		$filetype = strtolower($arrNome[count($arrNome)-1]);
+	}
+	
+	return $filetype;
+}
+
 /**
  * Funcao usada para redirecionar páginas quando já tem saida de informação
  *
@@ -255,31 +279,116 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	   return $ret;
 	}
 	
-	/**
-	 * Envia emails
-	 *
-	 * @param unknown_type $remetente
-	 * @param unknown_type $destinatario
-	 * @param unknown_type $subject
-	 * @param unknown_type $texConteudo
-	 * @param unknown_type $arrArquivoAnexado
-	 * @return unknown
-	 */
-	function EnviarEmail($remetente, $destinatario, $subject, $texConteudo, $arrArquivoAnexado=NULL)
+
+	function EnviarEmail($remetente_nome, $remetente_email, $destinatario_nome, $destinatario_email, $assunto=-1, $texConteudo=-1, $altConteudo="", $arrArquivoAnexado=array())
 	{
-	  include_once('email.class.php');
-	  
-//	  echo "fnc nova!";
-//	  exit();
-	  
-	  $corpo = "<html><body style='margin:0; padding:0;'>".
-						"$texConteudo".
-						"<BR></body></html>";
-	  
-	  $email = new Email($remetente, $destinatario, $subject, $corpo, $headers);
-	
-	  $wassent = $email->envia();
-	  return $wassent;
+		include_once("phpmailer/class.phpmailer.php");
+		
+		// para views antes da versao 2.8.9
+		$flag = 0;
+		if ($assunto==-1 && $texConteudo==-1)
+		{
+			$tempRem = $remetente_nome;
+			$tempDes = $remetente_email;
+			$tempAss = $destinatario_nome;
+			$tempMsg = $destinatario_email;
+
+			// arrumando campo remetente
+			if (strpos($remetente_nome, "<")!==false)
+			{
+				$remetente_nome = substr($tempRem, 0, strpos($tempRem, "<"));
+				$remetente_email = substr($tempRem, strpos($tempRem, "<")+1, strpos($tempRem, ">")-strpos($tempRem, "<")-1);
+			}
+			else
+			{
+				$remetente_nome = $remetente_email = $tempRem;
+			}
+			
+			// arrumando campo destinatario
+			$arDes = preg_split("[,|;]", $tempDes);
+
+			$destin = array();
+			for ($i=0; $i<count($arDes); $i++)
+			{
+				$temp = $arDes[$i];
+				$destin[] = array("nome"=>"", "email"=>$temp);
+			}
+			
+			$assunto = $tempAss;
+			$texConteudo = $tempMsg;
+			
+			$flag = 1;
+		}
+		else
+		{
+			$destin = array(array("nome"=>$destinatario_nome, "email"=>$destinatario_email));
+		}
+		
+		$mail = new PHPMailer(true);
+		$mail->Charset = 'UTF-8';
+		
+		$retorno = false;
+		
+		foreach ($arrArquivoAnexado as $arq)
+		{
+			$mail->AddAttachment($arq[0], $arq[1]);
+		}
+		
+		if (_mailsmtp)
+		{
+			// envio smtp
+			try {
+				$mail->SetFrom($remetente_email, $remetente_nome);
+				$mail->AddReplyTo($remetente_email, $remetente_nome);
+				$mail->IsHTML(true);
+				$mail->Subject = $assunto;
+				$mail->Body     = $texConteudo;
+				$mail->AltBody = $altConteudo;
+				$mail->IsSMTP();
+				$mail->Host     = _mailhost;
+				$mail->Port     = _mailport;
+				if (_mailuser!="")
+				{
+					$mail->SMTPAuth = true;
+					$mail->Username = _mailuser;
+					$mail->Password = _mailpass;		
+				}
+				foreach($destin as $dest)
+				{
+					$mail->AddAddress($dest["email"], $dest["nome"]);
+				}
+				$mail->Send();
+				$retorno = true;
+			} catch (phpmailerException $e) {
+				echo $e->errorMessage();
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
+		} 
+		else 
+		{
+			// envio simples
+			try
+			{
+				$mail->SetFrom($remetente_email, $remetente_nome);
+				$mail->AddReplyTo($remetente_email, $remetente_nome);
+				foreach($destin as $dest)
+				{
+					$mail->AddAddress($dest["email"], $dest["nome"]);
+				}
+				$mail->Subject    = $assunto;
+				$mail->AltBody    = $altConteudo;
+				$mail->MsgHTML($texConteudo);
+				$mail->Send();
+				$retorno = true;
+			} catch (phpmailerException $e) {
+				echo $e->errorMessage(); 
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
+		}
+		
+		return $retorno;
 	}
 	
 	
@@ -288,7 +397,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	{
 		echo "<div style='background-color:#DFDFDF; border:1px #666666 solid'>";
 			echo "<pre>";
-				print_r($obj);
+				var_dump($obj);
 			echo "</pre>";
 		echo "</div>";
 		die();
@@ -299,7 +408,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	{
 		echo "<div style='background-color:#DFDFDF; border:1px #666666 solid'>";
 			echo "<pre>";
-				print_r($obj);
+				var_dump($obj);
 			echo "</pre>";
 		echo "</div>";
 	}
@@ -307,7 +416,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	
 	/**
     * Retira acentos, espaços e caracteres especiais da string
-    * @param  $str - string que ira ser tratada
+    * @param  string $str - string que ira ser tratada
     * @return string
     */
     function limpaString($str)
@@ -330,15 +439,70 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 					'u' => '/&ugrave;|&uacute;|&ucirc;|&uuml;/',
 					'Y' => '/&Yacute;/',
 					'y' => '/&yacute;|&yuml;/',
-					'_' => '/&amp;| |-|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|\.|,|\$|\?|\"|\'|\*|\:|\!|\/|\–|\(|\)|&ldquo;|&rdquo;/');
+					'-' => '/ |&amp;|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|&sup1;|&sup2;|&sup3;|&quot;|\/|\–|_/',
+					'' => '/\.|,|\$|\?|\"|\'|\*|\:|\!|\“|\”|\(|\)|\||\+|\¹|\?|&ldquo;|&rdquo;/');
 
-		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_QUOTES, "ISO-8859-1"));
-		
-//		echo ">>".$palavra;
-
-
-//		return $str;		
+		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_QUOTES, "UTF-8"));
+		$palavra = str_replace("--", "-", $palavra);
+		$palavra = str_replace("--", "-", $palavra);
+		$palavra = str_replace("--", "-", $palavra);
+	
 		return $palavra;
 
 	}
 	
+	function limpaStringEspaco($str)
+	{
+		
+		$acentos = array(
+					'A' => '/&Agrave;|&Aacute;|&Acirc;|&Atilde;|&Auml;|&Aring;/',
+					'a' => '/&agrave;|&aacute;|&acirc;|&atilde;|&auml;|&aring;/',
+					'C' => '/&Ccedil;/',
+					'c' => '/&ccedil;/',
+					'E' => '/&Egrave;|&Eacute;|&Ecirc;|&Euml;/',
+					'e' => '/&egrave;|&eacute;|&ecirc;|&euml;/',
+					'I' => '/&Igrave;|&Iacute;|&Icirc;|&Iuml;/',
+					'i' => '/&igrave;|&iacute;|&icirc;|&iuml;/',
+					'N' => '/&Ntilde;/',
+					'n' => '/&ntilde;/',
+					'O' => '/&Ograve;|&Oacute;|&Ocirc;|&Otilde;|&Ouml;/',
+					'o' => '/&ograve;|&oacute;|&ocirc;|&otilde;|&ouml;/',
+					'U' => '/&Ugrave;|&Uacute;|&Ucirc;|&Uuml;/',
+					'u' => '/&ugrave;|&uacute;|&ucirc;|&uuml;/',
+					'Y' => '/&Yacute;/',
+					'y' => '/&yacute;|&yuml;/');
+
+		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_QUOTES, "UTF-8"));
+		$palavra = str_replace("--", "-", $palavra);
+		$palavra = str_replace("--", "-", $palavra);
+		$palavra = str_replace("--", "-", $palavra);
+	
+		return $palavra;
+
+	}
+
+	/**
+	* Lê arquivo em byte streaming
+	*/
+	function readfile_chunked($filename, $retbytes=true)
+	{
+		$chunksize = 1*(1024*1024); // tamanho dos pedaços
+		$buffer = '';
+		$cnt = 0;
+		$handle = fopen($filename, 'rb');
+		if ($handle === false) return false;
+		while (!feof($handle))
+		{
+			$buffer = fread($handle, $chunksize);
+			echo $buffer;
+			ob_flush();
+			flush();
+			if ($retbytes)
+			{
+				$cnt += strlen($buffer);
+			}
+		}
+		$status = fclose($handle);
+		if ($retbytes && $status) return $cnt;
+		return $status;
+	} 	

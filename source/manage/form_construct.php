@@ -1,7 +1,8 @@
 <?php
 global $_page, $action;
 
-include_once ($_SERVER['DOCUMENT_ROOT']."/FCKeditor/fckeditor.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/ckeditor/ckeditor.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/ckfinder/ckfinder.php");
 		
 // Variaveis de definicao para estrutura de formulario
 $DatadeHoje = date("j/n/Y"); 
@@ -310,11 +311,22 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 						case 8:
 							if ($prop['seguranca'] >= $_SESSION['usuario']['perfil'])
 							{
-								$f = new FCKeditor('property:'. $prop['nome']);
-								if ($edit)
-								$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
-								$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
-								$f->Create();
+								$f = new CKEditor();
+								$nomeCk = 'property:'. $prop['nome'];
+								$valorCk = ($edit)?$_page->_objeto->ValorParaEdicao($_page, $prop['nome']):"";
+								$f->returnOutput = true;
+								$f->basePath = '/ckeditor/';
+								$f->config['width'] = 520;
+								$f->config['height'] = 350;
+								CKFinder::SetupCKEditor($f, '/ckfinder/');
+								//$f->textareaAttributes = array("cols" => 60, "rows" => 20);
+								$campo = $f->editor($nomeCk, $valorCk);
+								echo $campo;
+								//$f = new FCKeditor('property:'. $prop['nome']);
+								//if ($edit)
+								//$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
+								//$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
+								//$f->Create();
 							}
 							break;
 						case 6: // CAMPO REFERENCIA A UM OBJETO (RefObj)
@@ -419,6 +431,13 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 		
 	?>
 	</P>
+	<p>											
+			URL Amig&aacute;vel &nbsp;<a href='#' onclick='return false;' onmouseover='document.getElementById("help_amigavel").style.display="";' onmouseout='document.getElementById("help_amigavel").style.display="none";'><b>&lt;?&gt;</b></a> <span id='help_amigavel' style='position:absolute; width:200px; background:#ffffff; padding-left:2px; padding-right:2px; padding-top:2px; padding-bottom:2px; color:#000000; font-weight:normal; border: 1px solid #000000; display:none;'>URL amig&aacute;vel do objeto. Caso exista uma url igual, ser&aacute; adicionado um numero no final. ex: pagina, pagina1, pagina2</span><br>
+			<input class="pblInputForm" type="text" size=50 name="url_amigavel" value='<? if ($edit) 
+														echo $_page->_objeto->ValorParaEdicao($_page, "url_amigavel");
+													  else
+													  	echo isset($url_amigavel)?$url_amigavel:"";?>'>
+			</p>
 	<p>
 	TAGS deste Objeto<br>
 	<textarea class="pblInputForm" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" name="tags" cols=45 rows=4><? if ($edit) echo $_page->_objeto->ValorParaEdicao($_page, "tags") ?></textarea>

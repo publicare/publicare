@@ -679,9 +679,14 @@ class Parse
 									),
 
 							"srcblob" => array (
-									'regex' => '',
-									'output' => '<? echo $_BLOBVIEW; ?>'."\n",
-									'parameters'=> false,
+									'regex' => '|(.*)|',
+									'output' => '<? echo $_BLOBVIEW."?w=<#P:largura#>&h=<#P:altura#>"; ?>'."\n",
+									'parameters'=> 1,
+									'paramitens' => array ('largura' => 'n',
+										'altura' => 'n'),
+									'paramforce' => false,
+									'paramdefault' => array('largura' => '0',
+										'altura' => '0')
 									),
 
 							"iconeclasse" => array (
@@ -714,6 +719,29 @@ class Parse
 
 								   'output' => '<? include_once ($_SERVER["DOCUMENT_ROOT"]."/html/objects/<#P:objeto#>.php");'."\n"
 								  			  .'eval ("object_<#P:objeto#>(\'".<#P:parametros#>."\');");'."\n?>"
+									),
+									
+							"temfilho" => array (
+									'opentag'=>'temfilho',
+									'regex' => '|(.*)|',
+									'output' => '<? if (<#P:cod_objeto#>!="") $_tmp_=$_page->_adminobjeto->PegaNumFilhos($_page, <#P:cod_objeto#>);'."\n"
+												.'if ($_tmp_ > 0) {'."\n"
+												.'?>'."\n"
+												,
+									'parameters'=> 1,
+									'helptext' => 'O comando <strong>usarobjeto</strong> deve ser escrito assim: <strong>&lt;@usarobjeto cod_objeto=[{numero}]@&gt; </strong>',
+									'paramitens' => array (
+											'cod_objeto'=>'n'
+										),
+									),
+									
+							"/temfilho" => array (
+									'closetag'=>'temfilho',
+									'regex' => '',
+									'output' => '<?'."\n"
+												.' } ?>'."\n",
+									'parameters'=> false,
+									'helptext' => 'O comando <strong>\temfilho</strong> deve ser escrito assim: <strong>&lt;@\temfilho@&gt;</strong>',
 									),
 
 							

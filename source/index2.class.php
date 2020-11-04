@@ -15,7 +15,7 @@ class index
 	public $search_result_count;
 	public $indexed_words;
 	public $parentesco;
-	public $index;
+	public $index; 
 	
 	function __construct()
 	{
@@ -75,6 +75,31 @@ class index
 	{
 		if(!$contents) $contents=$this->contents;
 		$contents=strtolower(stripslashes($contents));
+		
+		$acentos = array(
+					'A' => '/&Agrave;|&Aacute;|&Acirc;|&Atilde;|&Auml;|&Aring;/',
+					'a' => '/&agrave;|&aacute;|&acirc;|&atilde;|&auml;|&aring;/',
+					'C' => '/&Ccedil;/',
+					'c' => '/&ccedil;/',
+					'E' => '/&Egrave;|&Eacute;|&Ecirc;|&Euml;/',
+					'e' => '/&egrave;|&eacute;|&ecirc;|&euml;/',
+					'I' => '/&Igrave;|&Iacute;|&Icirc;|&Iuml;/',
+					'i' => '/&igrave;|&iacute;|&icirc;|&iuml;/',
+					'N' => '/&Ntilde;/',
+					'n' => '/&ntilde;/',
+					'O' => '/&Ograve;|&Oacute;|&Ocirc;|&Otilde;|&Ouml;/',
+					'o' => '/&ograve;|&oacute;|&ocirc;|&otilde;|&ouml;/',
+					'U' => '/&Ugrave;|&Uacute;|&Ucirc;|&Uuml;/',
+					'u' => '/&ugrave;|&uacute;|&ucirc;|&uuml;/',
+					'Y' => '/&Yacute;/',
+					'y' => '/&yacute;|&yuml;/',
+					'_' => '/&amp;|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|&sup1;|&sup2;|&sup3;|&quot;|\/|\–|-/',
+					'' => '/\.|,|\$|\?|\"|\'|\*|\:|\!|\“|\”|\(|\)|\||\+|\¹|\?|&ldquo;|&rdquo;/');
+
+		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($contents, ENT_QUOTES, "UTF-8"));
+		
+		
+		/*
 //		$contents=strtolower($contents);
 		$chr_src='בדאדגהיטךכםלןמףעץפצתשûüחס';
 		$chr_dst='aaaaaaeeeeiiiiooooouuuucn';
@@ -120,7 +145,8 @@ class index
 		$contents = str_replace("&ndash;", " ", $contents);
 		$contents = str_replace("&mdash;", " ", $contents);
 		$contents = str_replace('\n', ' ', $contents);
-		return $contents;
+		*/
+		return $palavra;
 	}
 
 	function strip_badwords(&$_page, $word_array)

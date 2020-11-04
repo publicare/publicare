@@ -92,7 +92,7 @@ function nome_do_mes($mes, $locale='pt_BR')
 	switch($locale)
 	{
 		case 'en_US':
-			$nomedomes = array('01'=>'january','02'=>'february','03'=>'march','04'=>'april','05'=>'may','06'=>'june','07'=>'july','08'=>'august','09'=>'september','10'=>'october','11'=>'november','12'=>'december');
+			$nomedomes = array('01'=>'January','02'=>'February','03'=>'March','04'=>'April','05'=>'May','06'=>'June','07'=>'July','08'=>'August','09'=>'September','10'=>'October','11'=>'November','12'=>'December');
 			$nomediasemana=array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
 		break;
 		
@@ -519,6 +519,27 @@ function format_data($timestamp, $formato)
 			case 30:
 				//     12:00
 				$return=date('H', $timestamp).':'.date('i', $timestamp);
+				if($formato=='?') { $formato_out++; echo $formato_out.': '.$return.'<BR>'; } else break;
+				
+			case 31:
+				//        02/01/2001
+				$return= date('m/d/Y', $timestamp);
+				if($formato=='?') { $formato_out++; echo $formato_out.': '.$return.'<BR>'; } else break;
+				
+			case 32:
+				//         February 01, 2001
+				$dia = date('d', $timestamp);
+				$ends = array('th','st','nd','rd','th','th','th','th','th','th');
+				if (($dia % 100) >= 11 && ($dia % 100) <= 13)
+					$abbreviation = $dia. 'th';
+				else
+					$abbreviation = $dia. $ends[$dia % 10];
+					
+					
+					
+				$return = nome_do_mes(date('m', $timestamp), 'en_US')." ".$abbreviation.", ".date('Y', $timestamp);
+				
+				
 				if($formato=='?') { $formato_out++; echo $formato_out.': '.$return.'<BR>'; } else break;
 		}
 

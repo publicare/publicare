@@ -1,28 +1,38 @@
 <?php
 
-define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
+define ('_VERSIONPROG','Publicare 2.9.1 - 22/03/2015');
 
 
 
 /*
-	versao: 2.8.8 - Corrigido bug ao criar tabela temporaria. Nï¿½o estava criando as colunas corretamente. Erro no switch.
+	versao: 2.9.1 - Adicionada ferramenta para re-indexação lucene
+					- Adicionada funcionalidade de cache de banco, usando cache do adodb
+
+	versao: 2.9.0 - Adicionado novamente controle de cache com o quickcache (foi necessario alterar o quickcache)
+					- Corrigidos problemas na linguagem PBL, com a utilização do localizar quando utiliza propriedades na ordem e na condição
+					- Adicionada funcionalidade no <@srcblob@>, atravez dos parametros largura e altura é possivel especificar o tamanho que deseja exibir a imagem
+					- Adicionada funcionalidade de cache de imagem, quando necessário redimensionar a imagem a nova imagem é gravada para poupar o processamento da redução da imagem
+
+	versao: 2.8.9 - Adicionado controle urls amigaveis
+
+	versao: 2.8.8 - Corrigido bug ao criar tabela temporaria. Não estava criando as colunas corretamente. Erro no switch.
 					- dblayer_adodb.class.php - linhas 277 - 303
-					Adicionado o tipo Texto Avanï¿½ado para buscas que utilizam tabela temporï¿½ria
+					Adicionado o tipo Texto Avançado para buscas que utilizam tabela temporária
 					- dblayer_adodb.class.php - linhas 103, 114, 124, 301-304
-					Adicionada a palavra ILIKE para ser aceita na condiï¿½ï¿½o do publicare
+					Adicionada a palavra ILIKE para ser aceita na condição do publicare
 					- adminobjeto.class.php - linha 357
 					* Diogo Corazolla 23/11/2011
 					
-					Adicionado tipo de coluna Obj. ref para tabela temporï¿½ria, utilizando mesmo tipo de dado de string.
+					Adicionado tipo de coluna Obj. ref para tabela temporária, utilizando mesmo tipo de dado de string.
 					-  dblayer_adodb.class.php - linhas 292
 					* Diogo Corazolla 25/11/2011
 					
-					Alterado publicare para utilizaï¿½ï¿½od e tabelas temporï¿½rias, em vez de tabelas fisicas. Desta forma a busca fica mais rï¿½pida.
+					Alterado publicare para utilizaçãod e tabelas temporárias, em vez de tabelas fisicas. Desta forma a busca fica mais rápida.
 					* Diogo Corazolla 02/11/2011
 					
-					Corrigido Problema ao apagar classe, nï¿½o estava apagando os relacionamentos, classexfilhos e classexobjeto.
+					Corrigido Problema ao apagar classe, não estava apagando os relacionamentos, classexfilhos e classexobjeto.
 					- administracao.class.php - ApagarClasse() - linhas: 2674 - 2686
-					Retirada a tabela tempcontrole do publicare. Tabela nï¿½o ï¿½ mais necessï¿½ria. Apagada do banco e removida do dblayer.
+					Retirada a tabela tempcontrole do publicare. Tabela não é mais necessária. Apagada do banco e removida do dblayer.
 					- dblayer_adodb.class.php - linha 57
 					
 					* Diogo Corazolla 09/12/2011
@@ -33,14 +43,14 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 					Alterada funcao limpaString() para nao dar mais problema de enconding
 					- funcoes.php - linhas 313 - 339
 					
-					Adicionada seguranï¿½a no _download_blob.php -> Verifica se estï¿½ sob onjeto protegido e nï¿½o permite download
+					Adicionada segurança no _download_blob.php -> Verifica se está sob onjeto protegido e não permite download
 					Adicionados mime types ao arquivo (flv, ogx, ogg, oga, ogv, spx, flac, anx, axa, axv, xspf)
 					- portal_instalar/html/objects/_download_blob.php
 					
 					Pastas upd_blob e upd_thumb retiradas da public_html
-					- portal_instalar/html/objects/_viewblob.php - adicionada visualizaï¿½ï¿½o de ï¿½cones de classes
+					- portal_instalar/html/objects/_viewblob.php - adicionada visualização de ícones de classes
 					- manage/classes.php - adicionada chamada para _viewblob.php e corrigida logica do icone
-					- manage/classe_post.php - corrigido local de gravaï¿½ï¿½o do ï¿½cone da classe
+					- manage/classe_post.php - corrigido local de gravação do ícone da classe
 					- parse.class.php - alterada funcao iconeclasse para exibir corretamente o icone e alterada chamada linkblob para executar downloadblob
 					
 					Corrigido arquivo header_publicare.php - linhas 13 a 17
@@ -49,22 +59,22 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 					Corrigido arquivo administracao.class.php - linha 1423
 					- Alterado formato da data para gravacao na coluna data_exclusao da tabela objeto
 					
-					Corrigido problema de charset para utilizaï¿½ï¿½o do postgres
-					- Adicionada sentenï¿½a  SET CLIENT_ENCODING TO 'LATIN1' no dblayer, quando for utilizado pgsql
+					Corrigido problema de charset para utilização do postgres
+					- Adicionada sentença  SET CLIENT_ENCODING TO 'LATIN1' no dblayer, quando for utilizado pgsql
 					
 					* Diogo Corazolla - 21/06/2011
 
 
-	versï¿½o: 2.8.6 - Removida a verificaï¿½ï¿½o por cod_perfil em Administracao->SubmeterObjeto na linha 854
+	versão: 2.8.6 - Removida a verificação por cod_perfil em Administracao->SubmeterObjeto na linha 854
 					- Alterado "administracao.class.php" (linha 854)
 					* Danilo Lisboa - 19/07/2010
 
 
-	versï¿½o: 2.8.5 - Incluido a TAG Publicare <@iconesadmin classe=['']@>
+	versão: 2.8.5 - Incluido a TAG Publicare <@iconesadmin classe=['']@>
 					- Alterado "parse.class.php" (linhas 724 a 761)
-					- Alterado "publicare.conf" adicionado o caminho das imagens dos icones de administraï¿½ï¿½o
+					- Alterado "publicare.conf" adicionado o caminho das imagens dos icones de administração
 					- Alterado "funcoes.php" - atualizada a funcao "limpaString()" passou a retirar "." e "_" de uma string
-					- Incluï¿½do imagens dos icones de administraï¿½ï¿½o na pastas "/html/imagens/portalimages/":
+					- Incluído imagens dos icones de administração na pastas "/html/imagens/portalimages/":
 						"/html/imagens/portalimages/ic-inserir.gif"
 						"/html/imagens/portalimages/ic-editar.gif"
 						"/html/imagens/portalimages/ic-publicar.gif"
@@ -72,7 +82,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 					* Marcos Rodrigo - 13/04/2010
 
 
-	versï¿½o: 2.7.6 - Adicionada a possibilidade de usar o like na condiï¿½ï¿½o do localizar.
+	versão: 2.7.6 - Adicionada a possibilidade de usar o like na condição do localizar.
 
 		            alterado o arquivo adminobjeto.class.php nas linhas 357 E 788
 
@@ -84,7 +94,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 /*
 
-	versï¿½o: 2.7.7 - Alterada a pasta tmp do ADODB para /tmp/adodb, as versï¿½es anteriores estvam apagando todos os arquivos com permissï¿½o para o apache.
+	versão: 2.7.7 - Alterada a pasta tmp do ADODB para /tmp/adodb, as versões anteriores estvam apagando todos os arquivos com permissão para o apache.
 
 		            alterado o arquivo adodb.inc.php nas linhas 164
 
@@ -96,7 +106,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 /*
 
-	versï¿½o: 2.7.8 - Alterado metodo publicaObjeto para enviar email de notificacao de publicacao. Para que a funï¿½ï¿½o funcione ï¿½ necessï¿½rio acrescentar 3 linhas no publicare.conf.
+	versão: 2.7.8 - Alterado metodo publicaObjeto para enviar email de notificacao de publicacao. Para que a função funcione é necessário acrescentar 3 linhas no publicare.conf.
 
 					Exemplo:	
 
@@ -118,7 +128,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 /*
 
-	versï¿½o: 2.7.9 - Alterado o Portal Instalar.
+	versão: 2.7.9 - Alterado o Portal Instalar.
 
 					
 
@@ -134,7 +144,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 /*
 
-	versï¿½o: 2.7.10 - Corrigido a possibilidade de usar o like na condiï¿½ï¿½o do localizar com mais de uma classe.
+	versão: 2.7.10 - Corrigido a possibilidade de usar o like na condição do localizar com mais de uma classe.
 
 		            alterado o arquivo adminobjeto.class.php na linha 681
 
@@ -146,11 +156,11 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 /*
 
-	versï¿½o: 2.7.11 - Implementado a verificaï¿½ï¿½o dos campos do tipo BLOB quando forem obrigatï¿½rios. 
+	versão: 2.7.11 - Implementado a verificação dos campos do tipo BLOB quando forem obrigatórios. 
 
-					 Anteriormente a verificaï¿½ï¿½o nï¿½o funcionava porque os campos do tipo BLOB nï¿½o possuï¿½am ID. 
+					 Anteriormente a verificação não funcionava porque os campos do tipo BLOB não possuíam ID. 
 
-					 A forma padrï¿½o de verificaï¿½ï¿½o dos campos do formuï¿½rio se dï¿½ atravï¿½z da recuperaï¿½ï¿½o do campo pelo ID do mesmo.
+					 A forma padrão de verificação dos campos do formuário se dá atravéz da recuperação do campo pelo ID do mesmo.
 
 		             Alterado o arquivo "manage/form_construct.php" nas linhas 281 e 344
 
@@ -160,9 +170,9 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 		             
 
-		             Implementado ordenaï¿½ï¿½o dos scripts de exibiï¿½ï¿½o em ordem alfabï¿½tica
+		             Implementado ordenação dos scripts de exibição em ordem alfabética
 
-					 As views da pele e pasta template foram ordenadas em ordem alfabetica na hora de exibiï¿½ï¿½o na combo
+					 As views da pele e pasta template foram ordenadas em ordem alfabetica na hora de exibição na combo
 
 		             Alterado o arquivo "manage/form_advanced.php" entre as linhas 82 a 120 e 99 a 136
 
@@ -174,11 +184,11 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 /*
 
-	versï¿½o: 2.7.12 - Corrigido mï¿½todo EnviarEmail do arquivo funcoes.php. Esse mï¿½todo
+	versão: 2.7.12 - Corrigido método EnviarEmail do arquivo funcoes.php. Esse método
 
   fazia include('email.class.php') e isso gerava erro ao tentar redeclarar classe email quando
 
-  tentava-se publicar vï¿½rios objetos de uma sï¿½ vez quando a notificaï¿½ï¿½o de aviso de publicaï¿½ï¿½o estava true.
+  tentava-se publicar vários objetos de uma só vez quando a notificação de aviso de publicação estava true.
 
   Foi substituido o " include('email.class.php');" por " include_once('email.class.php');" na linha 270.
 
@@ -194,9 +204,9 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 /*
 
-	versï¿½o: 2.7.13 - Corrigida funï¿½ï¿½o showRSS no arquivo rss.class.php
+	versão: 2.7.13 - Corrigida função showRSS no arquivo rss.class.php
 
-				Inserido tags CDATA em todos os campos da funï¿½ï¿½o para escapar caratceres especiais.
+				Inserido tags CDATA em todos os campos da função para escapar caratceres especiais.
 
 					
 
@@ -206,17 +216,17 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 */
 
-/* versï¿½o: 2.7.14 - Inserido nova forma de busca no comando LOCALIZAR
+/* versão: 2.7.14 - Inserido nova forma de busca no comando LOCALIZAR
 
 				O comando <@localizar@> agora possui uma nova  tag: ILIKE.
 
-            Segundo diï¿½logo com programador, esta foi a melhor forma para inserir uma busca por palavra "nï¿½o case sensitive",
+            Segundo diálogo com programador, esta foi a melhor forma para inserir uma busca por palavra "não case sensitive",
 
-            mantentendo, portanto, a tag LIKE ativa sem alteraï¿½ï¿½es.
+            mantentendo, portanto, a tag LIKE ativa sem alterações.
 
             Foram inseridos meios de bloqueio de tentativa de utilizando das duas TAGs (LIKE / ILIKE) ao mesmo tempo,
 
-            executando somente a tag ILIKE, quando for o caso. O comando foi testado, obtendo ï¿½xito.
+            executando somente a tag ILIKE, quando for o caso. O comando foi testado, obtendo êxito.
 
 
 
@@ -228,17 +238,17 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 */
 
-/* versï¿½o: 2.8.0 - Modificada forma como o comando LINKBLOB trabalha.
+/* versão: 2.8.0 - Modificada forma como o comando LINKBLOB trabalha.
 
             O comando <@linkblob@> agora tem o mesmo efeito do <@downloadblob@>. Isso foi feito
 
- *          para que nï¿½o seja mais liberada para curiosos ou sistemas de busca (Ex. Google), o link direto para os blobs.
+ *          para que não seja mais liberada para curiosos ou sistemas de busca (Ex. Google), o link direto para os blobs.
 
- *          Isso tambï¿½m favorece o uso da pasta de blobs fora da pasta public_html, ficando assim, protegidos de acesso direto.
+ *          Isso também favorece o uso da pasta de blobs fora da pasta public_html, ficando assim, protegidos de acesso direto.
 
  *
 
- *          Tambï¿½m foi modificado o arquivo _downloadblob.php para verificar se o arquivo a ser acessado nï¿½o estï¿½ sob uma ï¿½rea protegida.(Chama a funcao $_page->_adminobjeto->estaSobAreaProtegida())
+ *          Também foi modificado o arquivo _downloadblob.php para verificar se o arquivo a ser acessado não está sob uma área protegida.(Chama a funcao $_page->_adminobjeto->estaSobAreaProtegida())
 
  *
 
@@ -246,7 +256,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
  *
 
- *          Em adminobjeto.class.php foi criada a funcao estaSobAreaProtegida, que verifica se o arquivo a ser acessado nï¿½o estï¿½ sob uma ï¿½rea protegida.
+ *          Em adminobjeto.class.php foi criada a funcao estaSobAreaProtegida, que verifica se o arquivo a ser acessado não está sob uma área protegida.
 
  *
 
@@ -256,11 +266,11 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
  *          Alterado "adminobjeto.class.php" (1299)
 
- *          Alterado "_downloadblob.php" (161 atï¿½ 165)
+ *          Alterado "_downloadblob.php" (161 até 165)
 
- *          Alterado "_viewblob.php" (31 atï¿½ 35)
+ *          Alterado "_viewblob.php" (31 até 35)
 
- *          Alterado "_viewthumb.php" (23 atï¿½ 27)
+ *          Alterado "_viewthumb.php" (23 até 27)
 
  *
 
@@ -268,7 +278,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 */
 
-/* versï¿½o: 2.8.1 - Feita a paginaï¿½ï¿½o dos objetos apagados.
+/* versão: 2.8.1 - Feita a paginação dos objetos apagados.
 
  *
 
@@ -284,7 +294,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 */
 
-/* versï¿½o: 2.8.2 - Modificada forma de listagem de objetos apagados (Agora: por data de exclusï¿½o)
+/* versão: 2.8.2 - Modificada forma de listagem de objetos apagados (Agora: por data de exclusão)
 
  *
 
@@ -302,7 +312,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 
 
-/* versï¿½o: 2.8.3 - Desfeita a modificacao da versao 2.8.0
+/* versão: 2.8.3 - Desfeita a modificacao da versao 2.8.0
 
  *
 
@@ -316,7 +326,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
 
 
-/* versï¿½o: 2.8.4 - Incluido o titulo do objeto na URL mantendo a leitura das URL antigas
+/* versão: 2.8.4 - Incluido o titulo do objeto na URL mantendo a leitura das URL antigas
 
  *				
 
@@ -326,7 +336,7 @@ define ('_VERSIONPROG','Publicare 2.8.9 - 09/03/2012');
 
  *			Alterado "funcoes.php" - incluido as funcoes "x()", "xd()" uteis para debug e a funcao "limpaString()" responsavel
 
- *						             por retirar acentos, espaï¿½os, e caracteres especiais de uma string
+ *						             por retirar acentos, espaços, e caracteres especiais de uma string
 
  *			
 

@@ -1,7 +1,5 @@
 <?
 global $_page;
-header("Content-Type: text/html; charset=ISO-8859-1",true);
-
 	if (($_page->_objeto->PodeTerFilhos()))
 	{
 ?>

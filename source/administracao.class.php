@@ -261,28 +261,32 @@
             $row_pele = $_page->_db->ExecSQL($sql_pele);
             $row_pele = $row_pele->GetRows();
             $row_pele = $row_pele[0];
-            if ($row_pele['cod_pele']!=$dados['cod_pele'])
-            {
-            	$this->TrocaPeleFilhos($_page, $dados['cod_objeto'], $dados['cod_pele']);
-            }
+
+				if ((is_array($row_pele) && $row_pele['cod_pele']!=$dados['cod_pele']) || (is_null(row_pele) && !is_null($dados['cod_pele'])))
+				{
+					$this->TrocaPeleFilhos($_page, $dados['cod_objeto'], $dados['cod_pele']);
+				}
 
 			if ($dados['cod_objeto']==1)
 			{
 				$dados['cod_status'] = _STATUS_PUBLICADO;
 			}
 			
+			$dados['url_amigavel'] = $this->verificaExistenciaUrlAmigavel($_page, $dados['url_amigavel'], $dados['cod_objeto']);
+			
 			$sql = "update objeto 
 			set cod_pai=".$dados['cod_pai'].",
 			script_exibir='".$dados['script_exibir']."',
 			cod_classe=".$dados['cod_classe'].",
-			cod_usuario=".$dados['cod_usuario'].",
-			cod_pele=".($dados['cod_pele']+0).",
-			cod_status=".$dados['cod_status'].",
+			cod_usuario=".$dados['cod_usuario'].",";
+			if (!is_null($dados['cod_pele'])) $sql .= "cod_pele=".($dados['cod_pele']).",";
+			$sql .= "cod_status=".$dados['cod_status'].",
 			titulo='".$_page->_db->Slashes($dados['titulo'])."',
 			descricao='".$_page->_db->Slashes($dados['descricao'])."',
 			data_publicacao='".ConverteData($dados['data_publicacao'],27)."',
 			data_validade ='".ConverteData($dados['data_validade'],27)."',
-			peso='".$dados['peso']."' 
+			peso='".$dados['peso']."',
+			url_amigavel='".$dados['url_amigavel']."'
 			where cod_objeto=".$dados['cod_objeto'];
 			$_page->_db->ExecSQL($sql);
 
@@ -303,6 +307,25 @@
 			}
 
 			return $dados['cod_objeto'];
+		}
+		
+		function verificaExistenciaUrlAmigavel(&$_page, $url, $cod_objeto=0, $nivel=0, $tamanho=0)
+		{
+			$url = limpaString($url);
+			$url = strtolower($url);
+			if (strlen($url)>249) $url = substr($url_amigavel, 0, 245);
+			$sql = "select cod_objeto from objeto where url_amigavel='".$url."'";
+			if ($cod_objeto>0) $sql .= " and not cod_objeto = ".$cod_objeto;
+			$rs = $_page->_db->ExecSQL($sql);
+			if ($tamanho==0) $tamanho = strlen($url);
+			if ($rs->_numOfRows > 0)
+			{
+				$nivel++;
+				$url = substr($url, 0, $tamanho).$nivel;
+				$url = $this->verificaExistenciaUrlAmigavel($_page, $url, $cod_objeto, $nivel, $tamanho);
+			}
+			return $url;
+			
 		}
 
 		function ApagarPropriedades(&$_page, $cod_objeto, $tudo=true)
@@ -335,7 +358,7 @@
 
 						for ($j=0; $j<sizeof($row_blob); $j++)
 						{
-							$file_ext=$this->PegaExtensaoArquivo($row_blob[$j]['arquivo']);
+							$file_ext=PegaExtensaoArquivo($row_blob[$j]['arquivo']);
 							if (file_exists(_BLOBDIR."/".identificaPasta($row_blob[$j]['cod_blob'])."/".$row_blob[$j]['cod_blob'].'.'.$file_ext))
 							{
 								$checkDelete = unlink(_BLOBDIR."/".identificaPasta($row_blob[$j]['cod_blob'])."/".$row_blob[$j]['cod_blob'].'.'.$file_ext);
@@ -460,7 +483,7 @@
 
 						    while ($row = $rs->FetchRow())
 						    {
-								$file_ext = $this->PegaExtensaoArquivo($row['arquivo']);
+								$file_ext = PegaExtensaoArquivo($row['arquivo']);
 								if (file_exists(_BLOBDIR."/".identificaPasta($row['cod_blob'])."/".$row['cod_blob'].'.'.$file_ext))
 								{
 									$checkDelete = unlink(_BLOBDIR."/".identificaPasta($row['cod_blob'])."/".$row['cod_blob'].'.'.$file_ext);
@@ -511,7 +534,7 @@
 								$campos['arquivo'] = strtolower($valor['name']);
 								$campos['tamanho'] = filesize($valor['tmp_name']);
 								$name = $_page->_db->Insert($info['tabela'],$campos);
-								$filetype=$this->PegaExtensaoArquivo($valor['name']);
+								$filetype=PegaExtensaoArquivo($valor['name']);
 
 								$subpasta = identificaPasta($name);  //Pega o nome da subpasta
 								if (!$resultado=is_dir(_BLOBDIR."/".$subpasta."/"))
@@ -551,12 +574,6 @@
 					}
 				}
 			}
-		}
-
-		function PegaExtensaoArquivo($nome)
-		{
-			if (preg_match('/\.(.+?)$/is',$nome,$matches)) return strtolower($matches[1]);
-			else return '';	
 		}
 
 		function CriarObjeto(&$_page, $dados, $log=true, $array_files='')
@@ -602,15 +619,19 @@
 			$campos['cod_pai'] = $dados['cod_pai'];
 			$campos['cod_classe'] = $dados['cod_classe'];
 			$campos['cod_usuario'] = $dados['cod_usuario'];
-			$campos['cod_pele'] = $dados['cod_pele']+0;
+			if (!empty($dados['cod_pele'])) $campos['cod_pele'] = $dados['cod_pele'];
 			$campos['cod_status'] = $dados['cod_status'];
-			$campos['titulo'] = $dados['titulo'];
-			$campos['descricao'] = $dados['descricao'];
+			$campos['titulo'] = $_page->_db->Slashes($dados['titulo']);
+			$campos['descricao'] = $_page->_db->Slashes($dados['descricao']);
 			$campos['data_publicacao']= ConverteData($dados['data_publicacao'],27);
 			$campos['data_validade']= ConverteData($dados['data_validade'],27);
 			$campos['peso'] = $dados['peso']+0;
+			
+			
+			if ($dados['url_amigavel']=="") $dados['url_amigavel']=limpaString($dados["titulo"]);
+			$campos['url_amigavel'] = $this->verificaExistenciaUrlAmigavel($_page, $dados['url_amigavel']);
 
-			$cod_objeto = $_page->_db->Insert('objeto',$campos);
+			$cod_objeto = $_page->_db->Insert('objeto', $campos);
 
 			$this->GravarPropriedades($_page, $cod_objeto, $dados['cod_classe'], $proplist, $array_files);
 			$this->CriaParentesco($_page, $cod_objeto, $dados['cod_pai']);
@@ -636,7 +657,7 @@
 
 				foreach ($tagslist as $tag)
 				{
-					$tag = trim($this->index->clean($tag));
+					$tag = $this->index->clean(trim($tag));
 					$sql = "select cod_tag from tag where nome_tag='".$tag."'";
 					$rs = $_page->_db->ExecSQL($sql);
 					if ($rs->_numOfRows == 0)
@@ -651,6 +672,7 @@
 
 					$sql = "insert into tagxobjeto (cod_tag, cod_objeto) values (".$cod_tag.",".$cod_objeto.")";
 					$rs = $_page->_db->ExecSQL($sql);
+				
 				}
 			}
 		}
@@ -1945,40 +1967,32 @@
 
 		}
 
-
-
 		function ApagarEmDefinitivo(&$_page, $cod_objeto)
-
 		{
 
 			$this->ApagarTags($_page, $cod_objeto);
 
 			$sql = "select cod_objeto from parentesco where cod_pai=$cod_objeto";
-
 			$res=$_page->_db->ExecSQL($sql);
-
 			$row = $res->GetRows();
 
 			for ($c=0; $c<sizeof($row); $c++)
-
 			{
-
 				$this->ApagarTags($_page, $row[$c]["cod_objeto"]);
-
-				$sql = "delete from objeto where cod_objeto=".$row[$c]["cod_objeto"];
-
+				$sql = "delete from classexobjeto where cod_objeto=".$row[$c]["cod_objeto"];
 				$_page->_db->ExecSQL($sql);
-
+				$this->ApagarParentesco($_page, $row[$c]["cod_objeto"]);
 				$this->ApagarPropriedades($_page, $row[$c]["cod_objeto"]);
-
+				$sql = "delete from objeto where cod_objeto=".$row[$c]["cod_objeto"];
+				$_page->_db->ExecSQL($sql);
 			}
 
+			$sql = "delete from classexobjeto where cod_objeto=".$cod_objeto;
+			$_page->_db->ExecSQL($sql);
+			$this->ApagarParentesco($_page, $cod_objeto);
 			$this->ApagarPropriedades($_page, $cod_objeto);
-
 			$_page->_db->ExecSQL("delete from parentesco where cod_objeto=$cod_objeto");
-
             $_page->_db->ExecSQL("delete from objeto where cod_objeto=$cod_objeto");
-
 		}
 
 

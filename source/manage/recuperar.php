@@ -1,6 +1,5 @@
 <?
 global $_page;
-header("Content-Type: text/html; charset=ISO-8859-1",true);
 
 $sql = "select count(cod_objeto) as total from objeto where apagado=1";
 $rs = $_page->_db->ExecSQL($sql);

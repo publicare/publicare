@@ -5,6 +5,8 @@
 	$_POST['cod_status'] = 1;
 	$_POST['script_exibir'] = str_replace("//", "/", $_POST['script_exibir']); // Arruma uma falha
 	
+	if ($_POST['cod_pele']==0) $_POST['cod_pele'] = null;
+	
 
 	// VERIFICA A EXISTENCIA DE SCRIPT (ANTES DE GRAVAR O OBJETO)
 	$rtnExecAntes = $_page->_adminobjeto->ExecutaScript($_page, $_POST['cod_classe'],$_POST['cod_pele'],'antes');

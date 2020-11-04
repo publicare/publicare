@@ -25,6 +25,8 @@ class DBLayer
 		
 	function __construct()
 	{
+		global $ADODB_CACHE_DIR;
+		
 	// pegando dados de conexao ao banco
 		$this->contador = 0;
 		$this->server = _DBSERVERTYPE;
@@ -89,7 +91,8 @@ class DBLayer
 		'objetosistema',
 		'url',
 		'peso',
-		'tags');
+		'tags',
+		'url_amigavel');
 			
 	// definindo tipos de dados para os bancos
 		switch ($this->server){
@@ -151,7 +154,9 @@ class DBLayer
 		".$this->nomes_tabelas["objeto"].".script_exibir,
 		".$this->nomes_tabelas["objeto"].".apagado,
 		".$this->nomes_tabelas["objeto"].".objetosistema,
-		".$this->nomes_tabelas["objeto"].".peso ";
+		".$this->nomes_tabelas["objeto"].".peso,
+		".$this->nomes_tabelas["objeto"].".url_amigavel
+		";
 	
 	// definindo clausula from do sql geral de consulta
 		$this->sqlobjfrom = " from objeto ".$this->nomes_tabelas["objeto"]." 
@@ -165,22 +170,27 @@ class DBLayer
 		try {
 				$this->con = ADONewConnection($this->server);
 				//$this->con->debug = true;
+				if (_ATIVA_CACHE_DB == true)
+				{
+					$ADODB_CACHE_DIR = _PATH_CACHE_DB;
+					$this->con->cacheSecs = _TEMPO_CACHE_DB; // tempo do cache adodb, em segundos
+				}
 				switch ($this->server)
 				{
 					case "postgres":
 						$this->con->Connect("host=".$this->host." port=".$this->port." user=".$this->user." password=".$this->password." dbname=".$this->db) or die("Erro ao tentar conectar banco de dados");
-						$this->con->Execute("SET CLIENT_ENCODING TO 'LATIN1'");
 						break;
 
 					case "mysql":
 						$this->con->Connect($this->host, $this->user, $this->password, $this->db) or die("Erro ao tentar conectar banco de dados");
+						$this->con->Execute("SET NAMES 'utf8'");
 						break;
 					
 					case "mssql":
 						$this->con->Connect($this->host, $this->user, $this->password, $this->db) or die("Erro ao tentar conectar banco de dados");
 						break;
-							
 				}
+				
 				$this->con->SetFetchMode(ADODB_FETCH_ASSOC);
 //				ini_get_all();
 			} catch (exception $e) {
@@ -195,7 +205,7 @@ class DBLayer
 	
 	function __destruct()
 	{
-		$this->Close();
+		//$this->Close();
 	}
 	
 	function GetTempTable()
@@ -224,56 +234,43 @@ class DBLayer
 										"script_exibir ".$this->tipodados["texto"]." NULL",
 										"apagado ".$this->tipodados["inteiropqn"]." NULL",
 										"objetosistema ".$this->tipodados["inteiropqn"]." NULL",
-										"peso ".$this->tipodados["inteiro"]." NULL");
-/*										
-		echo "<pre>";
-		var_dump($tabelaTemp);
-		exit();
-	*/
-	/*
-		$sql = "CREATE TABLE ".$tablename." (
-			cod_objeto ".$this->tipodados["inteiro"]." NOT NULL ,
-			cod_pai ".$this->tipodados["inteiro"]." NULL ,
-			cod_classe ".$this->tipodados["inteiro"]." NULL ,
-			classe ".$this->tipodados["texto"]." NULL,
-			temfilhos ".$this->tipodados["inteiro"]." NULL,
-			prefixoclasse ".$this->tipodados["texto"]." NULL,
-			cod_usuario ".$this->tipodados["inteiro"]." NULL ,
-			cod_pele ".$this->tipodados["inteiro"]." NULL ,
-			pele ".$this->tipodados["texto"]." NULL,
-			prefixopele ".$this->tipodados["texto"]." NULL,
-			cod_status ".$this->tipodados["inteiro"]." NULL ,
-			status ".$this->tipodados["texto"]." NULL,
-			titulo ".$this->tipodados["texto"]." NULL ,
-			descricao ".$this->tipodados["texto"]." NULL ,
-			data_publicacao ".$this->tipodados["inteirogde"]." NULL ,
-			data_validade ".$this->tipodados["inteirogde"]." NULL ,
-			script_exibir ".$this->tipodados["texto"]." NULL ,
-			apagado ".$this->tipodados["inteiropqn"]." NULL ,
-			objetosistema ".$this->tipodados["inteiropqn"]." NULL ,
-			peso ".$this->tipodados["inteiro"]." NULL)";
-		$this->ExecSQL($sql);		
-		*/
+										"peso ".$this->tipodados["inteiro"]." NULL",
+										"url_amigavel ".$this->tipodados["texto"]." NULL");
 		
 		return $tabelaTemp;
 	}
 		
-	function ExecSQL($sql, $start=-1, $limit=-1)
+	function ExecSQL($sql, $start=-1, $limit=-1, $semcache=0)
 	{
 		$this->contador++;
 		$this->LogSQL[]=$sql;
-
-		if ($limit!=-1)
-			if ($start==-1)
-				$start=0;
+		
+		//xd($ADODB_CACHE_DIR);
+		
+		if ($limit!=-1 && $start==-1) $start=0;
 		
 		if ($limit!=-1 && $start!=-1)
 		{
-			$this->result = $this->con->SelectLimit($sql, $limit, $start);
+			
+			if (_ATIVA_CACHE_DB == true && $semcache==0)
+			{
+				$this->result = $this->con->CacheSelectLimit(_TEMPO_CACHE_DB, $sql, $limit, $start);
+			}
+			else
+			{
+				$this->result = $this->con->SelectLimit($sql, $limit, $start);
+			}
 		}
 		else 
 		{
-			$this->result = $this->con->Execute($sql);
+			if (_ATIVA_CACHE_DB == true && $semcache==0)
+			{
+				$this->result = $this->con->CacheExecute(_TEMPO_CACHE_DB, $sql);
+			}
+			else
+			{
+				$this->result = $this->con->Execute($sql);
+			}
 		}
 
 		return $this->result;
@@ -299,7 +296,7 @@ class DBLayer
 	function DropTempTable($tbl)
 	{
 		$sql = 'drop table '.$tbl;
-		$this->ExecSQL($sql);	
+		//$this->ExecSQL($sql);	
 	}
 	
 	function AddFieldToTempTable($tbl, $field)
@@ -309,19 +306,19 @@ class DBLayer
 		{
 			$field['field']=substr($field['field'],0,strpos($field['field'],'.'));
 		}
-		
-		switch ($field['type'])
+				
+		switch (trim($field['type']))
 		{
 			case 'data':
 			case 'Data':
 				$txt = $field['field'].' '.$this->tipodados["inteirogde"].' NULL';
 				break;
-			case 'número preciso':
-			case 'Número Preciso':
+			case 'nÃºmero preciso':
+			case 'NÃºmero Preciso':
 				$txt = $field['field'].' '.$this->tipodados["float"].' NULL';
 				break;
-			case 'número':
-			case 'Número':
+			case 'nÃºmero':
+			case 'NÃºmero':
 				$txt = $field['field'].' '.$this->tipodados["inteiro"].' NULL';
 				break;
 			case 'ref_objeto':
@@ -340,15 +337,6 @@ class DBLayer
 				break;
 							
 		}
-		//$sql = "alter table ".$tbl." add ".$this->tipodados["coluna"]." ".$txt;
-		/*
-		echo "<pre>";
-		var_dump($field);
-		var_dump($tbl);
-		echo ">>".$sql."<br>";
-		echo "</pre>";
-			*/
-		//$this->Query($sql);
 		
 		return $txt;
 	}
@@ -438,17 +426,21 @@ class DBLayer
 		return $res;
 	}
 	
-	function CreateTest($field,$ar_values)
+	function CreateTest($field,$ar_values)	
 	{
 		$sql = '';
 		foreach ($ar_values as $value)
 		{
-			if ($sql !='')
-				$sql .= ' or ';
-			if (is_numeric($value))
-				$sql .= "$field=$value";
-			else
-				$sql .="LOWER($field)='$value'";
+		
+			if ($value != '')
+			{
+				if ($sql !='')
+					$sql .= ' or ';
+				if (is_numeric($value))
+					$sql .= "$field=$value";
+				else
+					$sql .="LOWER($field)='$value'";
+			}
 		}
 		if ($sql!='')
 			$sql = '('.$sql.')';

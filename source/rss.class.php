@@ -6,7 +6,7 @@ class Rss
 	
 	private $_cod_pai;
 	private $_total;
-	private $_encoding="ISO-8859-1";
+	private $_encoding="UTF-8";
 	private $_title="";
 	private $_language="pt-br";
 	private $_description="";
