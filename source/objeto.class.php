@@ -38,9 +38,7 @@
 			$this->metadados=$dados;
 			$this->metadados['data_publicacao']=ConverteData($this->metadados['data_publicacao'],1);
 			$this->metadados['data_validade']=ConverteData($this->metadados['data_validade'],1);
-            //INCLUIDO O TITULO DO OBJETO NA URL
-			if ($this->metadados['url_amigavel'] && $this->metadados['url_amigavel']!="") $this->metadados['url'] = "/".$this->metadados['url_amigavel'];
-            else $this->metadados['url']='/index.php/content/view/'.$this->metadados['cod_objeto']."/".limpaString($this->metadados['titulo']).".html";
+            $this->metadados['url']='/index.php/content/view/'.$this->metadados['cod_objeto'].".html";
             $this->metadados['tags']=$_page->_adminobjeto->PegaTags($_page, $this->metadados['cod_objeto']);
 //            echo "<pre>";
 //            var_dump($this->metadados);
@@ -80,7 +78,7 @@
 		
 		function LinkDiretoBlob(&$_page, $campo)
 		{
-            if (!isset($this->propriedades) || !is_array($this->propriedades))
+            if (!is_array($this->propriedades))
 			{
 				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
 			}
@@ -91,7 +89,7 @@
 		function LinkBlob(&$_page, $campo)
 		{
 			//echo "Campo: $campo<br>";
-			if (!isset($this->propriedades) || !is_array($this->propriedades))
+			if (!is_array($this->propriedades))
 			{
 				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
 			}
@@ -103,7 +101,7 @@
 		function DownloadBlob(&$_page, $campo)
 		{
 			//echo "Campo: $campo<br>";
-			if (!isset($this->propriedades) || !is_array($this->propriedades))
+			if (!is_array($this->propriedades))
 			{
 				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
 			}
@@ -112,7 +110,7 @@
 
 		function ExibirBlob(&$_page, $campo, $width=0, $height=0)
 		{
-		     if (!isset($this->propriedades) || !is_array($this->propriedades))
+		     if (!is_array($this->propriedades))
 			{
 				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
 			}
@@ -122,7 +120,7 @@
 
 		function ExibirThumb(&$_page, $campo, $width=0, $height=0)
 		{
-		    if (!isset($this->propriedades) || !is_array($this->propriedades))
+		    if (!is_array($this->propriedades))
 			{
 				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
 			}
@@ -152,44 +150,39 @@
 
 		function Propriedade(&$_page, $campo)
 		{
-                    $campo = strtolower($campo);
-                    if (!isset($this->propriedades) || !is_array($this->propriedades))
-                    {
-                        $this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
-                    }
-                    if (isset($this->propriedades[$campo])) return $this->propriedades[$campo]['valor'];
-                    else return "";
+			$campo=strtolower($campo);
+			if (!isset($this->propriedades) || !is_array($this->propriedades))
+			{
+				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
+			}
+			return $this->propriedades[$campo]['valor'];
 		}
 
 		function TamanhoBlob(&$_page, $campo)
 		{
-                    if (!isset($this->propriedades) || !is_array($this->propriedades))
-                    {
-                        $this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
-                    }
-                    return ($this->propriedades[$campo]['tamanho_blob']);
+			if (!is_array($this->propriedades))
+			{
+				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
+			}
+			return ($this->propriedades[$campo]['tamanho_blob']);
 		}
 
 		function TipoBlob(&$_page, $campo)
 		{
-                    if (!isset($this->propriedades) || !is_array($this->propriedades))
-                    {
-                        $this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
-                    }
-                    return ($this->propriedades[$campo]['tipo_blob']);
+			if (!is_array($this->propriedades))
+			{
+				$this->propriedades = $_page->_adminobjeto->PegaPropriedades($_page, $this->metadados['cod_objeto']);
+			}
+			return ($this->propriedades[$campo]['tipo_blob']);
 		}
 		
 		function IconeBlob(&$_page, $campo)
 		{
 			$arquivo ='/html/imagens/icnx_'.$this->TipoBlob($_page, $campo).'.gif';
 			if (file_exists($_SERVER['DOCUMENT_ROOT'].$arquivo))
-			{
 				return $arquivo;
-			}
 			else
-			{
 				return '/html/imagens/icnx_generic.gif';
-			}
 		
 		}
 
@@ -236,7 +229,6 @@
 			//exit;
 			return $_page->_adminobjeto->EFilho($_page, $this->Valor("cod_objeto"), $cod_pai);
 		}
-                
 	}
 
 ?>

@@ -60,7 +60,7 @@ function validNum(formField,fieldLabel,required){
 	if (required && !validRequired(formField,fieldLabel)) result = false;
  	if (result) {
  		if (!allDigits(formField.value)){
- 			alert('Por favor, preencha o campo "' + fieldLabel +'" com um n√∫mero v√°lido.');
+ 			alert('Por favor, preencha o campo "' + fieldLabel +'" com um n˙mero v·lido.');
  			MostraBotaoGravar()
 			formField.focus();		
 			result = false;
@@ -76,7 +76,7 @@ function validInt(formField,fieldLabel,required){
  	if (result){
  		var num = parseInt(formField.value);
  		if (isNaN(num)){
- 			alert('Por favor, preencha o campo "' + fieldLabel +'" com um n√∫mero v√°lido.');
+ 			alert('Por favor, preencha o campo "' + fieldLabel +'" com um n˙mero v·lido.');
 			formField.focus();		
 			result = false;
 		}
@@ -185,7 +185,7 @@ function validTime (formField,fieldLabel,required,valor){
 				result = false;
 		}
   		if (!result){
- 			alert('Entre uma hora v√°lida no formato HH:MM:SS para o campo "' + fieldLabel +'".');
+ 			alert('Entre uma hora v·lida no formato HH:MM:SS para o campo "' + fieldLabel +'".');
 			formField.focus();		
 		}
 	} 
@@ -197,7 +197,7 @@ function validDateTime(formField,fieldLabel,required,sodata) {
 	var elems = formField.value.split(" ");
 	if ((elems.length!=2) && (sodata==false))
 	{
-		alert('Entre uma data/hora v√°lida no formato MM/DD/YYYY HH:MM:SS para o campo "' + fieldLabel +'".');
+		alert('Entre uma data/hora v·lida no formato MM/DD/YYYY HH:MM:SS para o campo "' + fieldLabel +'".');
 		return false;
 		formfield.focus();
 		MostraBotaoGravar();
@@ -241,21 +241,13 @@ function validDateTime(formField,fieldLabel,required,sodata) {
 			break;
 		case "textarea":
 			//if (ObjVer.value ==""){
-			//	alert("Existe um campo texto-avan√ßado que deve ser preenchido obrigat√≥riamente: "+ObjNome);
+			//	alert("Existe um campo texto-avanÁado que deve ser preenchido obrigatÛriamente: "+ObjNome);
 			//MostraBotaoGravar();
 			//	return false;}
 			//else
 				return true;
 			break;
 		case "select-one":
-			if (ObjVer.value == 0){
-				alert('Preencha o campo "'+ObjNome+'"');
-				MostraBotaoGravar(); 
-				return false;}
-			else
-				return true;
-			break;
-		case "file":
 			if (ObjVer.value == 0){
 				alert('Preencha o campo "'+ObjNome+'"');
 				MostraBotaoGravar();

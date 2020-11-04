@@ -7,7 +7,6 @@ define ('_OPERACAO_OBJETO_EDITAR',2);
 define ('_OPERACAO_OBJETO_CRIAR',1);
 	
 $_OPERACAO_OBJETO = array('','Criar','Editar','Apagar','Recuperar');
-$header_admin = false;
 
 class Pagina
 {
@@ -43,264 +42,245 @@ class Pagina
 
 	function IncluirAdmin()
 	{
-		include_once ('administracao.class.php');
-		include_once ('classelog.class.php');
+		include ('administracao.class.php');
+		include ('classelog.class.php');
+		include ('index2.class.php');
 		$this->_administracao = new Administracao($this);
 		$this->_log = new ClasseLog($this);
 	}
 
 	function Executar($acao,$incluirheader=false, $irpararaiz=false)
 	{
-
-            $acaoCompleta = "";
-            
-            if (strpos($acao,"/do/")!==false)
-            {
-                if ($this->_usuario->PodeExecutar($this, $acao))
-                {
-                        $this->IncluirAdmin();
-                        $tmpArrPerfilObjeto = $this->_administracao->PegaDireitosDoUsuario($this, $_SESSION['usuario']['cod_usuario']);
-
-                        //Avalia se e alguma operacao com a pilha
-                        if ($acao=='/do/copy')
-                        {
-                                $this->_administracao->CopiarObjetoParaPilha($this, $cod_objeto);
-                                $acao = '/content/view';
-                                return true;
-                        }
-                        elseif ($acao=='/do/paste')
-                        {
-                                if ($this->_objeto->PodeTerFilhos())
-                                {
-                                        $this->_administracao->MoverObjeto($this, -1,$cod_objeto);
-                                        $acao = '/content/view';
-                                }
-                                return true;
-                        }
-                        elseif ($acao=='/do/pastecopy')
-                        {
-                                if ($this->_objeto->PodeTerFilhos())
-                                {
-                                        $this->_administracao->DuplicarObjeto($this, -1,$cod_objeto);
-                                        $acao = '/content/view';
-                                }
-                                return true;
-                        }
-                        // Fim dos testes sobre operacoes com a pilha
-
-                        if (!strpos($acao,'_post') && !isset($_GET["naoincluirheader"]))
-                        {
-                                include("header_publicare.php");
-                        }
-                        $path = preg_split("[\/]",$acao);
-                        $acaoSistema=$path[count($path)-1];
-
-                        if (strpos($acaoSistema,'.php')!==false)
-                        {
-                            include ('manage/'.$acaoSistema);
-                        }
-                        else
-                        {
-                            include ('manage/'.$acaoSistema.'.php');
-                        }
-
-                        if (!strpos($acao,'_post'))
-                        {
-                            include ("footer_publicare.php");
-                        }
-                }
-                else
-                {
-                    $this->ExibirMensagemProibido($acao);
-                }
-			
-                return true;
-            }
-
-            if ($irpararaiz)
-            {
-                    $this->_objeto = new Objeto($this, _ROOT);
-            }
-
-            if (isset($ucode))
-            {
-                $sql = "Select cod_objeto from unlock_table where cod_unlock=".$ucode;
-                $rs = $this->_db->ExecSQL($sql);
-                $unlock=false;
-                if ($row = $rs->FetchRow())
-                {
-                    if ($row['cod_objeto']==$cod_objeto)
-                    {
-                        $sql = "delete from unlock_table where cod_unlock=".$ucode;
-                        $this->_db->ExecSQL($sql);
-                        $unlock=true;
-                    }
-                }
-            }
-		
-            if (($this->_usuario->PodeExecutar($this, $acao)) || (isset($unlock)))
-            {
-                //Inclui Classe Administracao ou Cria entrada no Log de Acesso
-                if ($acao!="/content/view")
-                {
-                    $this->IncluirAdmin();
-                }
-                else
-                {
-                    if ($this->_objeto->Valor($this, 'apagado'))
-                    {
-                        $this->ExibirMensagemProibido($acao);
-                        return false;
-                    }
-                }
+		if (strpos($acao,"/do/")!==false)
+		{
+			if ($this->_usuario->PodeExecutar($this, $acao))
+			{
+				$this->IncluirAdmin();
+				$tmpArrPerfilObjeto = $this->_administracao->PegaDireitosDoUsuario($this, $_SESSION['usuario']['cod_usuario']);
 				
-                //Inclui o prefixo da classe para ajudar na decisao de qual include deve ser usado
-                switch ($acao)
-                {
-                    case "/manage/edit":
-                        break;
-                    case "/content/view":
-                        $acaoCompleta = $acao."_".$this->_objeto->metadados['prefixoclasse'];
-                        break;
-                    default:
-                        $acaoCompleta = $acao;
-                        break;
-                }
+				//Avalia se e alguma operacao com a pilha
+				if ($acao=='/do/copy')
+				{
+					$this->_administracao->CopiarObjetoParaPilha($this, $cod_objeto);
+					$acao = '/content/view';
+					return true;
+				}
+				elseif ($acao=='/do/paste')
+				{
+					if ($this->_objeto->PodeTerFilhos())
+					{
+						$this->_administracao->MoverObjeto($this, -1,$cod_objeto);
+						$acao = '/content/view';
+					}
+					return true;
+				}
+				elseif ($acao=='/do/pastecopy')
+				{
+					if ($this->_objeto->PodeTerFilhos())
+					{
+						$this->_administracao->DuplicarObjeto($this, -1,$cod_objeto);
+						$acao = '/content/view';
+					}
+					return true;
+				}
+				// Fim dos testes sobre operacoes com a pilha
 
-                $path = preg_split("[\/]",$acao);
-                $acaoSistema=$path[count($path)-1];
+				if (!strpos($acao,'_post') && !isset($_GET["naoincluirheader"]))
+				{
+					include("header_publicare.php");
+				}
+				$path = split("/",$acao);
+				$acaoSistema=$path[count($path)-1];
+				
+				if (strpos($acaoSistema,'.php')!==false){
+					include ('manage/'.$acaoSistema);
+				}
+				else{
+					include ('manage/'.$acaoSistema.'.php');
+				}
 
-                switch ($acao)
-                {
-                    case "/manage/edit":
-                        $incluirheader = false;
-                        if (file_exists($_SERVER['DOCUMENT_ROOT'].$acaoCompleta.".php"))
-                        {
-                            $incluir[0] = $_SERVER['DOCUMENT_ROOT'].$acaoCompleta.".php";
-                            $incluir[1] = 0;
-                        }
-                        else
-                        {
-                            $incluir[0] = _dirManage.$acaoSistema.'_basic.php';
-                            $incluir[1] = 0;
-                        }
-                        break;
-                        
-                    case "/manage/new":
-                        $incluirheader = false;
-                        $incluir[0] = $acaoSistema.'.php';
-                        $incluir[1] = 0;
-                        break;
-                    
-                    case "/content/ajuda":
-//                        xd(_dirGeneral."ajuda/index.htm");
-                        $incluirheader = false;
-                        $incluir[0] = _dirGeneral."ajuda/index.htm";
-                        $incluir[1] = 0;
-                        break;
-					
-                    case "/content/view":
-                        if (isset($_GET["naoincluirheader"])) 
-                        {
-                            $incluirheader = false;
-                            $header_admin = true;
-                        }
-                        else $incluirheader = true;
-                        $tmpScriptAtual = $this->_objeto->metadados['script_exibir'];
+				if (!strpos($acao,'_post'))
+				{
+					include ("footer_publicare.php");
+				}
+			}
+			else
+			{
+				$this->ExibirMensagemProibido($acao);
+			}
+			
+//			$this->TempoDeExecucao=$this->getmicrotime()-$this->inicio;
+//			echo ">>> TEMPO DE EXECUCAO: ".$this->TempoDeExecucao." <<<";
+			return true;
+		}
 
-                        if ($this->_adminobjeto->estaSobAreaProtegida($this, $this->_objeto->metadados['cod_objeto']))
-                        {
-                            //Configurado um script para exibicao
-                            if ((isset($_GET['execview'])) && (!preg_match("/_protegido.*/",$tmpScriptAtual)))
-                            {
-                                $execview = htmlspecialchars($_GET['execview'], ENT_QUOTES, "UTF-8");
-                                                    
-							if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$execview.".php"))
-							{
-								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$execview.".php";
-								$incluir[1] = 1;
-								break;
-							}
-							elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$execview.".pbl"))
-							{
-								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$execview.".pbl";
-								$incluir[1] = 1;
-								break;
-							} 
-							
-							
-							if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$execview.".php"))
-							{
-								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$execview.".php";
-								$incluir[1] = 1;
-								break;
-							}
-							elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$execview.".pbl"))
-							{
-								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$execview.".pbl";
-								$incluir[1] = 1;
-								break;
-							}
-						}
+		if ($irpararaiz)
+		{
+			$this->_objeto = new Objeto($this, _ROOT);
+		}
 
-						if ($this->_objeto->metadados['script_exibir'] && file_exists($_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir']))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir'];
-							$incluir[1] = 1;
-							break;
-						}
+		if (isset($ucode))
+		{
+			$sql = "Select cod_objeto from unlock_table where cod_unlock=".$ucode;
+			$rs = $this->_db->ExecSQL($sql);
+			$unlock=false;
+			if ($row = $rs->FetchRow())
+			{
+				if ($row['cod_objeto']==$cod_objeto)
+				{
+					$sql = "delete from unlock_table where cod_unlock=".$ucode;
+					$this->_db->ExecSQL($sql);
+					$unlock=true;
+				}
+			}
+		}
+		
+		if (($this->_usuario->PodeExecutar($this, $acao)) || (isset($unlock)))
+		{
+			//Inclui Classe Administracao ou Cria entrada no Log de Acesso
+			if ($acao!="/content/view")
+			{
+				$this->IncluirAdmin();
+			}
+			else
+			{
+				if ($this->_objeto->Valor($this, 'apagado'))
+				{
+					$this->ExibirMensagemProibido($acao);
+					return false;
+				}
+//				$this->AdicionarEntradaLog();
+			}
+				
+			//Inclui o prefixo da classe para ajudar na decisao de qual include deve ser usado
+			switch ($acao)
+			{
+				case "/manage/edit":
+					break;
+				case "/content/view":
+					$acaoCompleta = $acao."_".$this->_objeto->metadados['prefixoclasse'];
+					break;
+				default:
+					$acaoCompleta = $acao;
+					break;
+			}
 
-				//Nao esta configurado um script para exibicao - Existe um skin?
-						if ($this->_objeto->metadados['cod_pele'])
-						{
+			$path = split("/",$acao);
+			$acaoSistema=$path[count($path)-1];
 
-							if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
-							{
-								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php";
-								$incluir[1] = 1;
-								break;
-								//Script de pele incluido - Finalizar
-							}
-							elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
-							{
-								$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
-								$incluir[1] = 1;
-								break;
-								//Script de pele incluido - Finalizar
-							}
-						}
-							
-				//Nao esta configurado uma skin. Incluir arquivos padrao
-						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php";
-							$incluir[1] = 1;
-						}
-						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
-							$incluir[1] = 1;
-						}
-						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php";
-							$incluir[1] = 1;
-						}
-						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl"))
-						{
-							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl";
-							$incluir[1] = 1;
-							
-						}
-						else 
-						{
-							echo "<span class=\"txtErro\">N&atilde;o foram encontrados os arquivos de SCRIPT DE EXIBI&Ccedil;&Atilde;O.</span>";
-						}
+			switch ($acao)
+			{
+				case "/manage/edit":
+					$incluirheader = false;
+					if (file_exists($_SERVER['DOCUMENT_ROOT'].$acaoCompleta.".php"))
+					{
+						$incluir[0] = $_SERVER['DOCUMENT_ROOT'].$acaoCompleta.".php";
+						$incluir[1] = 0;
 					}
 					else
 					{
-						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_protegido.php";
+						$incluir[0] = _dirManage.$acaoSistema.'_basic.php';
+						$incluir[1] = 0;
+					}
+					break;					
+				case "/manage/new":
+					$incluirheader = false;
+					$incluir[0] = $acaoSistema.'.php';
+					$incluir[1] = 0;
+					break;
+					
+				case "/content/view":
+					if (isset($_GET["naoincluirheader"])) 
+					{
+						$incluirheader = false;
+						$header_admin = true;
+					}
+					else $incluirheader = true;
+					$tmpScriptAtual = $this->_objeto->metadados['script_exibir'];
+					
+			//Configurado um script para exibicao
+					if ((isset($_GET['execview'])) && (!preg_match("/_protegido.*/",$tmpScriptAtual))){
+						
+						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".php"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".php";
+							$incluir[1] = 1;
+							break;
+						}
+						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".pbl"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$_GET['execview'].".pbl";
+							$incluir[1] = 1;
+							break;
+						} 
+						
+						
+						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".php"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".php";
+							$incluir[1] = 1;
+							break;
+						}
+						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".pbl"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$_GET['execview'].".pbl";
+							$incluir[1] = 1;
+							break;
+						}
+					}
+
+					if ($this->_objeto->metadados['script_exibir'] && file_exists($_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir']))
+					{
+						$incluir[0] = $_SERVER['DOCUMENT_ROOT'].$this->_objeto->metadados['script_exibir'];
 						$incluir[1] = 1;
+						break;
+					}
+
+			//Nao esta configurado um script para exibicao - Existe um skin?
+					if ($this->_objeto->metadados['cod_pele'])
+					{
+
+						if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".php";
+							$incluir[1] = 1;
+							break;
+							//Script de pele incluido - Finalizar
+						}
+						elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
+						{
+							$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$this->_objeto->metadados['prefixopele']."/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
+							$incluir[1] = 1;
+							break;
+							//Script de pele incluido - Finalizar
+						}
+					}
+						
+			//Nao esta configurado uma skin. Incluir arquivos padrao
+					if (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php"))
+					{
+						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".php";
+						$incluir[1] = 1;
+					}
+					elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl"))
+					{
+						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_".$this->_objeto->metadados['prefixoclasse'].".pbl";
+						$incluir[1] = 1;
+					}
+					elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php"))
+					{
+						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.php";
+						$incluir[1] = 1;
+					}
+					elseif (file_exists($_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl"))
+					{
+						$incluir[0] = $_SERVER['DOCUMENT_ROOT']."/html/template/view_basic.pbl";
+						$incluir[1] = 1;
+						
+					}
+					else 
+					{
+						echo "<span class=\"txtErro\">N&atilde;o foram encontrados os arquivos de SCRIPT DE EXIBI&Ccedil;&Atilde;O.</span>";
 					}
 					break;
 					
@@ -414,20 +394,18 @@ class Pagina
 				}
 				
 			}
-                        
-                        
 //$incluirheader=false;
 			if ($incluirheader)
 			{
 //				echo "> header: ".$header;
 				$this->_parser->Start($header);
-//				echo "\n<!-- http://".htmlspecialchars($_SERVER['HTTP_HOST'], ENT_QUOTES, "UTF-8").htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, "UTF-8")."-->\n";
-//				echo "\n<!-- ".substr($incluir[0], strrpos($incluir[0],'/'))." -->";
-//				echo "\n<!-- robot_contents -->\n";
+				echo "\n<!-- http://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']."-->\n";
+				echo "\n<!-- ".substr($incluir[0], strrpos($incluir[0],'/'))." -->";
+				echo "\n<!-- robot_contents -->\n";
 			}
 			else 
 			{
-				if (!isset($header_admin) || !$header_admin)
+				if (!$header_admin)
 					include ("header_publicare.php");
 					
 			}
@@ -444,7 +422,7 @@ class Pagina
 
 			if ($incluirheader)
 			{
-//				echo "\n<!-- /robot_contents -->\n";
+				echo "\n<!-- /robot_contents -->\n";
 				$this->_parser->Start($footer);
 			}
 			else

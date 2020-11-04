@@ -2,10 +2,8 @@
 
 
 /*
-@version   v5.20.15  24-Nov-2019
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-         Contributed by Ross Smith (adodb@netebb.com).
+V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+         Contributed by Ross Smith (adodb@netebb.com). 
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -71,7 +69,7 @@ class ADODB_Encrypt_MCrypt {
 
 	/**
 	 */
-	function __construct($cipher = null, $mode = null, $source = null) {
+	function ADODB_Encrypt_MCrypt($cipher = null, $mode = null, $source = null) {
 		if (!$cipher) {
 			$cipher = MCRYPT_RIJNDAEL_256;
 		}
@@ -107,3 +105,5 @@ class ADODB_Encrypt_MCrypt {
 }
 
 return 1;
+
+?>

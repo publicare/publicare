@@ -1,15 +1,13 @@
 <?php
-/*
-@version   v5.20.15  24-Nov-2019
-@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
-@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
+/* 
+V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+  Released under both BSD license and Lesser GPL library license. 
+  Whenever there is any discrepancy between the two licenses, 
+  the BSD license will take precedence. 
 Set tabs to 4 for best viewing.
-
-  Latest version is available at http://adodb.org/
-
+  
+  Latest version is available at http://adodb.sourceforge.net
+  
   Microsoft Visual FoxPro data driver. Requires ODBC. Works only on MS Windows.
 */
 
@@ -22,7 +20,7 @@ if (!defined('_ADODB_ODBC_LAYER')) {
 if (!defined('ADODB_VFP')){
 define('ADODB_VFP',1);
 class ADODB_vfp extends ADODB_odbc {
-	var $databaseType = "vfp";
+	var $databaseType = "vfp";	
 	var $fmtDate = "{^Y-m-d}";
 	var $fmtTimeStamp = "{^Y-m-d, h:i:sA}";
 	var $replaceQuote = "'+chr(39)+'" ;
@@ -35,14 +33,19 @@ class ADODB_vfp extends ADODB_odbc {
 	var $ansiOuter = true;
 	var $hasTransactions = false;
 	var $curmode = false ; // See sqlext.h, SQL_CUR_DEFAULT == SQL_CUR_USE_DRIVER == 2L
-
+	
+	function ADODB_vfp()
+	{
+		$this->ADODB_odbc();
+	}
+	
 	function Time()
 	{
 		return time();
 	}
-
+	
 	function BeginTrans() { return false;}
-
+	
 	// quote string to be sent back to database
 	function qstr($s,$nofixquotes=false)
 	{
@@ -50,31 +53,31 @@ class ADODB_vfp extends ADODB_odbc {
 		return "'".$s."'";
 	}
 
-
+	
 	// TOP requires ORDER BY for VFP
-	function SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
+	function &SelectLimit($sql,$nrows=-1,$offset=-1, $inputarr=false,$secs2cache=0)
 	{
 		$this->hasTop = preg_match('/ORDER[ \t\r\n]+BY/is',$sql) ? 'top' : false;
 		$ret = ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 		return $ret;
 	}
-
+	
 
 
 };
+ 
 
+class  ADORecordSet_vfp extends ADORecordSet_odbc {	
+	
+	var $databaseType = "vfp";		
 
-class  ADORecordSet_vfp extends ADORecordSet_odbc {
-
-	var $databaseType = "vfp";
-
-
-	function __construct($id,$mode=false)
+	
+	function ADORecordSet_vfp($id,$mode=false)
 	{
-		return parent::__construct($id,$mode);
+		return $this->ADORecordSet_odbc($id,$mode);
 	}
 
-	function MetaType($t, $len = -1, $fieldobj = false)
+	function MetaType($t,$len=-1)
 	{
 		if (is_object($t)) {
 			$fieldobj = $t;
@@ -86,18 +89,19 @@ class  ADORecordSet_vfp extends ADORecordSet_odbc {
 			if ($len <= $this->blobSize) return 'C';
 		case 'M':
 			return 'X';
-
+			 
 		case 'D': return 'D';
-
+		
 		case 'T': return 'T';
-
+		
 		case 'L': return 'L';
-
+		
 		case 'I': return 'I';
-
+		
 		default: return 'N';
 		}
 	}
 }
 
 } //define
+?>

@@ -1,6 +1,6 @@
 <?php
 
-define("EmailTextCharset", "utf-8");
+define("EmailTextCharset", "iso-8859-1");
 define("EmailHtmlCharset", "us-ascii");
 define("EmailNewLine", "\r\n");
 
@@ -26,14 +26,9 @@ class Email
 	function montaHeaders()
 	{
 		$this->_headers = "MIME-Version: 1.0".EmailNewLine; 
-		$this->_headers .= "Content-type: text/html; charset=utf-8".EmailNewLine; 
+		$this->_headers .= "Content-type: text/html; charset=iso-8859-1".EmailNewLine; 
 		$this->_headers .= "From: $this->_remetente".EmailNewLine; 
 		$this->_headers .= "Return-Path: $this->_remetente".EmailNewLine;
-	}
-	
-	function Send()
-	{
-		$this->envia();
 	}
 	
 	function envia()

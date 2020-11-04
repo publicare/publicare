@@ -1,4 +1,4 @@
-<?php
+<?
 global $_page;
 
 	//Checa se o nome enviado � valido
@@ -38,7 +38,6 @@ global $_page;
 			$campos['publica']=$skinPublica;
 			$_POST['cod_pele']=$_page->_db->Insert('pele',$campos);
 		}
-                $_page->_administracao->cacheFlush($_page);
 		header("Location:/index.php/do/peles/".$_page->_objeto->Valor($_page, "cod_objeto").".html?cod_pele=".$_POST['cod_pele']);
 	}
 	else

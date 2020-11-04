@@ -18,9 +18,7 @@ global $_page;
 		
 		if ($_page->_administracao->ExisteOutroUsuario($_page, $_POST['login'], $_POST['cod_usuario']))
 		{
-             
-		$Msg = "Login j&aacute; existe. Por favor escolha outro.";
-                       
+			$Msg = "Login j&aacute; existe. Por favor escolha outro.";
 		}
 		else
 		{ 	

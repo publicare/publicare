@@ -1,31 +1,29 @@
 <?php
 
-/**
- * @version   v5.20.15  24-Nov-2019
- * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
- * @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
- * Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
+/** 
+ * @version V4.93 10 Oct 2006 (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+ * Released under both BSD license and Lesser GPL library license. 
+  Whenever there is any discrepancy between the two licenses, 
+  the BSD license will take precedence. 
  */
-
-/* Documentation on usage is at http://adodb.org/dokuwiki/doku.php?id=v5:proxy:proxy_index
+ 
+/* Documentation on usage is at http://php.weblogs.com/adodb_csv
  *
  * Legal query string parameters:
- *
+ * 
  * sql = holds sql string
- * nrows = number of rows to return
+ * nrows = number of rows to return 
  * offset = skip offset rows of data
  * fetch = $ADODB_FETCH_MODE
- *
+ * 
  * example:
  *
  * http://localhost/php/server.php?select+*+from+table&nrows=10&offset=2
  */
 
 
-/*
- * Define the IP address you want to accept requests from
+/* 
+ * Define the IP address you want to accept requests from 
  * as a security measure. If blank we accept anyone promisciously!
  */
 $ACCEPTIP = '127.0.0.1';
@@ -52,14 +50,14 @@ function err($s)
 }
 
 // undo stupid magic quotes
-function undomq(&$m)
+function undomq(&$m) 
 {
 	if (get_magic_quotes_gpc()) {
 		// undo the damage
 		$m = str_replace('\\\\','\\',$m);
 		$m = str_replace('\"','"',$m);
 		$m = str_replace('\\\'','\'',$m);
-
+		
 	}
 	return $m;
 }
@@ -67,34 +65,36 @@ function undomq(&$m)
 ///////////////////////////////////////// DEFINITIONS
 
 
-$remote = $_SERVER["REMOTE_ADDR"];
-
+$remote = $_SERVER["REMOTE_ADDR"]; 
+ 
 
 if (!empty($ACCEPTIP))
- if ($remote != '127.0.0.1' && $remote != $ACCEPTIP)
+ if ($remote != '127.0.0.1' && $remote != $ACCEPTIP) 
  	err("Unauthorised client: '$remote'");
-
-
+	
+	
 if (empty($_REQUEST['sql'])) err('No SQL');
 
 
-$conn = ADONewConnection($driver);
+$conn = &ADONewConnection($driver);
 
 if (!$conn->Connect($host,$uid,$pwd,$database)) err($conn->ErrorNo(). $sep . $conn->ErrorMsg());
 $sql = undomq($_REQUEST['sql']);
 
 if (isset($_REQUEST['fetch']))
 	$ADODB_FETCH_MODE = $_REQUEST['fetch'];
-
+	
 if (isset($_REQUEST['nrows'])) {
 	$nrows = $_REQUEST['nrows'];
 	$offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : -1;
 	$rs = $conn->SelectLimit($sql,$nrows,$offset);
-} else
+} else 
 	$rs = $conn->Execute($sql);
-if ($rs){
+if ($rs){ 
 	//$rs->timeToLive = 1;
 	echo _rs2serialize($rs,$conn,$sql);
 	$rs->Close();
 } else
 	err($conn->ErrorNo(). $sep .$conn->ErrorMsg());
+
+?>

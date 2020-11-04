@@ -6,7 +6,7 @@ class Rss
 	
 	private $_cod_pai;
 	private $_total;
-	private $_encoding="UTF-8";
+	private $_encoding="ISO-8859-1";
 	private $_title="";
 	private $_language="pt-br";
 	private $_description="";
@@ -66,9 +66,9 @@ class Rss
 		$res.="\t\t<title><![CDATA[".$this->_title."]]></title>\n";
 		$res.="\t\t<description><![CDATA[".$this->_description."]]></description>\n";
 		$res.="\t\t<link>".$this->_link."</link>\n";
-		$res.="\t\t<language><![CDATA[".$this->_language."]]></language>\n";
-		$res.="\t\t<copyright><![CDATA[Copyright ".date("Y")." ".$this->_copyright."]]></copyright>\n";
-		$res.="\t\t<category><![CDATA[".$this->_categoria."]]></category>\n";
+		$res.="\t\t<language>".$this->_language."</language>\n";
+		$res.="\t\t<copyright>Copyright ".date("Y")." ".$this->_copyright."</copyright>\n";
+		$res.="\t\t<category>".$this->_categoria."</category>\n";
 		
 		//items
 		foreach($this->_items as $item) {

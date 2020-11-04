@@ -10,12 +10,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>C&amp;T Jovem - ComentÃ¡rios</title>
+<title>C&amp;T Jovem - Comentários</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <LINK rel="STYLESHEET" type="text/css" href="/style.css">
 </head>
 <body leftmargin="15" topmargin="2">
-<div align="center" CLASS="AAzul">Obrigado por seu comentÃ¡rio. Ele estarÃ¡ visÃ­vel apÃ³s aprovaÃ§Ã£o.<br>
+<div align="center" CLASS="AAzul">Obrigado por seu comentário. Ele estará visível após aprovação.<br>
 <form action="javascript:window.close()">
 	<input class='pblFormButton' type='submit' value='Fechar'>
 </form>

@@ -11,7 +11,7 @@ class Parse
 	public $types;
 	public $cmdArray;
 	
-	function __construct()
+	function Parse()
 	{
 		if (!defined ("_PARSEINITIALIZED"))
 		{
@@ -23,7 +23,6 @@ class Parse
 
 	function Initialize()
 	{
-		
 		$this->InitCmd = '<?'."\n"
 						.'global $_page;'."\n"
 						.'$_PAGINATIONSTACK_=array();'."\n"
@@ -36,10 +35,9 @@ class Parse
 						.'list($usec, $sec) = explode(" ", microtime());'."\n"
 						.'$_seed=(float) $sec + ((float) $usec * 100000);'."\n"
 						.'mt_srand($_seed);'."\n"
-						.'//x($_OBJ_->Valor($_page, "cod_status"));'."\n"
 						.'$_GETARRAY=$_GET;'."\n"
 						.'?>';
-		
+
 		$this->debug=0;
 		$this->operands = array ('=','>','<','<=','>=','!=');
 
@@ -245,7 +243,6 @@ class Parse
 									'regex' => '|(.*)|',
 									'output' => '<?
 													if (<#P:nome#>_max = $_OBJ_->PegaListaDeFilhos($_page, <#P:classes#>, <#P:ordem#>, <#P:inicio#>, <#P:limite#>)) {'."\n"
-                                                                                                        .'if (!isset($_LOOP_)) $_LOOP_=array();'."\n"
 													.'array_push($_LOOPSTACK_,$_LOOP_);'."\n"
 													.'$_LOOP_=array();'."\n"
 													.'$_LOOP_["array"]=array();'."\n"
@@ -310,7 +307,6 @@ class Parse
 									'output' => '<?
 													if (<#P:nome#>_max = $_OBJ_->PegaListaDeFilhos($_page, <#P:classes#>,<#P:ordem#>))
 													{
-                                                                                                                if (!isset($_LOOP_)) $_LOOP_=array();
 														array_push($_LOOPSTACK_,$_LOOP_);
 														$_LOOP_=array();
 														$_LOOP_["array"]=array();
@@ -376,9 +372,8 @@ class Parse
 							"localizar" => array (
 									'opentag'=>'localizar',
 									'regex' => '|(.*)|',
-									'output' => '<? <#P:nome#>_array = $_page->_adminobjeto->LocalizarObjetos($_page, <#P:classes#>,<#P:condicao#>,<#P:ordem#>,<#P:inicio#>,<#P:limite#>,<#P:pai#>,<#P:niveis#>,false,<#P:like#>,<#P:ilike#>,<#P:tags#>);
+									'output' => '<? <#P:nome#>_array = $_page->_adminobjeto->LocalizarObjetos($_page, <#P:classes#>,<#P:condicao#>,<#P:ordem#>,<#P:inicio#>,<#P:limite#>,<#P:pai#>,<#P:niveis#>,false,<#P:like#>,<#P:tags#>);
 													if (<#P:nome#>_max = count(<#P:nome#>_array)) {'."\n"
-                                                                                                        .'if (!isset($_LOOP_)) $_LOOP_=array();'."\n"
 													.'array_push($_LOOPSTACK_,$_LOOP_);'."\n"
 													.'$_LOOP_=array();'."\n"
 													.'$_LOOP_["array"]=array();'."\n"
@@ -393,7 +388,7 @@ class Parse
 													.'?>'."\n"
 												,
 									'parameters'=> 1,
-									'helptext' => 'O comando <strong>Localizar</strong> deve ser escrito assim: <strong>&lt;@localizar nome=[{variavel}] classes=[{string}] ordem=[{string}] niveis=[{numero}] like=[{string},{string}] ilike=[{string_minuscula},{string_minuscula}] tags=[{string},{string}] @&gt;</strong>',
+									'helptext' => 'O comando <strong>Localizar</strong> deve ser escrito assim: <strong>&lt;@localizar nome=[{variavel}] classes=[{string}] ordem=[{string}] niveis=[{numero}] like=[{string},{string}] tags=[{string},{string}] @&gt;</strong>',
 									'paramitens' => array (
 											'nome' 	  => 'v',
 											'condicao' => 's',
@@ -404,7 +399,6 @@ class Parse
 											'pai'=>'n',
 											'niveis'=>'n',
 											'like'=>'s',
-											'ilike'=>'s',
 											'tags'=>'s',
 										),
 									'paramforce' => false,
@@ -450,7 +444,6 @@ class Parse
 													<#P:nome#>_array = $_page->_adminobjeto->LocalizarObjetos($_page, <#P:classes#>,<#P:condicao#>,<#P:ordem#>,-1,-1,<#P:pai#>,<#P:niveis#>);
 													if (<#P:nome#>_max = count(<#P:nome#>_array))
 													{
-                                                                                                                if (!isset($_LOOP_)) $_LOOP_=array();
 														array_push($_STACK_,$_OBJ_);
 														array_push ($_LOOPSTACK_,$_LOOP_);
 														$_LOOP_=array();
@@ -513,6 +506,8 @@ class Parse
 									'parameters'=> false,
 									'helptext' => 'O comando <strong>\filhos </strong> deve ser escrito assim: <strong>&lt;@\filhos@&gt;</strong>',
 									),
+
+
 
 
 							"usarobjeto" => array (
@@ -600,12 +595,9 @@ class Parse
 									
 							"protegido" => array (
 									'regex' => '|(.*)|',
-									//'output' => '<? (<#P:pele#>) ? $tmpDir = "/html/skin/".<#P:pele#> : $tmpDir = "/html/template"; '."\n"
-									//.'$extensao=(file_exists($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".php"))?"php":"pbl";'."\n"
-									//.'($_page->_usuario->EstaLogadoMilitarizado()===true) ? $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".".$extensao) : $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"]."/html/template/view_protegido.pbl");',
 									'output' => '<? (<#P:pele#>) ? $tmpDir = "/html/skin/".<#P:pele#> : $tmpDir = "/html/template"; '."\n"
 									.'$extensao=(file_exists($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".php"))?"php":"pbl";'."\n"
-									.'($_page->_usuario->EstaLogadoMilitarizado()===true) ? $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".".$extensao) : $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"]."/html/template/view_protegido.php"); ?>',
+									.'($_page->_usuario->EstaLogadoMilitarizado()) ? $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"].$tmpDir."/view_".<#P:view#>.".".$extensao) : $_page->_parser->Start($_SERVER["DOCUMENT_ROOT"]."/html/template/view_protegido.pbl");?>',								
 									'parameters'=> 1,
 									'helptext' => 'O comando <strong>protegido</strong> deve ser escrito assim: <strong>&lt;@protegido view=[{nome_de_arquivo}] pele=[{prefixo_pele}]@&gt;</strong>',
 									'paramitens' => array (
@@ -622,7 +614,6 @@ class Parse
 												.'if ($_OBJ_->TamanhoBlob($_page, <#P:nome#>)) {'."\n"
 												.'$_BLOBTAMANHO = $_OBJ_->TamanhoBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBLINK = $_OBJ_->LinkBlob($_page, <#P:nome#>);'."\n"
-//												.'$_BLOBLINK = $_OBJ_->DownloadBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBDOWNLOAD = $_OBJ_->DownloadBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBVIEW = $_OBJ_->ExibirBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBTIPO = $_OBJ_->TipoBlob($_page, <#P:nome#>);'."\n"
@@ -652,7 +643,6 @@ class Parse
 									'parameters'=> false,
 									'helptext' => 'O comando <strong>\usarblob</strong> deve ser escrito assim: <strong>&lt;@\usarblob@&gt;</strong>',
 									),
-
 
 							"linkblob" => array (
 									'regex' => '',
@@ -698,7 +688,12 @@ class Parse
 										.'{'."\n"
 										.'    echo "<img src=\"".$_OBJ_->IconeBlob($_page, "conteudo")."\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
 										.'} else {'."\n"
-										.'    echo "<img src=\"/html/objects/_viewblob.php?tipo=classe&nome=".$_OBJ_->Valor($_page, "prefixoclasse")."\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
+										.'    if (file_exists($_SERVER["DOCUMENT_ROOT"]."/upd_blob/classes/".$ic_classe)) '."\n"
+										.'    {	'."\n"
+										.'        echo "<img src=\"/upd_blob/classes/".$ic_classe."\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
+										.'    } else {'."\n"
+										.'        echo "<img src=\"/upd_blob/classes/ic_default.gif\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
+										.'    }'."\n"
 										.'}?>'."\n",
 									'parameters'=> false,
 									),
@@ -722,70 +717,6 @@ class Parse
 								   'output' => '<? include_once ($_SERVER["DOCUMENT_ROOT"]."/html/objects/<#P:objeto#>.php");'."\n"
 								  			  .'eval ("object_<#P:objeto#>(\'".<#P:parametros#>."\');");'."\n?>"
 									),
-									
-							"temfilho" => array (
-									'opentag'=>'temfilho',
-									'regex' => '|(.*)|',
-									'output' => '<? if (<#P:cod_objeto#>!="") $_tmp_=$_page->_adminobjeto->PegaNumFilhos($_page, <#P:cod_objeto#>);'."\n"
-												.'if ($_tmp_ > 0) {'."\n"
-												.'?>'."\n"
-												,
-									'parameters'=> 1,
-									'helptext' => 'O comando <strong>usarobjeto</strong> deve ser escrito assim: <strong>&lt;@usarobjeto cod_objeto=[{numero}]@&gt; </strong>',
-									'paramitens' => array (
-											'cod_objeto'=>'n'
-										),
-									),
-									
-							"/temfilho" => array (
-									'closetag'=>'temfilho',
-									'regex' => '',
-									'output' => '<?'."\n"
-												.' } ?>'."\n",
-									'parameters'=> false,
-									'helptext' => 'O comando <strong>\temfilho</strong> deve ser escrito assim: <strong>&lt;@\temfilho@&gt;</strong>',
-									),
-
-							
-							"iconesadmin" => array (
-									'regex' => '|(.*)|',
-									'output' => '<? '."\n"
-												.'$strTitulo = $_OBJ_->Valor($_page, "titulo");'."\n"
-												.'$cod_objeto = $_OBJ_->Valor($_page, "cod_objeto");'."\n"
-												.'$cod_status = $_OBJ_->Valor($_page, "cod_status");'."\n"
-												.'$bln_temfilhos = $_OBJ_->Valor($_page, "temfilhos");'."\n"
-												.'$str_classeNovoObj = <#P:classe#>;'."\n"
-												.''."\n"
-												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icNovo)){$icNovo="<img src="._icNovo." border=\"0\" align=\"absmiddle\" alt=\"Inserir novos itens em ".$strTitulo."\" title=\"Inserir novos itens em ".$strTitulo."\">";}else{$icNovo="Novo&nbsp;|&nbsp;";} '."\n"
-												.''."\n"
-												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icAlterar)){$icAlterar="<img src="._icAlterar." border=\"0\" align=\"absmiddle\" alt=\"Editar o conte&uacute;do de ".$strTitulo."\" title=\"Editar o conte&uacute;do de ".$strTitulo."\">";}else{$icAlterar="|&nbsp;Editar&nbsp;|&nbsp;";} '."\n"
-												.''."\n"
-												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icPublicar)){$icPublicar="<img src="._icPublicar." border=\"0\" align=\"absmiddle\" alt=\"Publicar o conte&uacute;do de ".$strTitulo."\" title=\"Publicar o conte&uacute;do de ".$strTitulo."\">";}else{$icPublicar=" - a publicar&nbsp;";} '."\n"
-												.''."\n"
-												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icExcluir)){$icExcluir="<img src="._icExcluir." border=\"0\" align=\"absmiddle\" alt=\"Excluir ".$strTitulo."\" title=\"Excluir ".$strTitulo."\">";}else{$icExcluir="Excluir&nbsp;";} '."\n"
-												.''."\n"
-												.'if($bln_temfilhos==1 && $str_classeNovoObj != ""){ $str_classeNovoObj = "_".$str_classeNovoObj;}'."\n"
-												.''."\n"
-												.'if($_page->_usuario->EstaLogado(_PERFIL_AUTOR)){'."\n"
-												.'	echo "&nbsp;"; '."\n"
-												.'	if($cod_status!=2) {'."\n"
-												.'		echo "&nbsp;<span><a href=\"/index.php/do/publicar/".$cod_objeto.".html\"><font color=\"red\">$icPublicar</font></a></span>"; '."\n"
-												.'	}'."\n"
-												.'	echo "<span><a href=\"/index.php/manage/edit/".$cod_objeto.".html\">$icAlterar</a></span>"; '."\n"
-												.'	if($bln_temfilhos==1) {'."\n"
-												.'		echo "<span><a href=\"/index.php/manage/new".$str_classeNovoObj."/".$cod_objeto.".html\">$icNovo</a></span>"; '."\n"
-												.'	}'."\n"
-												.'	echo "<span><a href=\"/index.php/do/delete/".$cod_objeto.".html\">$icExcluir</a></span>&nbsp;"; '."\n"
-												.'}'."\n"
-												.'?>'."\n"
-												,
-									'parameters'=> 1,
-									'helptext' => 'O comando <strong>iconesadmin</strong> deve ser escrito assim: <strong>&lt;@iconesadmin classe=[{string}]@&gt;</strong>',
-									'paramitens' => array (
-											'classe'  => 's'
-										),
-									'paramforce'=>false,
-									),
 							)
 							;
 
@@ -795,9 +726,6 @@ class Parse
 	{
 		$this->tags=array();
 		$buffer = "";
-//                
-//                ob_flush();
-//                flush();
 		
 		if ($this->debug)
 		{
@@ -866,11 +794,7 @@ class Parse
 	/*	echo "?>".$this->InitCmd.$out;
 exit;*/
 		/*eval ("?>");*/
-//                ob_flush();
-//                flush();
 		eval ("?>".$this->InitCmd.$out);
-//                ob_flush();
-//                flush();
 		//return $this->InitCmd.$out;
 	}
 

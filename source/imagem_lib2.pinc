@@ -1,0 +1,333 @@
+<?php
+	function MostraImagem($arquivo, $preto="", $branco="", $escala=1, $echo=true, $param='')
+	{
+		global $DOCUMENT_ROOT;
+		if($arquivo)
+		{
+			$base=basename($arquivo);
+			if ($preto!="")
+			{
+				$preto=str_replace('#','',$preto);
+				$branco=str_replace('#','',$branco);
+			}
+			
+			
+			$filename=substr ($base,0,strrpos($base,".")).'-'.$preto.'-'.$branco;
+			$fileext=substr ($base,strrpos($base,"."));
+			$file=dirname($arquivo)."/arquivo/".$filename."e_".$escala.$fileext;
+			if(!file_exists($_SERVER['DOCUMENT_ROOT'].$file))
+			{
+				if($fileext=='.png') $im = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].$arquivo);
+				if($fileext=='.jpg')
+				{
+					$im = imagecreatefromjpeg($_SERVER['DOCUMENT_ROOT'].$arquivo);
+					imagetruecolortopalette ($im, true, 255);
+				}
+				
+				if ($preto!="")
+				{
+					$preto=array(hexdec(substr($preto,0,2)),hexdec(substr($preto,2,2)),hexdec(substr($preto,4,2)));
+					$branco=array(hexdec(substr($branco,0,2)),hexdec(substr($branco,2,2)),hexdec(substr($branco,4,2)));
+					$total_index=imageColorstotal($im);
+					$red=($branco[0]-$preto[0])/255;
+					$green=($branco[1]-$preto[1])/255;
+					$blue=($branco[2]-$preto[2])/255;
+					for($cor=0;$cor<$total_index;$cor++)
+					{
+						$cor_final = imagecolorsforindex ($im, $cor);
+						$media = ($cor_final['red'] + $cor_final['green'] + $cor_final['blue'])/3;
+						imagecolorset ($im, $cor, ($red*$media)+$preto[0], ($green*$media)+$preto[1], ($blue*$media)+$preto[2]);
+					}
+				}
+				if ($escala!=1)
+				{
+					$width=ceil (ImageSX($im)*$escala);
+					$height=ceil (ImageSY($im)*$escala);
+					$imscaled=ImageCreateTrueColor($width,$height);
+					ImageCopyResized ($imscaled,$im,0,0,0,0,$width,$height,ImageSX($im),ImageSY($im));
+					if($fileext=='.png') ImagePng($imscaled,$_SERVER['DOCUMENT_ROOT'].$file);
+					if($fileext=='.jpg') ImageJpeg($imscaled,$_SERVER['DOCUMENT_ROOT'].$file);
+					ImageDestroy($imscaled);
+				}
+					else
+				{
+					if($fileext=='.png') ImagePng($im,$_SERVER['DOCUMENT_ROOT'].$file);
+					if($fileext=='.jpg') ImageJpeg($im,$_SERVER['DOCUMENT_ROOT'].$file);
+				}
+				ImageDestroy($im);
+			}
+		}
+		if($echo) echo '<img src="'.$file.'" border="0" '.$param.'>';
+		return $file;
+	}
+	
+	function Subtom($cor,$inc=0.9)
+	{
+		if (strlen($cor)>=6)
+		{
+			$cor=str_replace("#","",$cor);
+			$novacor=array(hexdec(substr($cor,0,2)),
+						hexdec(substr($cor,2,2)),
+						hexdec(substr($cor,4,2)));
+			if ($inc>0)
+			{
+				$novacor[0]+=(255-$novacor[0])*$inc;
+				$novacor[1]+=(255-$novacor[1])*$inc;
+				$novacor[2]+=(255-$novacor[2])*$inc;
+			}
+			else
+			{
+				$novacor[0]+=($novacor[0])*$inc;
+				$novacor[1]+=($novacor[1])*$inc;
+				$novacor[2]+=($novacor[2])*$inc;
+			}
+			return "#".sprintf("%02s",dechex($novacor[0])).sprintf("%02s",dechex($novacor[1])).sprintf("%02s",dechex($novacor[2]));	
+		}
+		else
+			return "#d0d0d0";
+	}
+	
+	function ImagemUmaCor($arquivo, $cor, $param='border=0')
+	{
+		global $DOCUMENT_ROOT;
+		
+		$base=basename($arquivo);
+		$filename=substr ($base,0,strrpos($base,"."));
+		$file=$_SERVER['DOCUMENT_ROOT']."/imagens/arquivo/".$filename.'-'.$cor.".png";
+		if (!file_exists($file))
+		{
+			$im = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].$arquivo);
+			$a_cores=array(substr($cor,0,2),substr($cor,2,2),substr($cor,4,2));
+			$num_cores=imagecolorstotal($im);
+			for ($f=0;$f<$num_cores;$f++)
+			{
+				imagecolorset ($im, $f, hexdec($a_cores[0]),hexdec($a_cores[1]),hexdec($a_cores[2]));	
+			}
+			ImagePng($im,$file);
+		}
+		return '<img align="middle" src="/imagens/arquivo/'.basename($file).'" '.$param.'>';
+	}
+
+	function Quadrados($cores)
+	{
+		global $DOCUMENT_ROOT;
+		
+		$file=$_SERVER['DOCUMENT_ROOT']."/imagens/arquivo/quad-".$cores[0].'-'.$cores[1].'-'.$cores[2].".png";
+		if (!file_exists($file))
+		{
+			$im = imagecreatefrompng($_SERVER['DOCUMENT_ROOT']."/imagens/quadrados.png");
+			for ($f=0;$f<count($cores);$f++)
+			{
+				$a_cores=array(substr($cores[$f],0,2),substr($cores[$f],2,2),substr($cores[$f],4,2));
+				imagecolorset ($im, $f, hexdec($a_cores[0]),hexdec($a_cores[1]),hexdec($a_cores[2]));	
+			}
+			ImagePng($im,$file);
+		}
+		echo '<img src="/imagens/arquivo/'.basename($file).'" border=0>&nbsp;';
+	}
+	
+	
+	function TrocaCor($arquivo,$cor,$novacor)
+	{
+		global $DOCUMENT_ROOT;
+
+		$cor = str_replace("#","",$cor);
+		$novacor = str_replace("#","",$novacor);
+				
+		$base=basename($arquivo);
+		$filename=substr ($base,0,strrpos($base,"."));
+		$file=$_SERVER['DOCUMENT_ROOT']."/imagens/arquivo/".$filename.'-'.$novacor.".png";
+		
+		if (!file_exists($file))
+		{
+			$im = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].$arquivo);
+			$a_cores=array(substr($cor,0,2),substr($cor,2,2),substr($cor,4,2));
+			$nova_a_cores=array(substr($novacor,0,2),substr($novacor,2,2),substr($novacor,4,2));
+			$index_color = imagecolorexact($im, hexdec($a_cores[0]),hexdec($a_cores[1]),hexdec($a_cores[2]));
+			imagecolorset ($im, $index_color, hexdec($nova_a_cores[0]),hexdec($nova_a_cores[1]),hexdec($nova_a_cores[2]));
+			ImagePng($im,$file);
+		}
+		return '<img align="middle" src="/imagens/arquivo/'.basename($file).'" border=0>&nbsp;';
+	}
+	
+	
+	function MostraImagemResize($arquivo, $escala=1, $bgcolor='', $sombra=true, $echo=true, $param='',$maxsize=false)
+	{
+		global $DOCUMENT_ROOT;
+		$margem=0;
+		if($arquivo)
+		{
+			if(!$bgcolor) $bgcolor='FFFFFF';
+			
+			$base=basename($arquivo);
+			
+			$filename=substr ($base,0,strrpos($base,"."));
+			$fileext=substr ($base,strrpos($base,"."));
+			$file=dirname($arquivo)."/arquivo/".$filename."-cor-";
+			if($sombra) $file.="shadow-".str_replace('#','',$bgcolor)."-";
+			$file.="e_".$escala.$fileext;
+			if (!file_exists($_SERVER['DOCUMENT_ROOT'].$file))
+			{
+				if($fileext=='.png') $im = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].$arquivo);
+				if($fileext=='.jpg')
+				{
+					$im = imagecreatefromjpeg($_SERVER['DOCUMENT_ROOT'].$arquivo);
+//					imagetruecolortopalette ($im, true);
+				}
+				
+				if($im)
+				{
+					$width=ceil(ImageSX($im)*$escala);
+					$height=ceil(ImageSY($im)*$escala);
+					if($sombra) $margem=($escala/1)*10; else $margem=0;
+					if($maxsize)
+					{
+						if($width>$height)
+						{
+							if($width>$maxsize) $escala=($maxsize/$width);
+						}
+							else
+						{
+							if($height>$maxsize) $escala=($maxsize/$height);
+						}
+						
+						$width=ceil(ImageSX($im)*$escala);
+						$height=ceil(ImageSY($im)*$escala);
+					}
+					
+					if($sombra)
+					{
+						$imscaled=ImageCreateTrueColor($width+$margem,$height+$margem);
+						$fundo_file=MostraImagem('/imagens/sombra.png',"000000",$bgcolor,1,false);
+						$imsombra = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].$fundo_file);
+						imagetruecolortopalette ($imsombra, true, 255);
+						ImageCopyResized($imscaled, $imsombra, 0, 0, 0, 0, ImageSX($imscaled)+1, ImageSY($imscaled)+1, ImageSX($imsombra), ImageSY($imsombra));
+						ImageDestroy($imsombra);
+					}
+						else
+					{
+						$imscaled=ImageCreateTrueColor($width+$margem,$height+$margem);
+					}
+					
+					ImageCopyResized($imscaled, $im, 0, 0, 0, 0, ImageSX($imscaled)-$margem, ImageSY($imscaled)-$margem, ImageSX($im), ImageSY($im));
+					if($fileext=='.png') ImagePng($imscaled,$_SERVER['DOCUMENT_ROOT'].$file);
+					if($fileext=='.jpg') ImageJpeg($imscaled,$_SERVER['DOCUMENT_ROOT'].$file);
+					ImageDestroy($imscaled);
+					ImageDestroy($im);
+				} else return false;
+			}
+		}
+		if($echo) echo '<img src="'.$file.'" border="0" '.$param.'>';
+		return $file;
+	}
+	
+	function ImagemExiste($path,$file)
+	{
+		global $DOCUMENT_ROOT;
+		$ext_validas=array('jpg','png');
+		
+		foreach($ext_validas as $ext)
+		{
+			if (file_exists($_SERVER['DOCUMENT_ROOT'].$path.$file.'.'.$ext))
+			{
+				return $path.$file.'.'.$ext;
+			}
+		}
+	}
+	
+	
+	function menu($texto, $font_color='#FFFFFF', $base_color='#009C4E')
+	{
+			global $DOCUMENT_ROOT;
+			$font=$_SERVER['DOCUMENT_ROOT'].'/ttf/ARIALBD.TTF';
+			$font_size=11;
+			$width=133;
+			$height=24;
+			$margem=7;
+			$linha_height=14;
+			$buffer='';
+			$file='/imagens/arquivo/menu_'.file_encode($texto.$font_color.$base_color).'.png';
+			
+			for($n=0;$n<strlen($texto);$n++)
+			{
+				$buffer.=$texto[$n];
+				$size=ImageTTFBBox($font_size, 0, $font, $buffer);
+				if($size[2] > $width - ($margem * 2))
+				{
+					if(preg_match('/(.*)\s(.*)/is', $buffer, $saida))
+					{
+						$linhas[]=$saida[1];
+						$buffer=$saida[2];
+					}
+						else
+					{
+						$linhas[]=substr($buffer,0,-2).'-';
+						$buffer=substr($buffer,-2);
+					}
+					$height+=15;
+				}
+			}
+			$linhas[]=$buffer;
+			
+			$im = imagecreate($width, $height);
+			$black = imagecolorallocate ($im, 50, 50, 50);
+			$white = imagecolorallocate ($im, 255, 255, 255);
+			
+			$subtom=AllocateColor($im, Subtom($base_color,0.5));
+			$sombra=AllocateColor($im, Subtom($base_color,-0.4));
+			$base_color=AllocateColor($im, $base_color);
+			$font_color=AllocateColor($im, $font_color);
+			
+			imagefill ($im, 1, 1, $base_color);
+			
+			$v_pos=12;
+			foreach($linhas as $linha)
+			{
+				$size=ImageTTFBBox($font_size, 0, $font, $linha);
+				imageTTFText($im, $font_size, 0, ($width - $size[2] -$margem)+1, ($v_pos + 1), $sombra, $font, $linha);
+				imageTTFText($im, $font_size, 0, ($width - $size[2] -$margem), $v_pos, $font_color, $font, $linha);
+				$v_pos+=$linha_height;
+			}
+			
+			imageline ($im, $margem, $height-2, $width - $margem, $height-2, $subtom);
+			
+			ImagePng($im,$_SERVER['DOCUMENT_ROOT'].$file);
+			imagedestroy($im);
+	}
+	
+	function SetColor ($color)
+	{
+		if (!(strpos($color,'#')===false))
+		{
+			$r = hexdec(substr($color,1,2));
+			$g = hexdec(substr($color,3,2));
+			$b = hexdec(substr($color,5,2));
+			
+			return array ($r,$g,$b);
+		}
+	}
+	
+	function AllocateColor($img, $color)
+	{
+		list($r,$g,$b)=SetColor($color);	
+		return ImageColorAllocate($img,$r,$g,$b);
+	}
+	
+	function show_menu($texto, $font_color='#FFFFFF', $base_color='#009C4E', $show=true)
+	{
+		global $DOCUMENT_ROOT;
+		$file='/imagens/arquivo/menu_'.file_encode($texto.$font_color.$base_color).'.png';
+		if(!file_exists($_SERVER['DOCUMENT_ROOT'].$file))
+		{
+			menu($texto, $font_color, $base_color);
+		}
+		
+		if($show) echo '<img src="'.$file.'" border="0" alt="'.$texto.'">';
+		return $file;
+	}
+	
+	function file_encode($texto)
+	{
+		return base64_encode($texto);
+	}
+?>

@@ -4,36 +4,20 @@ global $PORTAL_NAME, $cod_objeto, $_page;
 <html>
 <head>
 <title> <? echo $PORTAL_NAME ;?> -- <?php echo _VERSIONPROG; ?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
 <script language="JavaScript1.2" src="/html/javascript/menu/js_menutab_data.js" type="text/javascript"></script>
 <script language="JavaScript1.2" src="/html/javascript/system.js" type="text/javascript"></script>
 <?php
 	$NewBrowser = DetectaBrowser();	
 	echo "<link href=\"/html/css/publicare_".$NewBrowser[0].".css\" rel=\"stylesheet\" type=\"text/css\">\n";
 	
-	$versao_php = phpversion();
-	
-	if (strpos($versao_php, '-')) $versao_php = substr($versao_php, 0, strpos($versao_php, '-'));
-	
 	$URLACTION = $_GET;
-    $URLCOMMON = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, "UTF-8");
-	
-	if (strnatcmp($versao_php, '5.3.3') < 0)
-	{
-		$tmpPosURL = strrpos($URLCOMMON,"/");
-		$URLCOMMON = substr($URLCOMMON,0,$tmpPosURL);
-	}
-	else
-	{
-		$tmpPosURL = strrpos($URLCOMMON,"/") - 10;
-		$URLCOMMON = substr($URLCOMMON,10,$tmpPosURL);
-	}
-	
-	$tmpPosURL = strrpos($URLCOMMON,"new_");
-	
+    $URLCOMMON = $_SERVER['PHP_SELF'];
+    $tmpPosURL = strrpos($URLCOMMON,"/") - 10;
+    $URLCOMMON = substr($URLCOMMON,10,$tmpPosURL);
+    $tmpPosURL = strrpos($URLCOMMON,"new_");
     if (!$tmpPosURL===false)
-        $URLCOMMON = "criando_arquivo";  	
+    	$URLCOMMON = "criando_arquivo";
+    	
     	
    // Determinando variaveis dinamicas utilizadas pelo JavaScript
     echo "<script language=\"JavaScript1.2\" type=\"text/javascript\">\n";
@@ -109,7 +93,7 @@ global $PORTAL_NAME, $cod_objeto, $_page;
 	  echo "menu_a = \"Solicita&ccedil;&atilde;o de Publica&ccedil;&atilde;o\";\n";
 	 break;
 	case "/do/ajuda":
-	  echo "menu_a = \"Ajuda do Portal\";\n";
+	  echo "menu_a = \"Ajuda do Portal C&T\";\n";
 	 break;
 	default:
 	  echo "menu_a = \""._VERSIONPROG."\";\n";

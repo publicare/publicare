@@ -6,14 +6,14 @@ global $PORTAL_EMAIL, $_DBSERVERTYPE, $_DBHOST, $_DB;
 	<TR>
 		<TD colspan="2">
 			<img border=0 src="/html/imagens/portalimages/peca3.gif" ALT="" align="left">
-			<font class="pblTituloBox">InformaÃ§Ãµes do Publicare</font><br>
+			<font class="pblTituloBox">Informações do Publicare</font><br>
 		</td>
 	</TR>
 	<tr>
 		<td width="150" class="pblFormTitle" valign="top" align="left">Nome do Site:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
-		 echo "<b>"._PORTAL_NAME."</b> [<i>"._LANGUAGE."</i>]";
+		 echo "<b>PORTAL MCT</b> [<i>"._LANGUAGE."</i>]";
 
 		 ?>
 		 </td>
@@ -34,7 +34,7 @@ global $PORTAL_EMAIL, $_DBSERVERTYPE, $_DBHOST, $_DB;
 		</td>
 	</tr>	
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">DiretÃ³rio Principal:</td>
+		<td width="" class="pblFormTitle" valign="top" align="left">Diretório Principal:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
 		echo $_SERVER['DOCUMENT_ROOT'];
@@ -42,7 +42,7 @@ global $PORTAL_EMAIL, $_DBSERVERTYPE, $_DBHOST, $_DB;
 		</td>
 	</tr>
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">DiretÃ³rio de Blob:</td>
+		<td width="" class="pblFormTitle" valign="top" align="left">Diretório de Blob:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
 		echo _BLOBDIR;
@@ -50,7 +50,7 @@ global $PORTAL_EMAIL, $_DBSERVERTYPE, $_DBHOST, $_DB;
 		</td>
 	</tr>	
 	<tr>
-		<td width="" class="pblFormTitle" valign="top" align="left">DiretÃ³rio de Thumb:</td>
+		<td width="" class="pblFormTitle" valign="top" align="left">Diretório de Thumb:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
 			echo _THUMBDIR;

@@ -1,8 +1,7 @@
 <?php
 global $_page, $action;
 
-include_once ($_SERVER['DOCUMENT_ROOT']."/ckeditor/ckeditor.php");
-include_once ($_SERVER['DOCUMENT_ROOT']."/ckfinder/ckfinder.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/FCKeditor/fckeditor.php");
 		
 // Variaveis de definicao para estrutura de formulario
 $DatadeHoje = date("j/n/Y"); 
@@ -262,32 +261,15 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 					echo "<p class=\"pblTextoLabelForm";
 					
 					// Verifica se a propriedade e obrigatoria & Escreve seu rotulo 
+
 					if ($prop['obrigatorio'])
 					{
 						echo " pblObrigatorio\" ".$DisplayObjeto.">".$prop['rotulo']." *";
-						
-						/**
-						 *  MUDEI - foi adicionado o ELSE que verifica se existe propriedades do tipo BLOB (cod_tipodado = 1)
-						 *  Se a mesma estiver vazia ela é adicionada ao array de propriedades obrigatórias
-						 *  Quando estiver editando o bjeto e já existir um arquivo anexado à propriedade, esta não
-						 *  será adicionada ao array de propriedades obrigatórias - RODRIGO - 30/04/2009 
-						 */
-						
 						if (!($edit && strtolower($prop['cod_tipodado']) == 1))
 						{
 							$chrtmpProp = "document.getElementById('property:".$prop['nome']."')";
 							array_push($arrIDPropriedade, $chrtmpProp);
 							array_push($arrNamePropriedade, $prop['rotulo']);
-						}
-						else 
-						{
-							//VERIFICA SE O CAMPO BLOB JÁ POSSUI UM ARQUIVO ANEXADO (CASO DE EDIÇÃO DO OBJETO)
-							if(!$_page->_objeto->ValorParaEdicao($_page, $prop['nome']))
-							{
-								$chrtmpProp = "document.getElementById('property:".$prop['nome']."')";
-								array_push($arrIDPropriedade, $chrtmpProp);
-								array_push($arrNamePropriedade, $prop['rotulo']);
-							}
 						}
 					}
 					else
@@ -311,25 +293,14 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 						case 8:
 							if ($prop['seguranca'] >= $_SESSION['usuario']['perfil'])
 							{
-								$f = new CKEditor();
-								$nomeCk = 'property:'. $prop['nome'];
-								$valorCk = ($edit)?$_page->_objeto->ValorParaEdicao($_page, $prop['nome']):"";
-								$f->returnOutput = true;
-								$f->basePath = '/ckeditor/';
-								$f->config['width'] = 520;
-								$f->config['height'] = 350;
-								CKFinder::SetupCKEditor($f, '/ckfinder/');
-								//$f->textareaAttributes = array("cols" => 60, "rows" => 20);
-								$campo = $f->editor($nomeCk, $valorCk);
-								echo $campo;
-								//$f = new FCKeditor('property:'. $prop['nome']);
-								//if ($edit)
-								//$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
-								//$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
-								//$f->Create();
+								$f = new FCKeditor('property:'. $prop['nome']);
+								if ($edit)
+								$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
+								$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
+								$f->Create();
 							}
 							break;
-						case 6: // CAMPO REFERENCIA A UM OBJETO (RefObj)
+						case 6: // Campo Referencia a um objeto (RefObj)
 							if ($edit)
 								$value=$_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
 							else
@@ -343,23 +314,19 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 							echo $_page->_administracao->DropDownListaDeObjetos($_page, $prop['cod_referencia_classe'],$prop['campo_ref'],$value,55);
 							echo '</select>';
 							break;
-						case 1: // CAMPO BLOB
+						case 1: // Campo Blob
 							if ($edit)
 							{
 								if ($_page->_objeto->ValorParaEdicao($_page, $prop['nome']))
 									echo $_page->_objeto->ValorParaEdicao($_page, $prop['nome'])." - ".$_page->_objeto->TamanhoBlob($_page, $prop['nome'])." bytes<BR>";
 							}
-							/**
-							 * MUDEI - Foi adicionado o id nos campos do tipo FILE, por estes campos não conter ID é que a validação de campos obrigatório
-							 * para eles não funcionava - RODRIGO - 30/04/2009 
-							 */
-							echo '<input class="pblInputForm" type="file" id="property:'.$prop['nome'].'" name="property:'.$prop['nome'].'" value="">';
+							echo '<input class="pblInputForm" type="file" name="property:'.$prop['nome'].'" value="">';
 							if (($edit) && ($_page->_objeto->ValorParaEdicao($_page, $prop['nome'])!=''))
 							{
 								echo '<input type="checkbox" id="property:'.$prop['nome'].'" name="property:'.$prop['nome'].'^delete" value="1">&nbsp;Apagar';
 							}
 							break;
-						case 2: // CAMPO BOOLEANO
+						case 2: //Campo Booleano
 							echo '<input type="radio" id="property:'.$prop['nome'].'" name="property:'.$prop['nome'].'" ';
 							if ($edit)
 							{
@@ -381,7 +348,7 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 							}
 							echo ' value="0">'.$prop['rot2booleano'];
 							break;
-						case 3: // CAMPO DATA
+						case 3: // Campo data
 							if ($prop['valorpadrao'] == "hoje") {
 								$ValorData = $DatadeHoje;}
 							elseif ($edit) {
@@ -394,17 +361,17 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 							echo '<input class="pblInputForm" type="text" size='.$inputsize.' id="property:'.$prop['nome'].'" name="property:'.$prop['nome'].'" value="'.$ValorData.'"';
 							echo ' '.$JavaScript.'">';
 							break;
-						case 4: // CAMPO NUMERO
+						case 4: // Campo numero
 							$JavaScript = "";
 							$inputsize = 15;
 							$incluir=true;
 							break;
-						case 5: // CAMPO NUMERO PRECISO
+						case 5: // Campo numero preciso
 							$JavaScript = "";
 							$inputsize = 15;
 							$incluir=true;
 							break;
-						case 9: // Script executavel [EXCLUIDO! AGORA ELE LE NA PASTA /html/execscript/]
+						case 9: // Script executavel [EXCLU�DO! AGORA ELE L� NA PASTA /html/execscript/]
 							echo "<input type=\"texto\" id=\"property:".$prop['nome']."\" name=\"property:\"".$prop['nome']."\" value=\"".$prop['valorpadrao']."\">";
 							break;
 	
@@ -431,17 +398,6 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 		
 	?>
 	</P>
-	<p>											
-			URL Amig&aacute;vel &nbsp;<a href='#' onclick='return false;' onmouseover='document.getElementById("help_amigavel").style.display="";' onmouseout='document.getElementById("help_amigavel").style.display="none";'><b>&lt;?&gt;</b></a> <span id='help_amigavel' style='position:absolute; width:200px; background:#ffffff; padding-left:2px; padding-right:2px; padding-top:2px; padding-bottom:2px; color:#000000; font-weight:normal; border: 1px solid #000000; display:none;'>URL amig&aacute;vel do objeto. Caso exista uma url igual, ser&aacute; adicionado um numero no final. ex: pagina, pagina1, pagina2</span><br>
-			<input class="pblInputForm" type="text" size=50 name="url_amigavel" value='<? if ($edit) 
-														echo $_page->_objeto->ValorParaEdicao($_page, "url_amigavel");
-													  else
-													  	echo isset($url_amigavel)?$url_amigavel:"";?>'>
-			</p>
-	<p>
-	TAGS deste Objeto<br>
-	<textarea class="pblInputForm" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" name="tags" cols=45 rows=4><? if ($edit) echo $_page->_objeto->ValorParaEdicao($_page, "tags") ?></textarea>
-	</p>
 	<input type="hidden" value="<?=isset($strPropriedadeSegura)?$strPropriedadeSegura:"";?>" name="propriedadesegura" readonly>
 	</td>
 	</tr>
@@ -468,27 +424,26 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 			return false;
 		}
 		
-		function validateForm(theForm)
-		{
-			if (!validRequired(theForm.titulo,"Titulo")) { MostraBotaoGravar(); return false;}
+	function validateForm(theForm)
+	{
+	<?php
+	$tmpContador = 0;
+	if (isset($arrIDPropriedade)){
+		foreach ($arrIDPropriedade as $item)
+		{					
+			echo "if (!JSVerificaCampoObrigatorio($arrIDPropriedade[$tmpContador],\"$arrNamePropriedade[$tmpContador]\")) return false;".chr(10);
+			$tmpContador++;
+		}
+	}
+	?>
+	if (!validRequired(theForm.titulo,"Titulo")) { MostraBotaoGravar(); return false;}
 		 	if (!validDateTime(theForm.dia_publicacao,"Data de Publica&ccedil;&atilde;o",true,true)) { MostraBotaoGravar(); return false;}
 			if (!validDateTime(theForm.dia_validade,"Data de Validade",true,true)) { MostraBotaoGravar();return false; }
-			
-			<?php
-			$tmpContador = 0;
-			
-			if (isset($arrIDPropriedade)){
-				foreach ($arrIDPropriedade as $item)
-				{					
-					echo "if (!JSVerificaCampoObrigatorio($arrIDPropriedade[$tmpContador],\"$arrNamePropriedade[$tmpContador]\")) return false;".chr(10);
-					$tmpContador++;
-				}
-			}
-			
-			echo isset($validation)?$validation:"";?>
-			
-			return true;
-		}
+		<? echo isset($validation)?$validation:"";?>
+		return true;
+	}
+	
+		
 
 	</script>
 <?php
@@ -501,3 +456,4 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 
 ?>
 	</form>
+	

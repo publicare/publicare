@@ -1,25 +1,27 @@
-<?php
+<?
 global $_page;
 
-$cod_pele = isset($_POST['cod_pele'])?$_POST['cod_pele']:(isset($_GET['cod_pele'])?$_GET['cod_pele']:0);
+	if ($_POST['cod_pele'])
+	{
+	 	$cod_pele=$_POST['cod_pele'];
+	}
+	elseif ($_GET['cod_pele'])
+	{
+		$cod_pele=$_GET['cod_pele'];
+	}
 
-$row = array("nome"=>"",
-        "prefixo"=>"",
-        "publica"=>"");
+	if ($cod_pele)
+	{
+		$sql = "select nome,prefixo,publica from pele where cod_pele=".$cod_pele;
+		$rs = $_page->_db->ExecSQL($sql);
+		$row = $rs->fields;
+	}
 
-
-if ($cod_pele > 0)
-{
-    $sql = "select nome,prefixo,publica from pele where cod_pele=".$cod_pele;
-    $rs = $_page->_db->ExecSQL($sql);
-    $row = $rs->fields;
-}
-
-if (isset($_GET['msg']))
-{
-        $row['nome']=$_GET['nome'];
-        $row['prefixo']=$_GET['prefixo'];
-}
+	if ($_GET['msg'])
+	{
+		$row['nome']=$_GET['nome'];
+		$row['prefixo']=$_GET['prefixo'];
+	}
 ?>
 
 
@@ -56,7 +58,7 @@ if (isset($_GET['msg']))
 	</tr>
 	<tr>
 		<td colspan="2">
-			<form style="padding:0; margin:0;" action="/index.php/do/peles_post.php/<?php echo $_page->_objeto->Valor($_page, "cod_objeto")?>.html" method="post">
+			<form style="padding:0; margin:0;" action="/index.php/do/peles_post.php/<? echo $_page->_objeto->Valor($_page, "cod_objeto")?>.html" method="post">
 				<input type="hidden" name="cod_pele" value="<? echo $cod_pele?>">
 				<table border="0" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
@@ -64,7 +66,7 @@ if (isset($_GET['msg']))
 						Nome
 					</td>
 					<td class="pblTextoForm" valign="top">
-						<input class="pblInputForm" type="Text" name="nome" value="<?php echo $row['nome']?>">
+						<input class="pblInputForm" type="Text" name="nome" value="<? echo $row['nome']?>">
 					</td>
 				</tr>
 				<tr>
@@ -72,7 +74,7 @@ if (isset($_GET['msg']))
 						Prefixo
 					</td>
 					<td class="pblTextoForm" valign="top">
-						<input class="pblInputForm" type="Text" name="prefixo" value="<?php echo $row['prefixo']?>">
+						<input class="pblInputForm" type="Text" name="prefixo" value="<? echo $row['prefixo']?>">
 					</td>
 				</tr>
 				<tr>
@@ -80,10 +82,11 @@ if (isset($_GET['msg']))
 					<input type="checkbox" name="publica" id="publica" <?=($row['publica'])?'checked':''?>><label for="publica"> Tornar P&uacute;blica</label>
 					</td>
 				</tr>
-                <?php
+                <?
                 	echo "<tr><td colspan='2' height='4'></td></tr>";
 					echo "<tr><td colspan='2' class='pblInputForm pblTextoLabelForm'>";
-					if (isset($_GET['erro'])) echo "<b>Erro: ".$_GET['erro']."</b>";
+					if ($_GET['erro'])
+						echo "<b>Erro: ".$_GET['erro']."</b>";
 					echo "</td></tr>";
 					echo "<tr><td colspan='2' height='4'></td></tr>";
 				?>
