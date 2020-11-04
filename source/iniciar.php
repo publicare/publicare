@@ -4,12 +4,18 @@ session_start();
 // Definindo timezone
 date_default_timezone_set("America/Sao_Paulo");
 
+//echo "<pre>";
+//print_r($_SERVER);
+
 // Pegando parametros passados por url
 if (strpos($_SERVER['SERVER_SOFTWARE'],"Apache")===false)
 {
+    if (empty($_SERVER['PATH_INFO'])) header("Location: "._URL."/index.php/content/view/"._ROOT.".html");
 	$script = str_replace ("/","\\\\",$_SERVER['PATH_INFO']);
 	$docroot=substr($_SERVER['PATH_TRANSLATED'],0,strpos($_SERVER['PATH_TRANSLATED'],$script));
-	$DOCUMENT_ROOT = $docroot;
+//    echo $docroot;
+//    exit();
+//	$_SERVER["DOCUMENT_ROOT"] = $docroot;
 }
 if (preg_match('/index\.php(\/.+)\/(\d+)\.html.*$/', $_SERVER['REQUEST_URI'], $matches))
 {
@@ -37,7 +43,7 @@ if (!isset($cod_objeto)) {
 }
 
 // inclusao das classes publicare
-require ('Zend/Search/Lucene.php');
+//require ('Zend/Search/Lucene.php');
 require ("adodb/adodb-exceptions.inc.php");
 require ("adodb/adodb.inc.php");
 require ("dblayer_adodb.class.php");
@@ -53,9 +59,14 @@ require ("funcoes.php");
 // inclusao da classe jpcache se for necessario
 //if (JPCACHE) include ('jpcache2.pinc');
 //require ("imagem_lib2.pinc");
-if ($cod_objeto != _ROOT && ATIVA_CACHE==true && !isset($_SESSION['usuario']["cod_usuario"]) && !isset($_SESSION['sessUsuarioPBQP']))
-	require ("quickcache.php");
+//if ($cod_objeto != _ROOT && ATIVA_CACHE==true && !isset($_SESSION['usuario']["cod_usuario"]) && !isset($_SESSION['sessUsuarioPBQP']))
+//	require ("quickcache.php");
 
 $_db = new DBLayer();
+//echo "<pre>";
+//print_r($_db);
+
+//echo $cod_objeto;
+
 $_page = new Pagina($_db, $cod_objeto);
 ?>

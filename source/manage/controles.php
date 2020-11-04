@@ -250,6 +250,14 @@ function validDateTime(formField,fieldLabel,required,sodata) {
 		case "select-one":
 			if (ObjVer.value == 0){
 				alert('Preencha o campo "'+ObjNome+'"');
+				MostraBotaoGravar(); 
+				return false;}
+			else
+				return true;
+			break;
+		case "file":
+			if (ObjVer.value == 0){
+				alert('Preencha o campo "'+ObjNome+'"');
 				MostraBotaoGravar();
 				return false;}
 			else

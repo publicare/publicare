@@ -61,39 +61,112 @@ global $_page;
 				$DesenhaView = FALSE;
 		}		
 		
-		// VERIFICACAO DE STATUS DE SCRIPT DE EXIBIï¿½ï¿½O
+		// VERIFICACAO DE STATUS DE SCRIPT DE EXIBICAO
 		if ($DesenhaView) {
 			$DirectorioPathPadrao = $_SERVER['DOCUMENT_ROOT']."/html/template";
 			$DirectorioPathwPele = $_SERVER['DOCUMENT_ROOT']."/html/skin/".$_page->_objeto->metadados['prefixopele'];
 			$DirectorioViewPele = "/html/skin/".$_page->_objeto->metadados['prefixopele'];
 			$DirectorioViewPadrao = "/html/template";
-
+			
 			echo "<select class=\"pblInputForm\" name=\"script_exibir\">";
 			echo "<option value=\"0\">sele&ccedil;&atilde;o autom&aacute;tica</option>";
+			
+			/**
+			 * MUDEI - AS VIEWS FORAM ORDENADAS EM ORDEM ALFABETICA 
+			 * AS VIEWS(SCRIPT DE EXIBIÇÃO) FORAM COLOCADAS DENTRO DE UM ARRAY, O ARRAY FOI ORDENADO E DEPOIS
+			 * FOI FEITO A IMPRESSÃO DAS VIEWS DENTRO DAS OPTIONS DO SELECT - RODRIGO 04/05/2009
+			 */
+			//LISTA VIEWS DA PELE
 			if ($handle = opendir($DirectorioPathwPele)) 
 			{
-				while (false !== ($ArquivoNome = readdir($handle))) {
-				$tmpScriptDir = "$DirectorioViewPele/$ArquivoNome";
-				$RGX_VIEWNO = preg_match("/view_protegido.php/",$ArquivoNome);
-				if ((substr($ArquivoNome,0,4) == "view") && (!$RGX_VIEWNO)){
-				if ($edit && $tmpScriptDir == $tmpScriptAtual)
-				  echo "<option value=\"$DirectorioViewPele/$ArquivoNome\" selected> (".$_page->_objeto->metadados['prefixopele'].") ".substr($ArquivoNome,0,-4)."</option>\n";
-				else 
-				  echo "<option value=\"$DirectorioViewPele/$ArquivoNome\"> (".$_page->_objeto->metadados['prefixopele'].") ".substr($ArquivoNome,0,-4)."</option>\n";
-				}}
+				//inicializa variável
+				$arrViews = array();
+				while (false !== ($ArquivoNome = readdir($handle))) 
+				{
+					//$tmpScriptDir = "$DirectorioViewPele/$ArquivoNome";
+					$RGX_VIEWNO = preg_match("/view_protegido.php/",$ArquivoNome);
+					
+					/* CODIGO ANTIGO
+					if ((substr($ArquivoNome,0,4) == "view") && (!$RGX_VIEWNO))
+					{
+						if ($edit && $tmpScriptDir == $tmpScriptAtual)
+						  echo "<option value=\"$DirectorioViewPele/$ArquivoNome\" selected> (".$_page->_objeto->metadados['prefixopele'].") ".substr($ArquivoNome,0,-4)."</option>\n";
+						else 
+						  echo "<option value=\"$DirectorioViewPele/$ArquivoNome\"> (".$_page->_objeto->metadados['prefixopele'].") ".substr($ArquivoNome,0,-4)."</option>\n";
+					}*/
+					
+					//COLOCA AS VIEWS DENTRO DO ARRAY
+					if ((substr($ArquivoNome,0,4) == "view") && (!$RGX_VIEWNO))
+					{
+						array_push($arrViews, $ArquivoNome);
+					}
+					
+				}
+				
+				//ORDENA O ARRAY E IMPRIME OS OPTIONS DAS VIEWS
+				sort($arrViews);
+				foreach($arrViews as $view) 
+				{
+					$tmpScriptDir = "$DirectorioViewPadrao/$view";
+					
+				    if ($edit &&  $tmpScriptDir== $tmpScriptAtual)
+				    {
+				    	echo "<option value=\"$DirectorioViewPele/$view\" selected> (".$_page->_objeto->metadados['prefixopele'].") ".substr($view,0,-4)."</option>\n";
+				    }
+					else 
+					{
+						echo "<option value=\"$DirectorioViewPele/$view\"> (".$_page->_objeto->metadados['prefixopele'].") ".substr($view,0,-4)."</option>\n";
+					}
+				}
 				closedir($handle);
 			}
+			
+			/**
+			 * MUDEI - AS VIEWS FORAM ORDENADAS EM ORDEM ALFABETICA 
+			 * AS VIEWS(SCRIPT DE EXIBIÇÃO) FORAM COLOCADAS DENTRO DE UM ARRAY, O ARRAY FOI ORDENADO E DEPOIS
+			 * FOI FEITO A IMPRESSÃO DAS VIEWS DENTRO DAS OPTIONS DO SELECT - RODRIGO 04/05/2009
+			 */
+			//LISTA VIEWS DA PASTA TEMPLATE
 			if ($handle = opendir($DirectorioPathPadrao)) 
-			{
-				while (false !== ($ArquivoNome = readdir($handle))) {
-				$tmpScriptDir = "$DirectorioViewPadrao/$ArquivoNome";
-				$RGX_VIEWNO = preg_match("/view_protegido.php/",$ArquivoNome);
-				if ((substr($ArquivoNome,0,4) == "view") && (!$RGX_VIEWNO)){					
-				if ($edit && $tmpScriptDir == $tmpScriptAtual)
-				  echo "<option value=\"$DirectorioViewPadrao/$ArquivoNome\" selected>(padr&atilde;o) ".substr($ArquivoNome,0,-4)."</option>\n";
-				else 
-				  echo "<option value=\"$DirectorioViewPadrao/$ArquivoNome\">(padr&atilde;o) ".substr($ArquivoNome,0,-4)."</option>\n";
-				}}
+			{	
+				//inicializa variável
+				$arrViews = array();
+				while (false !== ($ArquivoNome = readdir($handle))) 
+				{
+					//$tmpScriptDir = "$DirectorioViewPadrao/$ArquivoNome";
+					$RGX_VIEWNO = preg_match("/view_protegido.php/",$ArquivoNome);
+					
+					/* CODIGO ANTIGO
+					if ((substr($ArquivoNome,0,4) == "view") && (!$RGX_VIEWNO))
+					{					
+						if ($edit && $tmpScriptDir == $tmpScriptAtual)
+						  echo "<option value=\"$DirectorioViewPadrao/$ArquivoNome\" selected>(padr&atilde;o) ".substr($ArquivoNome,0,-4)."</option>\n";
+						else 
+						  echo "<option value=\"$DirectorioViewPadrao/$ArquivoNome\">(padr&atilde;o) ".substr($ArquivoNome,0,-4)."</option>\n";
+					}*/
+					
+					//COLOCA AS VIEWS DENTRO DO ARRAY
+					if ((substr($ArquivoNome,0,4) == "view") && (!$RGX_VIEWNO))
+					{
+						array_push($arrViews, $ArquivoNome);
+					}
+				}
+				//ORDENA O ARRAY E IMPRIME OS OPTIONS DAS VIEWS
+				sort($arrViews);
+				foreach($arrViews as $view) 
+				{
+					$tmpScriptDir = "$DirectorioViewPadrao/$view";
+					
+				    if ($edit &&  $tmpScriptDir== $tmpScriptAtual)
+				    {
+					  	echo "<option value=\"$DirectorioViewPadrao/$view\" selected>(padr&atilde;o) ".substr($view,0,-4)."</option>\n";
+				    }
+					else 
+					{
+					  	echo "<option value=\"$DirectorioViewPadrao/$view\">(padr&atilde;o) ".substr($view,0,-4)."</option>\n";
+					}
+				}
+				
 				closedir($handle);
 			}
 			echo "</select>";

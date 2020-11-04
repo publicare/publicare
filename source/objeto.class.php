@@ -5,10 +5,18 @@
 		public $quantidade=0;
 		public $CaminhoObjeto;
 		public $metadados;
+        public $ArrayMEtadados;
+
+        function Objeto(&$_page, $cod_objeto=-1)
+        {
+            $this->__construct($_page, $cod_objeto);
+        }
 
 		function __construct(&$_page, $cod_objeto=-1)
 		{
+//            echo "AQUI";
 			$this->ArrayMetadados=$_page->_db->metadados;
+//            var_dump($_page);
 			if ($cod_objeto!=-1)
 			{
 				if (is_numeric($cod_objeto))

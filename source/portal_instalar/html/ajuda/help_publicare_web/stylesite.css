@@ -1,0 +1,187 @@
+/**
+	* @name stylesite.css
+	* @desc CSS StyleSheet
+	* @version v1.1 - Brasília, 17 de Outubro de 2006
+	* @author Helca Gonzaga
+	* @category CSS
+	* @package AjudaPublicare
+	*/
+
+
+/* ================== BODY ================ */
+body{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px; 
+	color: #000000;
+	/*padding: 10px;*/
+	margin: 10px;
+}
+
+		
+/* Formatação do texto referente as tags abaixo.
+   Mesma formatação do body com excessão do 'margin', para que não se repita o recuo na linha*/
+   
+p,div,table,blockquote{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px; 
+	color: #000000;
+	text-decoration: none;	
+}
+
+p.classe{  /* css para recuar o bloco na margem esquerda*/
+	padding-left: 20px;;
+}
+
+li{ /* espaçamento entre os marcadores */
+	padding-bottom:4px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.table /* tabelas */
+{
+	font-size: 9pt;
+	font-family: 'Verdana';
+	color: #000000;
+	text-decoration: none;
+	background-color: #EBEBEB;		
+}
+
+
+
+a{ 
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: blue;
+	/*text-decoration: none;*/
+}
+
+a:hover{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #666666;
+	font-size: 12px; 
+}
+		
+/* ================================= PARA STYLES ============================================ */
+
+.barraTopico /* Barra colorida referente aos tópicos da página*/
+{
+	background: #9fbed0;
+	margin: 0px 0px 20px 0px;
+	font-size: 16pt;
+	font-family: 'MS Sans Serif';
+	color: #ffffff;
+}
+
+.rodape /* Barra colorida refente ao rodapé das páginas */
+{
+	text-align: center;
+	background: #e4e4e4;
+ 	margin: 20px 0px 0px 0px;
+	font-family: "MS Sans Serif";
+	color: #808080;
+	font-size: 12px;
+}
+
+span.realce /* Utilizada para realçar o texto */
+{
+	background:#AAC6FF;
+	color: black;
+}
+
+/* ========================================================================================== */
+
+
+
+/* ======= Efeito em links que usam a função JSMostraeOculta ================================ */
+
+a.lmostraOculta{ 
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a.lmostraOculta:hover{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #0000FF;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+/* ========================================================================================== */
+
+
+
+/* ======= Dica de contexto com Css - ToolTip =============================================== */
+a.dcontexto{
+	position:relative; 
+	font:12px Verdana, Arial, Helvetica, sans-serif; 
+	padding:0;
+	color:#006600;
+	text-decoration:underline;
+	border-bottom:none;
+	cursor:help; 
+	z-index:24;
+}
+a.dcontexto:hover{
+	background:transparent;
+	z-index:25;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #FF0000;
+	text-decoration: none;
+}
+a.dcontexto span{
+	display: none;
+	text-decoration: none;
+}
+a.dcontexto:hover span{
+	display:block;
+	position:absolute;
+	width:230px;
+	top:1.2em;
+	text-align:left;
+	left:0;
+	font: 11px Verdana, Arial, Helvetica, sans-serif;
+	padding:5px 10px;
+	border:1px solid #999;
+	background:#FFFFCC;
+	color:#000;
+	text-decoration: none;
+}
+
+/* ========= Dica de contexto com Css - ToolTip e script============================================= 
+a.dcontexto{
+	position:relative; 
+	font:12px Verdana, Arial, Helvetica, sans-serif; 
+	padding:0;
+	color:#006600;
+	text-decoration:none;
+	border-bottom:none;
+	cursor:help; 
+	z-index:24;
+}
+
+a.dcontexto span{
+	display: none;
+	text-decoration: none;
+}
+
+a.dcontexto2 span {
+	display:block;
+	position:absolute;
+	width:230px;
+	top:2em;
+	text-align:left;
+	left:0;
+	font: 11px Verdana, Arial, Helvetica, sans-serif;
+	padding:5px 10px;
+	border:1px solid #999;
+	background:#FFFFCC;
+	color:#000;
+	text-decoration: none;
+}
+*/
+
+/* =========================================================================================== */

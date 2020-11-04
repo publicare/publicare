@@ -267,7 +267,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	 */
 	function EnviarEmail($remetente, $destinatario, $subject, $texConteudo, $arrArquivoAnexado=NULL)
 	{
-	  include('email.class.php');
+	  include_once('email.class.php');
 	  
 //	  echo "fnc nova!";
 //	  exit();

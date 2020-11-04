@@ -6068,4 +6068,1829 @@ class Image {
 	    else {
 		$bbox = array($bbox[0],$bbox[3],$bbox[4],$bbox[3],
 			      $bbox[4],$bbox[7],$bbox[0],$bbox[7]);
-	  
+	    }
+	}
+	elseif(  $aAngle < 0 ) {
+	    if( $aAngle <= -270 ) { // <= -3
+		$bbox = array($bbox[6],$bbox[1],$bbox[2],$bbox[1],
+			      $bbox[2],$bbox[5],$bbox[6],$bbox[5]);
+	    }
+	    elseif( $aAngle <= -180 ) { // <= -2
+		$bbox = array($bbox[0],$bbox[3],$bbox[4],$bbox[3],
+			      $bbox[4],$bbox[7],$bbox[0],$bbox[7]);
+	    }
+	    elseif( $aAngle <= -90 ) { // <= -1
+		$bbox = array($bbox[2],$bbox[5],$bbox[6],$bbox[5],
+			      $bbox[6],$bbox[1],$bbox[2],$bbox[1]);
+	    }
+	    else {
+		$bbox = array($bbox[0],$bbox[3],$bbox[4],$bbox[3],
+			      $bbox[4],$bbox[7],$bbox[0],$bbox[7]);
+	    }
+	}	
+	return $bbox;
+    }
+
+    function GetBBoxHeight($aTxt,$aAngle=0) {
+	$box = $this->GetBBoxTTF($aTxt,$aAngle);
+	return $box[1]-$box[7]+1;
+    }
+
+    function GetBBoxWidth($aTxt,$aAngle=0) {
+	$box = $this->GetBBoxTTF($aTxt,$aAngle);
+	return $box[2]-$box[0]+1;	
+    }
+
+    function _StrokeTTF($x,$y,$txt,$dir=0,$paragraph_align="left",&$aBoundingBox,$debug=false) {
+
+	// Setupo default inter line margin for paragraphs to
+	// 25% of the font height.
+	$ConstLineSpacing = 0.25 ;
+
+	// Remember the anchor point before adjustment
+	if( $debug ) {
+	    $ox=$x;
+	    $oy=$y;
+	}
+
+	if( !ereg("\n",$txt) || ($dir>0 && ereg("\n",$txt)) ) {
+	    // Format a single line
+
+	    $txt = $this->AddTxtCR($txt);
+
+	    $bbox=$this->GetBBoxTTF($txt,$dir);
+	    
+	    // Align x,y ot lower left corner of bbox
+	    $x -= $bbox[0];
+	    $y -= $bbox[1];
+
+	    // Note to self: "topanchor" is deprecated after we changed the
+	    // bopunding box stuff. 
+	    if( $this->text_halign=="right" || $this->text_halign=="topanchor" ) 
+		$x -= $bbox[2]-$bbox[0];
+	    elseif( $this->text_halign=="center" ) $x -= ($bbox[2]-$bbox[0])/2; 
+	    
+	    if( $this->text_valign=="top" ) $y += abs($bbox[5])+$bbox[1];
+	    elseif( $this->text_valign=="center" ) $y -= ($bbox[5]-$bbox[1])/2; 
+
+	    ImageTTFText ($this->img, $this->font_size, $dir, $x, $y, 
+			  $this->current_color,$this->font_file,$txt); 
+
+	    // Calculate and return the co-ordinates for the bounding box
+	    $box=@ImageTTFBBox($this->font_size,$dir,$this->font_file,$txt);
+	    $p1 = array();
+
+
+	    for($i=0; $i < 4; ++$i) {
+		$p1[] = round($box[$i*2]+$x);
+		$p1[] = round($box[$i*2+1]+$y);
+	    }
+	    $aBoundingBox = $p1;
+
+	    // Debugging code to highlight the bonding box and bounding rectangle
+	    // For text at 0 degrees the bounding box and bounding rectangle are the
+	    // same
+            if( $debug ) {
+		// Draw the bounding rectangle and the bounding box
+		$box=@ImageTTFBBox($this->font_size,$dir,$this->font_file,$txt);
+		$p = array();
+		$p1 = array();
+		for($i=0; $i < 4; ++$i) {
+		    $p[] = $bbox[$i*2]+$x;
+		    $p[] = $bbox[$i*2+1]+$y;
+		    $p1[] = $box[$i*2]+$x;
+		    $p1[] = $box[$i*2+1]+$y;
+		}
+
+		// Draw bounding box
+		$this->PushColor('green');
+		$this->Polygon($p1,true);
+		$this->PopColor();
+		
+		// Draw bounding rectangle
+		$this->PushColor('darkgreen');
+		$this->Polygon($p,true);
+		$this->PopColor();
+		
+		// Draw a cross at the anchor point
+		$this->PushColor('red');
+		$this->Line($ox-15,$oy,$ox+15,$oy);
+		$this->Line($ox,$oy-15,$ox,$oy+15);
+		$this->PopColor();
+            }
+	}
+	else {
+	    // Format a text paragraph
+	    $fh=$this->GetFontHeight();
+
+	    // Line margin is 25% of font height
+	    $linemargin=round($fh*$ConstLineSpacing);
+	    $fh += $linemargin;
+	    $w=$this->GetTextWidth($txt);
+
+	    $y -= $linemargin/2;
+	    $tmp = split("\n",$txt);
+	    $nl = count($tmp);
+	    $h = $nl * $fh;
+
+	    if( $this->text_halign=="right") 				
+		$x -= $dir==0 ? $w : $h;
+	    elseif( $this->text_halign=="center" ) {
+		$x -= $dir==0 ? $w/2 : $h/2;
+	    }
+	    
+	    if( $this->text_valign=="top" )
+		$y +=	$dir==0 ? $h : $w;
+	    elseif( $this->text_valign=="center" ) 				
+		$y +=	$dir==0 ? $h/2 : $w/2;
+
+	    // Here comes a tricky bit. 
+	    // Since we have to give the position for the string at the
+	    // baseline this means thaht text will move slightly up
+	    // and down depending on any of it's character descend below
+	    // the baseline, for example a 'g'. To adjust the Y-position
+	    // we therefore adjust the text with the baseline Y-offset
+	    // as used for the current font and size. This will keep the
+	    // baseline at a fixed positoned disregarding the actual 
+	    // characters in the string. 
+	    $standardbox = $this->GetTTFBBox('Gg',$dir);
+	    $yadj = $standardbox[1];
+	    $xadj = $standardbox[0];
+	    $aBoundingBox = array();
+	    for($i=0; $i < $nl; ++$i) {
+		$wl = $this->GetTextWidth($tmp[$i]);
+		$bbox = $this->GetTTFBBox($tmp[$i],$dir);
+		if( $paragraph_align=="left" ) {
+		    $xl = $x; 
+		}
+		elseif( $paragraph_align=="right" ) {
+		    $xl = $x + ($w-$wl);
+		}
+		else {
+		    // Center
+		    $xl = $x + $w/2 - $wl/2 ;
+		}
+
+		$xl -= $bbox[0];
+		$yl = $y - $yadj; 
+		$xl = $xl - $xadj; 
+		ImageTTFText ($this->img, $this->font_size, $dir, 
+			      $xl, $yl-($h-$fh)+$fh*$i,
+			      $this->current_color,$this->font_file,$tmp[$i]); 
+
+		if( $debug  ) {
+		    // Draw the bounding rectangle around each line
+		    $box=@ImageTTFBBox($this->font_size,$dir,$this->font_file,$tmp[$i]);
+		    $p = array();
+		    for($j=0; $j < 4; ++$j) {
+			$p[] = $bbox[$j*2]+$xl;
+			$p[] = $bbox[$j*2+1]+$yl-($h-$fh)+$fh*$i;
+		    }
+		    
+		    // Draw bounding rectangle
+		    $this->PushColor('darkgreen');
+		    $this->Polygon($p,true);
+		    $this->PopColor();
+		}
+	    }
+
+	    // Get the bounding box
+	    $bbox = $this->GetBBoxTTF($txt,$dir);
+	    for($j=0; $j < 4; ++$j) {
+		$bbox[$j*2]+= round($x);
+		$bbox[$j*2+1]+= round($y - ($h-$fh) - $yadj);
+	    }
+	    $aBoundingBox = $bbox;
+
+	    if( $debug ) {	
+		// Draw a cross at the anchor point
+		$this->PushColor('red');
+		$this->Line($ox-25,$oy,$ox+25,$oy);
+		$this->Line($ox,$oy-25,$ox,$oy+25);
+		$this->PopColor();
+	    }
+
+	}
+    }
+	
+    function StrokeText($x,$y,$txt,$dir=0,$paragraph_align="left",$debug=false) {
+
+	$x = round($x);
+	$y = round($y);
+
+	// Do special language encoding
+	$txt = $this->langconv->Convert($txt,$this->font_family);
+
+	if( !is_numeric($dir) )
+	    JpGraphError::RaiseL(25094);//(" Direction for text most be given as an angle between 0 and 90.");
+			
+	if( $this->font_family >= FF_FONT0 && $this->font_family <= FF_FONT2+1) {	
+	    $this->_StrokeBuiltinFont($x,$y,$txt,$dir,$paragraph_align,$boundingbox,$debug);
+	}
+	elseif($this->font_family >= _FIRST_FONT && $this->font_family <= _LAST_FONT)  {
+	    $this->_StrokeTTF($x,$y,$txt,$dir,$paragraph_align,$boundingbox,$debug);
+	}
+	else
+	    JpGraphError::RaiseL(25095);//(" Unknown font font family specification. ");
+	return $boundingbox;
+    }
+	
+    function SetMargin($lm,$rm,$tm,$bm) {
+	$this->left_margin=$lm;
+	$this->right_margin=$rm;
+	$this->top_margin=$tm;
+	$this->bottom_margin=$bm;
+	$this->plotwidth=$this->width - $this->left_margin-$this->right_margin ; 
+	$this->plotheight=$this->height - $this->top_margin-$this->bottom_margin ;
+	if( $this->width  > 0 && $this->height > 0 ) {
+	    if( $this->plotwidth < 0  || $this->plotheight < 0 )
+		JpGraphError::raise("To small plot area. ($lm,$rm,$tm,$bm : $this->plotwidth x $this->plotheight). With the given image size and margins there is to little space left for the plot. Increase the plot size or reduce the margins.");
+	}
+    }
+
+    function SetTransparent($color) {
+	imagecolortransparent ($this->img,$this->rgb->allocate($color));
+    }
+	
+    function SetColor($color,$aAlpha=0) {
+	$this->current_color_name = $color;
+	$this->current_color=$this->rgb->allocate($color,$aAlpha);
+	if( $this->current_color == -1 ) {
+	    $tc=imagecolorstotal($this->img);
+	    JpGraphError::RaiseL(25096);
+//("Can't allocate any more colors. Image has already allocated maximum of <b>$tc colors</b>. This might happen if you have anti-aliasing turned on together with a background image or perhaps gradient fill since this requires many, many colors. Try to turn off anti-aliasing. If there is still a problem try downgrading the quality of the background image to use a smaller pallete to leave some entries for your graphs. You should try to limit the number of colors in your background image to 64. If there is still problem set the constant DEFINE(\"USE_APPROX_COLORS\",true); in jpgraph.php This will use approximative colors when the palette is full. Unfortunately there is not much JpGraph can do about this since the palette size is a limitation of current graphic format and what the underlying GD library suppports."); 
+	}
+	return $this->current_color;
+    }
+	
+    function PushColor($color) {
+	if( $color != "" ) {
+	    $this->colorstack[$this->colorstackidx]=$this->current_color_name;
+	    $this->colorstack[$this->colorstackidx+1]=$this->current_color;
+	    $this->colorstackidx+=2;
+	    $this->SetColor($color);
+	}
+	else {
+	    JpGraphError::RaiseL(25097);//("Color specified as empty string in PushColor().");
+	}
+    }
+	
+    function PopColor() {
+	if($this->colorstackidx<1)
+	    JpGraphError::RaiseL(25098);//(" Negative Color stack index. Unmatched call to PopColor()");
+	$this->current_color=$this->colorstack[--$this->colorstackidx];
+	$this->current_color_name=$this->colorstack[--$this->colorstackidx];
+    }
+	
+	
+    function SetLineWeight($weight) {
+	imagesetthickness($this->img,$weight);
+	$this->line_weight = $weight;
+    }
+	
+    function SetStartPoint($x,$y) {
+	$this->lastx=round($x);
+	$this->lasty=round($y);
+    }
+	
+    function Arc($cx,$cy,$w,$h,$s,$e) {
+	// GD Arc doesn't like negative angles
+	while( $s < 0) $s += 360;
+	while( $e < 0) $e += 360;
+    	
+	imagearc($this->img,round($cx),round($cy),round($w),round($h),
+		 $s,$e,$this->current_color);
+    }
+    
+    function FilledArc($xc,$yc,$w,$h,$s,$e,$style='') {
+	while( $s < 0 ) $s += 360;
+	while( $e < 0 ) $e += 360;
+	if( $style=='' ) 
+	    $style=IMG_ARC_PIE;
+	if( abs($s-$e) > 0.001 ) {
+	    imagefilledarc($this->img,round($xc),round($yc),round($w),round($h),
+			   round($s),round($e),$this->current_color,$style);
+	}
+    }
+
+    function FilledCakeSlice($cx,$cy,$w,$h,$s,$e) {
+	$this->CakeSlice($cx,$cy,$w,$h,$s,$e,$this->current_color_name);
+    }
+
+    function CakeSlice($xc,$yc,$w,$h,$s,$e,$fillcolor="",$arccolor="") {
+	$s = round($s); $e = round($e);
+	$w = round($w); $h = round($h);
+	$xc = round($xc); $yc = round($yc);
+	$this->PushColor($fillcolor);
+	$this->FilledArc($xc,$yc,2*$w,2*$h,$s,$e);
+	$this->PopColor();
+	if( $arccolor != "" ) {
+	    $this->PushColor($arccolor);
+	    // We add 2 pixels to make the Arc() better aligned with
+	    // the filled arc. 
+	    imagefilledarc($this->img,$xc,$yc,2*$w,2*$h,$s,$e,$this->current_color,IMG_ARC_NOFILL | IMG_ARC_EDGED ) ;
+	    $this->PopColor();
+	}
+    }
+
+    function Ellipse($xc,$yc,$w,$h) {
+	$this->Arc($xc,$yc,$w,$h,0,360);
+    }
+			
+    function Circle($xc,$yc,$r) {
+	imageellipse($this->img,round($xc),round($yc),$r*2,$r*2,$this->current_color);
+    }
+	
+    function FilledCircle($xc,$yc,$r) {
+	imagefilledellipse($this->img,round($xc),round($yc),2*$r,2*$r,$this->current_color);
+    }
+	
+    // Linear Color InterPolation
+    function lip($f,$t,$p) {
+	$p = round($p,1);
+	$r = $f[0] + ($t[0]-$f[0])*$p;
+	$g = $f[1] + ($t[1]-$f[1])*$p;
+	$b = $f[2] + ($t[2]-$f[2])*$p;
+	return array($r,$g,$b);
+    }
+
+    // Set line style dashed, dotted etc
+    function SetLineStyle($s) {
+	if( is_numeric($s) ) {
+	    if( $s<1 || $s>4 ) 
+		JpGraphError::RaiseL(25101,$s);//(" Illegal numeric argument to SetLineStyle(): ($s)");
+	}
+	elseif( is_string($s) ) {
+	    if( $s == "solid" ) $s=1;
+	    elseif( $s == "dotted" ) $s=2;
+	    elseif( $s == "dashed" ) $s=3;
+	    elseif( $s == "longdashed" ) $s=4;
+	    else JpGraphError::RaiseL(25102,$s);//(" Illegal string argument to SetLineStyle(): $s");
+	}
+	else JpGraphError::RaiseL(25103,$s);//(" Illegal argument to SetLineStyle $s");
+	$this->line_style=$s;
+    }
+	
+    // Same as Line but take the line_style into account
+    function StyleLine($x1,$y1,$x2,$y2) {
+	if( $this->line_weight <= 0 )
+	    return;
+
+	switch( $this->line_style ) {
+	    case 1:// Solid
+		$this->Line($x1,$y1,$x2,$y2);
+		break;
+	    case 2: // Dotted
+		$this->DashedLine($x1,$y1,$x2,$y2,1,3);
+		break;
+	    case 3: // Dashed
+		$this->DashedLine($x1,$y1,$x2,$y2,2,4);
+		break;
+	    case 4: // Longdashes
+		$this->DashedLine($x1,$y1,$x2,$y2,8,6);
+		break;
+	    default:
+		JpGraphError::RaiseL(25104,$this->line_style);//(" Unknown line style: $this->line_style ");
+		break;
+	}
+    }
+	
+    function DashedLine($x1,$y1,$x2,$y2,$dash_length=1,$dash_space=4) {
+
+	if( $this->line_weight <= 0 )
+	    return;
+
+	$x1 = round($x1);
+	$x2 = round($x2);
+	$y1 = round($y1);
+	$y2 = round($y2);
+
+	$style = array_fill(0,$dash_length,$this->current_color);
+	$style = array_pad($style,$dash_length+$dash_space,IMG_COLOR_TRANSPARENT);
+	imagesetstyle($this->img, $style);
+	imageline($this->img, $x1, $y1, $x2, $y2, IMG_COLOR_STYLED);
+	$this->lastx=$x2; $this->lasty=$y2;		
+    } 
+
+    function Line($x1,$y1,$x2,$y2) {
+
+	if( $this->line_weight <= 0 )
+	    return;
+
+	$x1 = round($x1);
+	$x2 = round($x2);
+	$y1 = round($y1);
+	$y2 = round($y2);
+
+	imageline($this->img,$x1,$y1,$x2,$y2,$this->current_color);
+	$this->lastx=$x2; $this->lasty=$y2;		
+    }
+
+    function Polygon($p,$closed=FALSE,$fast=FALSE) {
+
+	if( $this->line_weight <= 0 ) 
+	    return;
+
+	$n=count($p);
+	$oldx = $p[0];
+	$oldy = $p[1];
+	if( $fast ) {
+	    for( $i=2; $i < $n; $i+=2 ) {
+		imageline($this->img,$oldx,$oldy,$p[$i],$p[$i+1],$this->current_color);
+		$oldx = $p[$i];
+		$oldy = $p[$i+1];
+	    }
+	    if( $closed ) {
+		imageline($this->img,$p[$n*2-2],$p[$n*2-1],$p[0],$p[1],$this->current_color);
+	    }
+	}
+	else {
+	    for( $i=2; $i < $n; $i+=2 ) {
+		$this->StyleLine($oldx,$oldy,$p[$i],$p[$i+1]);
+		$oldx = $p[$i];
+		$oldy = $p[$i+1];
+	    }
+	    if( $closed )
+		$this->StyleLine($oldx,$oldy,$p[0],$p[1]);
+	}
+    }
+	
+    function FilledPolygon($pts) {
+	$n=count($pts);
+	if( $n == 0 ) {
+	    JpGraphError::RaiseL(25105);//('NULL data specified for a filled polygon. Check that your data is not NULL.');
+	}
+	for($i=0; $i < $n; ++$i) 
+	    $pts[$i] = round($pts[$i]);
+	imagefilledpolygon($this->img,$pts,count($pts)/2,$this->current_color);
+    }
+	
+    function Rectangle($xl,$yu,$xr,$yl) {
+	$this->Polygon(array($xl,$yu,$xr,$yu,$xr,$yl,$xl,$yl,$xl,$yu));
+    }
+	
+    function FilledRectangle($xl,$yu,$xr,$yl) {
+	$this->FilledPolygon(array($xl,$yu,$xr,$yu,$xr,$yl,$xl,$yl));
+    }
+
+    function FilledRectangle2($xl,$yu,$xr,$yl,$color1,$color2,$style=1) {
+	// Fill a rectangle with lines of two colors
+	if( $style===1 ) {
+	    // Horizontal stripe
+	    if( $yl < $yu ) {
+		$t = $yl; $yl=$yu; $yu=$t;
+	    }
+	    for( $y=$yu; $y <= $yl; ++$y) {
+		$this->SetColor($color1);
+		$this->Line($xl,$y,$xr,$y);
+		++$y;
+		$this->SetColor($color2);
+		$this->Line($xl,$y,$xr,$y);
+	    }
+	}
+	else {
+	    if( $xl < $xl ) {
+		$t = $xl; $xl=$xr; $xr=$t;
+	    }
+	    for( $x=$xl; $x <= $xr; ++$x) {
+		$this->SetColor($color1);
+		$this->Line($x,$yu,$x,$yl);
+		++$x;
+		$this->SetColor($color2);
+		$this->Line($x,$yu,$x,$yl);
+	    }
+	}
+    }
+
+    function ShadowRectangle($xl,$yu,$xr,$yl,$fcolor=false,$shadow_width=3,$shadow_color=array(102,102,102)) {
+	// This is complicated by the fact that we must also handle the case where
+        // the reactangle has no fill color
+	$this->PushColor($shadow_color);
+	$this->FilledRectangle($xr-$shadow_width,$yu+$shadow_width,$xr,$yl-$shadow_width-1);
+	$this->FilledRectangle($xl+$shadow_width,$yl-$shadow_width,$xr,$yl);
+	//$this->FilledRectangle($xl+$shadow_width,$yu+$shadow_width,$xr,$yl);
+	$this->PopColor();
+	if( $fcolor==false )
+	    $this->Rectangle($xl,$yu,$xr-$shadow_width-1,$yl-$shadow_width-1);
+	else {		
+	    $this->PushColor($fcolor);
+	    $this->FilledRectangle($xl,$yu,$xr-$shadow_width-1,$yl-$shadow_width-1);
+	    $this->PopColor();
+	    $this->Rectangle($xl,$yu,$xr-$shadow_width-1,$yl-$shadow_width-1);
+	}
+    }
+
+    function FilledRoundedRectangle($xt,$yt,$xr,$yl,$r=5) {
+	if( $r==0 ) {
+	    $this->FilledRectangle($xt,$yt,$xr,$yl);
+	    return;
+	}
+
+	// To avoid overlapping fillings (which will look strange
+	// when alphablending is enabled) we have no choice but 
+	// to fill the five distinct areas one by one.
+	
+	// Center square
+	$this->FilledRectangle($xt+$r,$yt+$r,$xr-$r,$yl-$r);
+	// Top band
+	$this->FilledRectangle($xt+$r,$yt,$xr-$r,$yt+$r-1);
+	// Bottom band
+	$this->FilledRectangle($xt+$r,$yl-$r+1,$xr-$r,$yl);
+	// Left band
+	$this->FilledRectangle($xt,$yt+$r+1,$xt+$r-1,$yl-$r);
+	// Right band
+	$this->FilledRectangle($xr-$r+1,$yt+$r,$xr,$yl-$r);
+
+	// Topleft & Topright arc
+	$this->FilledArc($xt+$r,$yt+$r,$r*2,$r*2,180,270);
+	$this->FilledArc($xr-$r,$yt+$r,$r*2,$r*2,270,360);
+
+	// Bottomleft & Bottom right arc
+	$this->FilledArc($xt+$r,$yl-$r,$r*2,$r*2,90,180);
+	$this->FilledArc($xr-$r,$yl-$r,$r*2,$r*2,0,90);
+
+    }
+
+    function RoundedRectangle($xt,$yt,$xr,$yl,$r=5) {    
+
+	if( $r==0 ) {
+	    $this->Rectangle($xt,$yt,$xr,$yl);
+	    return;
+	}
+
+	// Top & Bottom line
+	$this->Line($xt+$r,$yt,$xr-$r,$yt);
+	$this->Line($xt+$r,$yl,$xr-$r,$yl);
+
+	// Left & Right line
+	$this->Line($xt,$yt+$r,$xt,$yl-$r);
+	$this->Line($xr,$yt+$r,$xr,$yl-$r);
+
+	// Topleft & Topright arc
+	$this->Arc($xt+$r,$yt+$r,$r*2,$r*2,180,270);
+	$this->Arc($xr-$r,$yt+$r,$r*2,$r*2,270,360);
+
+	// Bottomleft & Bottomright arc
+	$this->Arc($xt+$r,$yl-$r,$r*2,$r*2,90,180);
+	$this->Arc($xr-$r,$yl-$r,$r*2,$r*2,0,90);
+    }
+
+    function FilledBevel($x1,$y1,$x2,$y2,$depth=2,$color1='white@0.4',$color2='darkgray@0.4') {
+	$this->FilledRectangle($x1,$y1,$x2,$y2);
+	$this->Bevel($x1,$y1,$x2,$y2,$depth,$color1,$color2);
+    }
+
+    function Bevel($x1,$y1,$x2,$y2,$depth=2,$color1='white@0.4',$color2='black@0.5') {
+	$this->PushColor($color1);
+	for( $i=0; $i < $depth; ++$i ) {
+	    $this->Line($x1+$i,$y1+$i,$x1+$i,$y2-$i);
+	    $this->Line($x1+$i,$y1+$i,$x2-$i,$y1+$i);
+	}
+	$this->PopColor();
+	
+	$this->PushColor($color2);
+	for( $i=0; $i < $depth; ++$i ) {
+	    $this->Line($x1+$i,$y2-$i,$x2-$i,$y2-$i);
+	    $this->Line($x2-$i,$y1+$i,$x2-$i,$y2-$i-1);
+	}
+	$this->PopColor();
+    }
+
+    function StyleLineTo($x,$y) {
+	$this->StyleLine($this->lastx,$this->lasty,$x,$y);
+	$this->lastx=$x;
+	$this->lasty=$y;
+    }
+	
+    function LineTo($x,$y) {
+	$this->Line($this->lastx,$this->lasty,$x,$y);
+	$this->lastx=$x;
+	$this->lasty=$y;
+    }
+	
+    function Point($x,$y) {
+	imagesetpixel($this->img,round($x),round($y),$this->current_color);
+    }
+	
+    function Fill($x,$y) {
+	imagefill($this->img,round($x),round($y),$this->current_color);
+    }
+
+    function FillToBorder($x,$y,$aBordColor) {
+	$bc = $this->rgb->allocate($aBordColor);
+	if( $bc == -1 ) {
+	    JpGraphError::RaiseL(25106);//('Image::FillToBorder : Can not allocate more colors');
+	}
+	imagefilltoborder($this->img,round($x),round($y),$bc,$this->current_color);
+    }
+
+    function SetExpired($aFlg=true) {
+	$this->expired = $aFlg;
+    }
+	
+    // Generate image header
+    function Headers() {
+	
+	// In case we are running from the command line with the client version of
+	// PHP we can't send any headers.
+	$sapi = php_sapi_name();
+	if( $sapi == 'cli' )
+	    return;
+	
+	if( headers_sent($file,$lineno) ) {
+	    $file=basename($file);	    
+	    $t = new ErrMsgText();
+	    $msg = $t->Get(10,$file,$lineno);
+	    die($msg);
+	}	
+	
+	if ($this->expired) {
+	    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+	    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT");
+	    header("Cache-Control: no-cache, must-revalidate");
+	    header("Pragma: no-cache");
+	}
+	header("Content-type: image/$this->img_format");
+    }
+
+    // Adjust image quality for formats that allow this
+    function SetQuality($q) {
+	$this->quality = $q;
+    }
+	
+    // Stream image to browser or to file
+    function Stream($aFile="") {
+	$func="image".$this->img_format;
+	if( $this->img_format=="jpeg" && $this->quality != null ) {
+	    $res = @$func($this->img,$aFile,$this->quality);
+	}
+	else {
+	    if( $aFile != "" ) {
+		$res = @$func($this->img,$aFile);
+		if( !$res )
+		    JpGraphError::RaiseL(25107,$aFile);//("Can't write to file '$aFile'. Check that the process running PHP has enough permission.");
+	    }
+	    else {
+		$res = @$func($this->img);
+		if( !$res )
+		    JpGraphError::RaiseL(25108);//("Can't stream image. This is most likely due to a faulty PHP/GD setup. Try to recompile PHP and use the built-in GD library that comes with PHP.");
+		
+	    }
+	}
+    }
+		
+    // Clear resource tide up by image
+    function Destroy() {
+	imagedestroy($this->img);
+    }
+	
+    // Specify image format. Note depending on your installation
+    // of PHP not all formats may be supported.
+    function SetImgFormat($aFormat,$aQuality=75) {		
+	$this->quality = $aQuality;
+	$aFormat = strtolower($aFormat);
+	$tst = true;
+	$supported = imagetypes();
+	if( $aFormat=="auto" ) {
+	    if( $supported & IMG_PNG )
+		$this->img_format="png";
+	    elseif( $supported & IMG_JPG )
+		$this->img_format="jpeg";
+	    elseif( $supported & IMG_GIF )
+		$this->img_format="gif";
+	    elseif( $supported & IMG_WBMP )
+		$this->img_format="wbmp";
+	    elseif( $supported & IMG_XPM )
+		$this->img_format="xpm";
+	    else
+		JpGraphError::RaiseL(25109);//("Your PHP (and GD-lib) installation does not appear to support any known graphic formats. You need to first make sure GD is compiled as a module to PHP. If you also want to use JPEG images you must get the JPEG library. Please see the PHP docs for details.");
+				
+	    return true;
+	}
+	else {
+	    if( $aFormat=="jpeg" || $aFormat=="png" || $aFormat=="gif" ) {
+		if( $aFormat=="jpeg" && !($supported & IMG_JPG) )
+		    $tst=false;
+		elseif( $aFormat=="png" && !($supported & IMG_PNG) ) 
+		    $tst=false;
+		elseif( $aFormat=="gif" && !($supported & IMG_GIF) ) 	
+		    $tst=false;
+		elseif( $aFormat=="wbmp" && !($supported & IMG_WBMP) ) 	
+		    $tst=false;
+		elseif( $aFormat=="xpm" && !($supported & IMG_XPM) ) 	
+		    $tst=false;
+		else {
+		    $this->img_format=$aFormat;
+		    return true;
+		}
+	    }
+	    else 
+		$tst=false;
+	    if( !$tst )
+		JpGraphError::RaiseL(25110,$aFormat);//(" Your PHP installation does not support the chosen graphic format: $aFormat");
+	}
+    }	
+} // CLASS
+
+//===================================================
+// CLASS RotImage
+// Description: Exactly as Image but draws the image at
+// a specified angle around a specified rotation point.
+//===================================================
+class RotImage extends Image {
+    public $a=0;
+    public $dx=0,$dy=0,$transx=0,$transy=0; 
+    private $m=array();
+	
+    function RotImage($aWidth,$aHeight,$a=0,$aFormat=DEFAULT_GFORMAT,$aSetAutoMargin=true) {
+	$this->Image($aWidth,$aHeight,$aFormat,$aSetAutoMargin);
+	$this->dx=$this->left_margin+$this->plotwidth/2;
+	$this->dy=$this->top_margin+$this->plotheight/2;
+	$this->SetAngle($a);	
+    }
+	
+    function SetCenter($dx,$dy) {
+	$old_dx = $this->dx;
+	$old_dy = $this->dy;
+	$this->dx=$dx;
+	$this->dy=$dy;
+	$this->SetAngle($this->a);
+	return array($old_dx,$old_dy);
+    }
+	
+    function SetTranslation($dx,$dy) {
+	$old = array($this->transx,$this->transy);
+	$this->transx = $dx;
+	$this->transy = $dy;
+	return $old;
+    }
+
+    function UpdateRotMatrice()  {
+	$a = $this->a;
+	$a *= M_PI/180;
+	$sa=sin($a); $ca=cos($a);		
+	// Create the rotation matrix
+	$this->m[0][0] = $ca;
+	$this->m[0][1] = -$sa;
+	$this->m[0][2] = $this->dx*(1-$ca) + $sa*$this->dy ;
+	$this->m[1][0] = $sa;
+	$this->m[1][1] = $ca;
+	$this->m[1][2] = $this->dy*(1-$ca) - $sa*$this->dx ;
+    }
+
+    function SetAngle($a) {
+	$tmp = $this->a;
+	$this->a = $a;
+	$this->UpdateRotMatrice();
+	return $tmp;
+    }
+
+    function Circle($xc,$yc,$r) {
+	list($xc,$yc) = $this->Rotate($xc,$yc);
+	parent::Circle($xc,$yc,$r);
+    }
+
+    function FilledCircle($xc,$yc,$r) {
+	list($xc,$yc) = $this->Rotate($xc,$yc);
+	parent::FilledCircle($xc,$yc,$r);
+    }
+
+	
+    function Arc($xc,$yc,$w,$h,$s,$e) {
+	list($xc,$yc) = $this->Rotate($xc,$yc);
+	$s += $this->a;
+	$e += $this->a;
+	parent::Arc($xc,$yc,$w,$h,$s,$e);
+    }
+
+    function FilledArc($xc,$yc,$w,$h,$s,$e,$style='') {
+	list($xc,$yc) = $this->Rotate($xc,$yc);
+	$s += $this->a;
+	$e += $this->a;
+	parent::FilledArc($xc,$yc,$w,$h,$s,$e);
+    }
+
+    function SetMargin($lm,$rm,$tm,$bm) {
+	parent::SetMargin($lm,$rm,$tm,$bm);
+	$this->dx=$this->left_margin+$this->plotwidth/2;
+	$this->dy=$this->top_margin+$this->plotheight/2;
+	$this->UpdateRotMatrice();
+    }
+	
+    function Rotate($x,$y) {
+	// Optimization. Ignore rotation if Angle==0 || Angle==360
+	if( $this->a == 0 || $this->a == 360 ) {
+	    return array($x + $this->transx, $y + $this->transy );
+	}
+	else {
+	    $x1=round($this->m[0][0]*$x + $this->m[0][1]*$y,1) + $this->m[0][2] + $this->transx;
+	    $y1=round($this->m[1][0]*$x + $this->m[1][1]*$y,1) + $this->m[1][2] + $this->transy;
+	    return array($x1,$y1);
+	}
+    }
+	
+    function CopyMerge($fromImg,$toX,$toY,$fromX,$fromY,$toWidth,$toHeight,$fromWidth=-1,$fromHeight=-1,$aMix=100) {
+	list($toX,$toY) = $this->Rotate($toX,$toY);
+	parent::CopyMerge($fromImg,$toX,$toY,$fromX,$fromY,$toWidth,$toHeight,$fromWidth,$fromHeight,$aMix);
+
+    }
+
+    function ArrRotate($pnts) {
+	$n = count($pnts)-1;
+	for($i=0; $i < $n; $i+=2) {
+	    list ($x,$y) = $this->Rotate($pnts[$i],$pnts[$i+1]);
+	    $pnts[$i] = $x; $pnts[$i+1] = $y;
+	}
+	return $pnts;
+    }
+
+    function DashedLine($x1,$y1,$x2,$y2,$dash_length=1,$dash_space=4) {
+	list($x1,$y1) = $this->Rotate($x1,$y1);
+	list($x2,$y2) = $this->Rotate($x2,$y2);
+	parent::DashedLine($x1,$y1,$x2,$y2,$dash_length,$dash_space);
+    }
+	
+    function Line($x1,$y1,$x2,$y2) {
+	list($x1,$y1) = $this->Rotate($x1,$y1);
+	list($x2,$y2) = $this->Rotate($x2,$y2);
+	parent::Line($x1,$y1,$x2,$y2);
+    }
+
+    function Rectangle($x1,$y1,$x2,$y2) {
+	// Rectangle uses Line() so it will be rotated through that call
+	parent::Rectangle($x1,$y1,$x2,$y2);
+    }
+	
+    function FilledRectangle($x1,$y1,$x2,$y2) {
+	if( $y1==$y2 || $x1==$x2 )
+	    $this->Line($x1,$y1,$x2,$y2);
+	else 
+	    $this->FilledPolygon(array($x1,$y1,$x2,$y1,$x2,$y2,$x1,$y2));
+    }
+	
+    function Polygon($pnts,$closed=FALSE,$fast=FALSE) {
+	// Polygon uses Line() so it will be rotated through that call unless
+	// fast drawing routines are used in which case a rotate is needed
+	if( $fast ) {
+	    parent::Polygon($this->ArrRotate($pnts));
+	}
+	else
+	    parent::Polygon($pnts,$closed,$fast);
+    }
+	
+    function FilledPolygon($pnts) {
+	parent::FilledPolygon($this->ArrRotate($pnts));
+    }
+	
+    function Point($x,$y) {
+	list($xp,$yp) = $this->Rotate($x,$y);
+	parent::Point($xp,$yp);
+    }
+	
+    function StrokeText($x,$y,$txt,$dir=0,$paragraph_align="left",$debug=false) {
+	list($xp,$yp) = $this->Rotate($x,$y);
+	return parent::StrokeText($xp,$yp,$txt,$dir,$paragraph_align,$debug);
+    }
+}
+
+//===================================================
+// CLASS ImgStreamCache
+// Description: Handle caching of graphs to files
+//===================================================
+class ImgStreamCache {
+    private $cache_dir, $img=null, $timeout=0; 	// Infinite timeout
+    //---------------
+    // CONSTRUCTOR
+    function ImgStreamCache($aImg, $aCacheDir=CACHE_DIR) {
+	$this->img = $aImg;
+	$this->cache_dir = $aCacheDir;
+    }
+
+//---------------
+// PUBLIC METHODS	
+
+    // Specify a timeout (in minutes) for the file. If the file is older then the
+    // timeout value it will be overwritten with a newer version.
+    // If timeout is set to 0 this is the same as infinite large timeout and if
+    // timeout is set to -1 this is the same as infinite small timeout
+    function SetTimeout($aTimeout) {
+	$this->timeout=$aTimeout;	
+    }
+	
+    // Output image to browser and also write it to the cache
+    function PutAndStream($aImage,$aCacheFileName,$aInline,$aStrokeFileName) {
+	// Some debugging code to brand the image with numbe of colors
+	// used
+	GLOBAL $gJpgBrandTiming;
+
+	if( $gJpgBrandTiming ) {
+	    global $tim;
+	    $t=$tim->Pop()/1000.0;
+	    $c=$aImage->SetColor("black");
+	    $t=sprintf(BRAND_TIME_FORMAT,round($t,3));
+	    imagestring($this->img->img,2,5,$this->img->height-20,$t,$c);			
+	}
+
+	// Check if we should stroke the image to an arbitrary file
+	if( _FORCE_IMGTOFILE ) {
+	    $aStrokeFileName = _FORCE_IMGDIR.GenImgName();
+	}
+
+	if( $aStrokeFileName!="" ) {
+	    if( $aStrokeFileName == "auto" )
+		$aStrokeFileName = GenImgName();
+	    if( file_exists($aStrokeFileName) ) {
+		// Delete the old file
+		if( !@unlink($aStrokeFileName) )
+		    JpGraphError::RaiseL(25111,$aStrokeFileName);//(" Can't delete cached image $aStrokeFileName. Permission problem?");
+	    }
+	    $aImage->Stream($aStrokeFileName);
+	    return;
+	}
+
+	if( $aCacheFileName != "" && USE_CACHE) {
+
+	    $aCacheFileName = $this->cache_dir . $aCacheFileName;
+	    if( file_exists($aCacheFileName) ) {
+		if( !$aInline ) {
+		    // If we are generating image off-line (just writing to the cache)
+		    // and the file exists and is still valid (no timeout)
+		    // then do nothing, just return.
+		    $diff=time()-filemtime($aCacheFileName);
+		    if( $diff < 0 )
+			JpGraphError::RaiseL(25112,$aCacheFileName);//(" Cached imagefile ($aCacheFileName) has file date in the future!!");
+		    if( $this->timeout>0 && ($diff <= $this->timeout*60) ) 
+			return;		
+		}			
+		if( !@unlink($aCacheFileName) )
+		    JpGraphError::RaiseL(25113,$aStrokeFileName);//(" Can't delete cached image $aStrokeFileName. Permission problem?");
+		$aImage->Stream($aCacheFileName);	
+	    }
+	    else {
+		$this->MakeDirs(dirname($aCacheFileName));
+		if( !is_writeable(dirname($aCacheFileName)) ) {
+		    JpGraphError::RaiseL(25114,$aCacheFileName);//('PHP has not enough permissions to write to the cache file '.$aCacheFileName.'. Please make sure that the user running PHP has write permission for this file if you wan to use the cache system with JpGraph.');
+		}
+		$aImage->Stream($aCacheFileName);
+	    }
+			
+	    $res=true;
+	    // Set group to specified
+	    if( CACHE_FILE_GROUP != "" )
+		$res = @chgrp($aCacheFileName,CACHE_FILE_GROUP);
+	    if( CACHE_FILE_MOD != "" )
+		$res = @chmod($aCacheFileName,CACHE_FILE_MOD);
+	    if( !$res )
+		JpGraphError::RaiseL(25115,$aStrokeFileName);//(" Can't set permission for cached image $aStrokeFileName. Permission problem?");
+			
+	    $aImage->Destroy();
+	    if( $aInline ) {
+		if ($fh = @fopen($aCacheFileName, "rb") ) {
+		    $this->img->Headers();
+		    fpassthru($fh);
+		    return;
+		}
+		else
+		    JpGraphError::RaiseL(25116,$aFile);//(" Cant open file from cache [$aFile]"); 
+	    }
+	}
+	elseif( $aInline ) {
+	    $this->img->Headers();	 		
+	    $aImage->Stream();	
+	    return;
+	}
+    }
+	
+    // Check if a given image is in cache and in that case
+    // pass it directly on to web browser. Return false if the
+    // image file doesn't exist or exists but is to old
+    function GetAndStream($aCacheFileName) {
+	$aCacheFileName = $this->cache_dir.$aCacheFileName;		 
+	if ( USE_CACHE && file_exists($aCacheFileName) && $this->timeout>=0 ) {
+	    $diff=time()-filemtime($aCacheFileName);
+	    if( $this->timeout>0 && ($diff > $this->timeout*60) ) {
+		return false;		
+	    }
+	    else {
+		if ($fh = @fopen($aCacheFileName, "rb")) {
+		    $this->img->Headers();
+		    fpassthru($fh);
+		    return true;
+		}
+		else
+		    JpGraphError::RaiseL(25117,$aCacheFileName);//(" Can't open cached image \"$aCacheFileName\" for reading.");
+	    }
+	} 
+	return false;
+    }
+	
+    //---------------
+    // PRIVATE METHODS	
+    // Create all necessary directories in a path
+    function MakeDirs($aFile) {
+	$dirs = array();
+	while ( !(file_exists($aFile)) ) {
+	    $dirs[] = $aFile;
+	    $aFile = dirname($aFile);
+	}
+	for ($i = sizeof($dirs)-1; $i>=0; $i--) {
+	    if(! @mkdir($dirs[$i],0777) )
+		JpGraphError::RaiseL(25118,$aFile);//(" Can't create directory $aFile. Make sure PHP has write permission to this directory.");
+	    // We also specify mode here after we have changed group. 
+	    // This is necessary if Apache user doesn't belong the
+	    // default group and hence can't specify group permission
+	    // in the previous mkdir() call
+	    if( CACHE_FILE_GROUP != "" ) {
+		$res=true;
+		$res =@chgrp($dirs[$i],CACHE_FILE_GROUP);
+		$res = @chmod($dirs[$i],0777);
+		if( !$res )
+		    JpGraphError::RaiseL(25119,$aFile);//(" Can't set permissions for $aFile. Permission problems?");
+	    }
+	}
+	return true;
+    }	
+} // CLASS Cache
+	
+//===================================================
+// CLASS Legend
+// Description: Responsible for drawing the box containing
+// all the legend text for the graph
+//===================================================
+DEFINE('_DEFAULT_LPM_SIZE',8);
+class Legend {
+    public $txtcol=array();
+    private $color=array(0,0,0); // Default fram color
+    private $fill_color=array(235,235,235); // Default fill color
+    private $shadow=true; // Shadow around legend "box"
+    private $shadow_color='darkgray@0.5';
+    private $mark_abs_hsize=_DEFAULT_LPM_SIZE,$mark_abs_vsize=_DEFAULT_LPM_SIZE;
+    private $xmargin=10,$ymargin=3,$shadow_width=2;
+    private $xlmargin=2, $ylmargin='';
+    private $xpos=0.05, $ypos=0.15, $xabspos=-1, $yabspos=-1;
+    private $halign="right", $valign="top";
+    private $font_family=FF_FONT1,$font_style=FS_NORMAL,$font_size=12;
+    private $font_color='black';
+    private $hide=false,$layout_n=1;
+    private $weight=1,$frameweight=1;
+    private $csimareas='';
+    private $reverse = false ;
+//---------------
+// CONSTRUCTOR
+    function Legend() {
+	// Empty
+    }
+//---------------
+// PUBLIC METHODS	
+    function Hide($aHide=true) {
+	$this->hide=$aHide;
+    }
+	
+    function SetHColMargin($aXMarg) {
+	$this->xmargin = $aXMarg;
+    }
+
+    function SetVColMargin($aSpacing) {
+	$this->ymargin = $aSpacing ;
+    }
+
+    function SetLeftMargin($aXMarg) {
+	$this->xlmargin = $aXMarg;
+    }
+
+
+    // Synonym
+    function SetLineSpacing($aSpacing) {
+	$this->ymargin = $aSpacing ;
+    }
+
+    function SetShadow($aShow='gray',$aWidth=2) {
+	if( is_string($aShow) ) {
+	    $this->shadow_color = $aShow;
+	    $this->shadow=true;
+	}
+	else
+	    $this->shadow=$aShow;
+	$this->shadow_width=$aWidth;
+    }
+
+    function SetMarkAbsSize($aSize) {
+	$this->mark_abs_vsize = $aSize ;
+	$this->mark_abs_hsize = $aSize ;
+    }
+
+    function SetMarkAbsVSize($aSize) {
+	$this->mark_abs_vsize = $aSize ;
+    }
+
+    function SetMarkAbsHSize($aSize) {
+	$this->mark_abs_hsize = $aSize ;
+    }
+
+    function SetLineWeight($aWeight) {
+	$this->weight = $aWeight;
+    }
+
+    function SetFrameWeight($aWeight) {
+	$this->frameweight = $aWeight;
+    }
+	
+    function SetLayout($aDirection=LEGEND_VERT) {
+	$this->layout_n = $aDirection==LEGEND_VERT ? 1 : 99 ;
+    }
+	
+    function SetColumns($aCols) {
+	$this->layout_n = $aCols ;
+    }
+
+    function SetReverse($f=true) {
+	$this->reverse = $f ;
+    }
+
+    // Set color on frame around box
+    function SetColor($aFontColor,$aColor='black') {
+	$this->font_color=$aFontColor;
+	$this->color=$aColor;
+    }
+	
+    function SetFont($aFamily,$aStyle=FS_NORMAL,$aSize=10) {
+	$this->font_family = $aFamily;
+	$this->font_style = $aStyle;
+	$this->font_size = $aSize;
+    }
+	
+    function SetPos($aX,$aY,$aHAlign="right",$aVAlign="top") {
+	$this->Pos($aX,$aY,$aHAlign,$aVAlign);
+    }
+
+    function SetAbsPos($aX,$aY,$aHAlign="right",$aVAlign="top") {
+	$this->xabspos=$aX;
+	$this->yabspos=$aY;
+	$this->halign=$aHAlign;
+	$this->valign=$aVAlign;
+    }
+
+
+    function Pos($aX,$aY,$aHAlign="right",$aVAlign="top") {
+	if( !($aX<1 && $aY<1) )
+	    JpGraphError::RaiseL(25120);//(" Position for legend must be given as percentage in range 0-1");
+	$this->xpos=$aX;
+	$this->ypos=$aY;
+	$this->halign=$aHAlign;
+	$this->valign=$aVAlign;
+    }
+
+    function SetFillColor($aColor) {
+	$this->fill_color=$aColor;
+    }
+	
+    function Add($aTxt,$aColor,$aPlotmark='',$aLinestyle=0,$csimtarget='',$csimalt='',$csimwintarget='') {
+	$this->txtcol[]=array($aTxt,$aColor,$aPlotmark,$aLinestyle,$csimtarget,$csimalt,$csimwintarget);
+    }
+
+    function GetCSIMAreas() {
+	return $this->csimareas;
+    }
+	
+    function Stroke(&$aImg) {
+	// Constant
+	$fillBoxFrameWeight=1;
+
+	if( $this->hide ) return;
+
+	$aImg->SetFont($this->font_family,$this->font_style,$this->font_size);		
+
+	if( $this->reverse ) {
+	    $this->txtcol = array_reverse($this->txtcol);
+	}
+
+	$n=count($this->txtcol);
+	if( $n == 0 ) return;
+
+	// Find out the max width and height of each column to be able
+        // to size the legend box.
+	$numcolumns = ($n > $this->layout_n ? $this->layout_n : $n);
+	for( $i=0; $i < $numcolumns; ++$i ) {
+	    $colwidth[$i] = $aImg->GetTextWidth($this->txtcol[$i][0]) +
+		            2*$this->xmargin + 2*$this->mark_abs_hsize;
+	    $colheight[$i] = 0;
+	}
+
+	// Find our maximum height in each row
+	$rows = 0 ; $rowheight[0] = 0;
+	for( $i=0; $i < $n; ++$i ) {
+	    $h = max($this->mark_abs_vsize,$aImg->GetTextHeight($this->txtcol[$i][0]))+$this->ymargin;
+	    if( $i % $numcolumns == 0 ) {
+		$rows++;
+		$rowheight[$rows-1] = 0;
+	    }
+	    $rowheight[$rows-1] = max($rowheight[$rows-1],$h);
+	}
+
+	$abs_height = 0;
+	for( $i=0; $i < $rows; ++$i ) {
+	    $abs_height += $rowheight[$i] ;
+	}
+
+	// Make sure that the height is at least as high as mark size + ymargin
+	$abs_height = max($abs_height,$this->mark_abs_vsize);
+
+	// We add 3 extra pixels height to compensate for the difficult in
+	// calculating font height
+	$abs_height += $this->ymargin+3; 
+						
+	// Find out the maximum width in each column
+	for( $i=$numcolumns; $i < $n; ++$i ) {
+	    $colwidth[$i % $numcolumns] = max(
+		$aImg->GetTextWidth($this->txtcol[$i][0])+2*$this->xmargin+2*$this->mark_abs_hsize,$colwidth[$i % $numcolumns]);
+	}
+
+	// Get the total width
+	$mtw = 0;
+	for( $i=0; $i < $numcolumns; ++$i ) {
+	    $mtw += $colwidth[$i] ;
+	}
+
+	// Find out maximum width we need for legend box
+	$abs_width = $mtw+$this->xlmargin;
+
+	if( $this->xabspos === -1  && $this->yabspos === -1 ) {
+	    $this->xabspos = $this->xpos*$aImg->width ;
+	    $this->yabspos = $this->ypos*$aImg->height ;
+	}
+
+	// Positioning of the legend box
+	if( $this->halign == 'left' )
+	    $xp = $this->xabspos; 
+	elseif( $this->halign == 'center' )
+	    $xp = $this->xabspos - $abs_width/2; 
+	else  
+	    $xp = $aImg->width - $this->xabspos - $abs_width;
+
+	$yp=$this->yabspos;
+	if( $this->valign == 'center' )
+	    $yp-=$abs_height/2;
+	elseif( $this->valign == 'bottom' )
+	    $yp-=$abs_height;
+			
+	// Stroke legend box
+	$aImg->SetColor($this->color);	
+	$aImg->SetLineWeight($this->frameweight);
+	$aImg->SetLineStyle('solid');
+
+	if( $this->shadow )
+	    $aImg->ShadowRectangle($xp,$yp,$xp+$abs_width+$this->shadow_width,
+				   $yp+$abs_height+$this->shadow_width,
+				   $this->fill_color,$this->shadow_width,$this->shadow_color);
+	else {
+	    $aImg->SetColor($this->fill_color);				
+	    $aImg->FilledRectangle($xp,$yp,$xp+$abs_width,$yp+$abs_height);
+	    $aImg->SetColor($this->color);							
+	    $aImg->Rectangle($xp,$yp,$xp+$abs_width,$yp+$abs_height);
+	}
+
+	// x1,y1 is the position for the legend mark
+	$x1=$xp+$this->mark_abs_hsize+$this->xlmargin;
+	$y1=$yp + $this->ymargin;		
+	
+	$f2 =  round($aImg->GetTextHeight('X')/2);
+
+	$grad = new Gradient($aImg);
+	$patternFactory = null;
+
+	// Now stroke each legend in turn
+	// Each plot has added the following information to  the legend
+	// p[0] = Legend text
+	// p[1] = Color, 
+	// p[2] = For markers a reference to the PlotMark object
+	// p[3] = For lines the line style, for gradient the negative gradient style
+	// p[4] = CSIM target
+	// p[5] = CSIM Alt text
+	$i = 1 ; $row = 0;
+	foreach($this->txtcol as $p) {
+	 
+	    // STROKE DEBUG BOX
+	    if( _JPG_DEBUG ) {
+	        $aImg->SetLineWeight(1);
+	        $aImg->SetColor('red');
+	        $aImg->SetLineStyle('solid');
+	        $aImg->Rectangle($xp,$y1,$xp+$abs_width,$y1+$rowheight[$row]);
+	    }
+
+	    $aImg->SetLineWeight($this->weight);
+	    $x1 = round($x1); $y1=round($y1);
+	    if ( !empty($p[2]) && $p[2]->GetType() > -1 ) {
+		// Make a plot mark legend
+		$aImg->SetColor($p[1]);
+		if( is_string($p[3]) || $p[3]>0 ) {
+		    $aImg->SetLineStyle($p[3]);
+		    $aImg->StyleLine($x1-$this->mark_abs_hsize,$y1+$f2,$x1+$this->mark_abs_hsize,$y1+$f2);
+		}
+		// Stroke a mark with the standard size
+		// (As long as it is not an image mark )
+		if( $p[2]->GetType() != MARK_IMG ) {
+
+		    // Clear any user callbacks since we ont want them called for
+		    // the legend marks
+		    $p[2]->iFormatCallback = '';
+		    $p[2]->iFormatCallback2 = '';
+
+		    // Since size for circles is specified as the radius
+		    // this means that we must half the size to make the total
+		    // width behave as the other marks
+		    if( $p[2]->GetType() == MARK_FILLEDCIRCLE || $p[2]->GetType() == MARK_CIRCLE ) {
+		        $p[2]->SetSize(min($this->mark_abs_vsize,$this->mark_abs_hsize)/2);
+			$p[2]->Stroke($aImg,$x1,$y1+$f2);
+		    }
+		    else {
+		        $p[2]->SetSize(min($this->mark_abs_vsize,$this->mark_abs_hsize));
+			$p[2]->Stroke($aImg,$x1,$y1+$f2);
+		    }
+		}
+	    } 
+	    elseif ( !empty($p[2]) && (is_string($p[3]) || $p[3]>0 ) ) {
+		// Draw a styled line
+		$aImg->SetColor($p[1]);
+		$aImg->SetLineStyle($p[3]);
+		$aImg->StyleLine($x1-1,$y1+$f2,$x1+$this->mark_abs_hsize,$y1+$f2);
+		$aImg->StyleLine($x1-1,$y1+$f2+1,$x1+$this->mark_abs_hsize,$y1+$f2+1);
+	    } 
+	    else {
+		// Draw a colored box
+		$color = $p[1] ;
+		// We make boxes slightly larger to better show
+		$boxsize = min($this->mark_abs_vsize,$this->mark_abs_hsize) + 2 ;
+		$ym =  round($y1 + $f2 - $boxsize/2);
+		// We either need to plot a gradient or a 
+		// pattern. To differentiate we use a kludge.
+		// Patterns have a p[3] value of < -100
+		if( $p[3] < -100 ) { 
+		    // p[1][0] == iPattern, p[1][1] == iPatternColor, p[1][2] == iPatternDensity
+		    if( $patternFactory == null ) {
+			$patternFactory = new RectPatternFactory();
+		    }		    
+		    $prect = $patternFactory->Create($p[1][0],$p[1][1],1);
+		    $prect->SetBackground($p[1][3]);
+		    $prect->SetDensity($p[1][2]+1);
+		    $prect->SetPos(new Rectangle($x1,$ym,$boxsize,$boxsize));
+		    $prect->Stroke($aImg);
+		    $prect=null;
+		}
+		else {
+		    if( is_array($color) && count($color)==2 ) {
+			// The client want a gradient color
+			$grad->FilledRectangle($x1,$ym,
+					       $x1+$boxsize,$ym+$boxsize,
+					       $color[0],$color[1],-$p[3]);
+		    }
+		    else {
+			$aImg->SetColor($p[1]);
+			$aImg->FilledRectangle($x1,$ym,$x1+$boxsize,$ym+$boxsize);
+		    }
+		    $aImg->SetColor($this->color);
+		    $aImg->SetLineWeight($fillBoxFrameWeight);
+		    $aImg->Rectangle($x1,$ym,$x1+$boxsize,$ym+$boxsize);
+		}
+	    }
+	    $aImg->SetColor($this->font_color);
+	    $aImg->SetFont($this->font_family,$this->font_style,$this->font_size);		
+	    $aImg->SetTextAlign("left","top");			
+	    $aImg->StrokeText(round($x1+$this->mark_abs_hsize+$this->xmargin),$y1,$p[0]);
+
+	    // Add CSIM for Legend if defined
+	    if( !empty($p[4]) ) {
+		
+		$xe = $x1 + $this->xmargin+$this->mark_abs_hsize+$aImg->GetTextWidth($p[0]);
+		$ye = $y1 + max($this->mark_abs_vsize,$aImg->GetTextHeight($p[0]));
+		$coords = "$x1,$y1,$xe,$y1,$xe,$ye,$x1,$ye";
+		if( ! empty($p[4]) ) {
+		    $this->csimareas .= "<area shape=\"poly\" coords=\"$coords\" href=\"".htmlentities($p[4])."\"";
+
+		    if( !empty($p[6]) ) {
+			$this->csimareas .= " target=\"".$p[6]."\"";
+		    }
+
+		    if( !empty($p[5]) ) {
+			$tmp=sprintf($p[5],$p[0]);
+			$this->csimareas .= " title=\"$tmp\" alt=\"$tmp\" ";
+		    }
+		    $this->csimareas .= " />\n";
+		}
+	    }
+	    if( $i >= $this->layout_n ) {
+		$x1 = $xp+$this->mark_abs_hsize+$this->xlmargin;
+		$y1 += $rowheight[$row++];
+		$i = 1;
+	    }
+	    else {
+		$x1 += $colwidth[($i-1) % $numcolumns] ;
+		++$i;
+	    }
+	}	
+    }
+} // Class
+	
+
+//===================================================
+// CLASS DisplayValue
+// Description: Used to print data values at data points
+//===================================================
+class DisplayValue {
+    public $margin=5;
+    public $show=false;
+    public $valign="",$halign="center";
+    public $format="%.1f",$negformat="";
+    private $ff=FF_FONT1,$fs=FS_NORMAL,$fsize=10;
+    private $iFormCallback='';
+    private $angle=0;
+    private $color="navy",$negcolor="";
+    private $iHideZero=false;
+
+    function Show($aFlag=true) {
+	$this->show=$aFlag;
+    }
+
+    function SetColor($aColor,$aNegcolor="") {
+	$this->color = $aColor;
+	$this->negcolor = $aNegcolor;
+    }
+
+    function SetFont($aFontFamily,$aFontStyle=FS_NORMAL,$aFontSize=10) {
+	$this->ff=$aFontFamily;
+	$this->fs=$aFontStyle;
+	$this->fsize=$aFontSize;
+    }
+
+    function ApplyFont($aImg) {
+	$aImg->SetFont($this->ff,$this->fs,$this->fsize);
+    }
+
+    function SetMargin($aMargin) {
+	$this->margin = $aMargin;
+    }
+
+    function SetAngle($aAngle) {
+	$this->angle = $aAngle;
+    }
+
+    function SetAlign($aHAlign,$aVAlign='') {
+	$this->halign = $aHAlign;
+	$this->valign = $aVAlign;
+    }
+
+    function SetFormat($aFormat,$aNegFormat="") {
+	$this->format= $aFormat;
+	$this->negformat= $aNegFormat;
+    }
+
+    function SetFormatCallback($aFunc) {
+	$this->iFormCallback = $aFunc;
+    }
+
+    function HideZero($aFlag=true) {
+	$this->iHideZero=$aFlag;
+    }
+
+    function Stroke($img,$aVal,$x,$y) {
+	
+	if( $this->show ) 
+	{
+	    if( $this->negformat=="" ) $this->negformat=$this->format;
+	    if( $this->negcolor=="" ) $this->negcolor=$this->color;
+
+	    if( $aVal===NULL || (is_string($aVal) && ($aVal=="" || $aVal=="-" || $aVal=="x" ) ) ) 
+		return;
+
+	    if( is_numeric($aVal) && $aVal==0 && $this->iHideZero ) {
+		return;
+	    }
+
+	    // Since the value is used in different cirumstances we need to check what
+	    // kind of formatting we shall use. For example, to display values in a line
+	    // graph we simply display the formatted value, but in the case where the user
+	    // has already specified a text string we don't fo anything.
+	    if( $this->iFormCallback != '' ) {
+		$f = $this->iFormCallback;
+		$sval = call_user_func($f,$aVal);
+	    }
+	    elseif( is_numeric($aVal) ) {
+		if( $aVal >= 0 )
+		    $sval=sprintf($this->format,$aVal);
+		else
+		    $sval=sprintf($this->negformat,$aVal);
+	    }
+	    else
+		$sval=$aVal;
+
+	    $y = $y-sign($aVal)*$this->margin;
+
+	    $txt = new Text($sval,$x,$y);
+	    $txt->SetFont($this->ff,$this->fs,$this->fsize);
+	    if( $this->valign == "" ) {
+		if( $aVal >= 0 )
+		    $valign = "bottom";
+		else
+		    $valign = "top";
+	    }
+	    else
+		$valign = $this->valign;
+	    $txt->Align($this->halign,$valign);
+
+	    $txt->SetOrientation($this->angle);
+	    if( $aVal > 0 )
+		$txt->SetColor($this->color);
+	    else
+		$txt->SetColor($this->negcolor);
+	    $txt->Stroke($img);
+	}
+    }
+}
+
+//===================================================
+// CLASS Plot
+// Description: Abstract base class for all concrete plot classes
+//===================================================
+class Plot {
+    public $numpoints=0;
+    public $value;
+    public $legend='';
+    public $coords=array();
+    public $color="black";
+    public $hidelegend=false;
+    public $line_weight=1;
+    public $csimtargets=array(),$csimwintargets=array(); // Array of targets for CSIM
+    public $csimareas="";			// Resultant CSIM area tags	
+    public $csimalts=null;			// ALT:s for corresponding target
+    public $legendcsimtarget='',$legendcsimwintarget='';
+    public $legendcsimalt='';
+    protected $weight=1;	
+    protected $center=false;
+//---------------
+// CONSTRUCTOR
+    function Plot($aDatay,$aDatax=false) {
+	$this->numpoints = count($aDatay);
+	if( $this->numpoints==0 )
+	    JpGraphError::RaiseL(25121);//("Empty input data array specified for plot. Must have at least one data point.");
+	$this->coords[0]=$aDatay;
+	if( is_array($aDatax) ) {
+	    $this->coords[1]=$aDatax;
+	    $n = count($aDatax);
+	    for($i=0; $i < $n; ++$i ) {
+		if( !is_numeric($aDatax[$i]) ) {
+		    JpGraphError::RaiseL(25070);
+		}
+	    }
+	}
+	$this->value = new DisplayValue();
+    }
+
+//---------------
+// PUBLIC METHODS	
+
+    // Stroke the plot
+    // "virtual" function which must be implemented by
+    // the subclasses
+    function Stroke($aImg,$aXScale,$aYScale) {
+	JpGraphError::RaiseL(25122);//("JpGraph: Stroke() must be implemented by concrete subclass to class Plot");
+    }
+
+    function HideLegend($f=true) {
+	$this->hidelegend = $f;
+    }
+
+    function DoLegend($graph) {
+	if( !$this->hidelegend )
+	    $this->Legend($graph);
+    }
+
+    function StrokeDataValue($img,$aVal,$x,$y) {
+	$this->value->Stroke($img,$aVal,$x,$y);
+    }
+	
+    // Set href targets for CSIM	
+    function SetCSIMTargets($aTargets,$aAlts='',$aWinTargets='') {
+	$this->csimtargets=$aTargets;
+	$this->csimwintargets=$aWinTargets;
+	$this->csimalts=$aAlts;		
+    }
+ 	
+    // Get all created areas
+    function GetCSIMareas() {
+	return $this->csimareas;
+    }	
+	
+    // "Virtual" function which gets called before any scale
+    // or axis are stroked used to do any plot specific adjustment
+    function PreStrokeAdjust($aGraph) {
+	if( substr($aGraph->axtype,0,4) == "text" && (isset($this->coords[1])) )
+	    JpGraphError::RaiseL(25123);//("JpGraph: You can't use a text X-scale with specified X-coords. Use a \"int\" or \"lin\" scale instead.");
+	return true;	
+    }
+	
+    // Get minimum values in plot
+    function Min() {
+	if( isset($this->coords[1]) )
+	    $x=$this->coords[1];
+	else
+	    $x="";
+	if( $x != "" && count($x) > 0 ) {
+	    $xm=min($x);
+	}
+	else 
+	    $xm=0;
+	$y=$this->coords[0];
+	$cnt = count($y);
+	if( $cnt > 0 ) {
+	    /*
+	    if( ! isset($y[0]) ) {
+		JpGraphError('The input data array must have consecutive values from position 0 and forward. The given y-array starts with empty values (NULL)');
+	    }
+	    $ym = $y[0];
+	    */
+	    $i=0;
+	    while( $i<$cnt && !is_numeric($ym=$y[$i]) )
+		$i++;
+	    while( $i < $cnt) {
+		if( is_numeric($y[$i]) ) 
+		    $ym=min($ym,$y[$i]);
+		++$i;
+	    }			
+	}
+	else 
+	    $ym="";
+	return array($xm,$ym);
+    }
+	
+    // Get maximum value in plot
+    function Max() {
+	if( isset($this->coords[1]) )
+	    $x=$this->coords[1];
+	else
+	    $x="";
+
+	if( $x!="" && count($x) > 0 )
+	    $xm=max($x);
+	else {
+	    $xm = $this->numpoints-1;
+	}
+	$y=$this->coords[0];
+	if( count($y) > 0 ) {
+	    /*
+	    if( !isset($y[0]) ) {
+		JpGraphError::Raise('The input data array must have consecutive values from position 0 and forward. The given y-array starts with empty values (NULL)');
+//		$y[0] = 0;
+// Change in 1.5.1 Don't treat this as an error any more. Just silently convert to 0
+// Change in 1.17 Treat his as an error again !! This is the right way to do !!
+	    }
+	    */
+	    $cnt = count($y);
+	    $i=0;
+	    while( $i<$cnt && !is_numeric($ym=$y[$i]) )
+		$i++;				
+	    while( $i < $cnt ) {
+		if( is_numeric($y[$i]) ) 
+		    $ym=max($ym,$y[$i]);
+		++$i;
+	    }
+	}
+	else 
+	    $ym="";
+	return array($xm,$ym);
+    }
+	
+    function SetColor($aColor) {
+	$this->color=$aColor;
+    }
+	
+    function SetLegend($aLegend,$aCSIM='',$aCSIMAlt='',$aCSIMWinTarget='') {
+	$this->legend = $aLegend;
+	$this->legendcsimtarget = $aCSIM;
+	$this->legendcsimwintarget = $aCSIMWinTarget;
+	$this->legendcsimalt = $aCSIMAlt;
+    }
+
+    function SetWeight($aWeight) {
+	$this->weight=$aWeight;
+    }
+		
+    function SetLineWeight($aWeight=1) {
+	$this->line_weight=$aWeight;
+    }
+	
+    function SetCenter($aCenter=true) {
+	$this->center = $aCenter;
+    }
+	
+    // This method gets called by Graph class to plot anything that should go
+    // into the margin after the margin color has been set.
+    function StrokeMargin($aImg) {
+	return true;
+    }
+
+    // Framework function the chance for each plot class to set a legend
+    function Legend($aGraph) {
+	if( $this->legend != "" )
+	    $aGraph->legend->Add($this->legend,$this->color,"",0,$this->legendcsimtarget,
+				 $this->legendcsimalt,$this->legendcsimwintarget);    
+    }
+	
+} // Class
+
+
+//===================================================
+// CLASS PlotLine
+// Description: 
+// Data container class to hold properties for a static
+// line that is drawn directly in the plot area.
+// Usefull to add static borders inside a plot to show
+// for example set-values
+//===================================================
+class PlotLine {
+    public $scaleposition, $direction=-1; 
+    protected $weight=1;
+    protected $color="black";
+    private $legend='',$hidelegend=false, $legendcsimtarget='', $legendcsimalt='',$legendcsimwintarget='';
+
+//---------------
+// CONSTRUCTOR
+    function PlotLine($aDir=HORIZONTAL,$aPos=0,$aColor="black",$aWeight=1) {
+	$this->direction = $aDir;
+	$this->color=$aColor;
+	$this->weight=$aWeight;
+	$this->scaleposition=$aPos;
+    }
+	
+//---------------
+// PUBLIC METHODS	
+
+    function SetLegend($aLegend,$aCSIM='',$aCSIMAlt='',$aCSIMWinTarget='') {
+	$this->legend = $aLegend;
+	$this->legendcsimtarget = $aCSIM;
+	$this->legendcsimwintarget = $aCSIMWinTarget;
+	$this->legendcsimalt = $aCSIMAlt;
+    }
+
+    function HideLegend($f=true) {
+	$this->hidelegend = $f;
+    }
+
+    function SetPosition($aScalePosition) {
+	$this->scaleposition=$aScalePosition;
+    }
+	
+    function SetDirection($aDir) {
+	$this->direction = $aDir;
+    }
+	
+    function SetColor($aColor) {
+	$this->color=$aColor;
+    }
+	
+    function SetWeight($aWeight) {
+	$this->weight=$aWeight;
+    }
+
+//---------------
+// PRIVATE METHODS
+
+    function DoLegend(&$graph) {
+	if( !$this->hidelegend )
+	    $this->Legend($graph);
+    }
+
+    // Framework function the chance for each plot class to set a legend
+    function Legend(&$aGraph) {
+	if( $this->legend != "" ) {
+	    $dummyPlotMark = new PlotMark();
+	    $lineStyle = 1;
+	    $aGraph->legend->Add($this->legend,$this->color,$dummyPlotMark,$lineStyle,
+				 $this->legendcsimtarget,$this->legendcsimalt,$this->legendcsimwintarget);    
+	}
+    }
+
+    function PreStrokeAdjust($aGraph) {
+	// Nothing to do
+    }
+	
+    function Stroke($aImg,$aXScale,$aYScale) {
+	$aImg->SetColor($this->color);
+	$aImg->SetLineWeight($this->weight);		
+	if( $this->direction == VERTICAL ) {
+	    $ymin_abs=$aYScale->Translate($aYScale->GetMinVal());
+	    $ymax_abs=$aYScale->Translate($aYScale->GetMaxVal());
+	    $xpos_abs=$aXScale->Translate($this->scaleposition);
+	    $aImg->Line($xpos_abs, $ymin_abs, $xpos_abs, $ymax_abs);
+	}
+	elseif( $this->direction == HORIZONTAL ) {
+	    $xmin_abs=$aXScale->Translate($aXScale->GetMinVal());
+	    $xmax_abs=$aXScale->Translate($aXScale->GetMaxVal());
+	    $ypos_abs=$aYScale->Translate($this->scaleposition);
+	    $aImg->Line($xmin_abs, $ypos_abs, $xmax_abs, $ypos_abs);
+	}
+	else
+	    JpGraphError::RaiseL(25125);//(" Illegal direction for static line");
+    }
+}
+
+// <EOF>
+?>

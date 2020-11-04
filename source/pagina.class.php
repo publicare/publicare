@@ -25,8 +25,10 @@ class Pagina
 	function __construct(&$_db, $cod_objeto=_ROOT)
 	{
 		$this->cod_objeto = $cod_objeto;
-		$this->_db = $_db;
 		$this->_adminobjeto = new AdminObjeto();
+        $this->_db = $_db;
+        //echo "<pre>";
+        //var_dump($_db);
 		$this->_objeto = new Objeto($this, $cod_objeto);
 		$this->_usuario = new Usuario($this);
 		$this->_parser = new Parse();

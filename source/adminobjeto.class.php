@@ -677,7 +677,8 @@ class AdminObjeto
 	                        $temp_where[]=$info['where'];
 	                        $campo_incluido[]=$info['field'];
 	                    }
-			$temp_where[]= ' ('.$info['field'].$condicao[1].$info['delimitador'].$condicao[2].$info['delimitador'].')';                   
+			/*	MUDEI - COLOQUEI UM ESPAÇO ENTRE OS OS CAMPOS E O DELIMITADOR - DANILO 17/04/2009 */
+			$temp_where[]= ' ('.$info['field']." ".$condicao[1]." ".$info['delimitador'].$condicao[2].$info['delimitador'].')';                   
 	                }
                 }
 			}
