@@ -17,6 +17,9 @@ global $_page;
 			<textarea class="pblInputForm" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" name="descricao" cols=45 rows=4><? if ($edit) echo $_page->_objeto->ValorParaEdicao($_page, "descricao") ?></textarea>
 		</td>
 	</tr>
+	<!--
+	-- removendo tags do form avançado
+	--
 	<tr>
 		<td class="pblTextoLabelForm">
 			TAGS deste Objeto
@@ -25,6 +28,7 @@ global $_page;
 			<textarea class="pblInputForm" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" name="tags" cols=45 rows=4><? if ($edit) echo $_page->_objeto->ValorParaEdicao($_page, "tags") ?></textarea>
 		</td>
 	</tr>
+	-->
 	<?php
 		/* ........... SKIN ..........
 		   Limita os campos PELE (publica e nao publica) / DONO DO OBJETO /

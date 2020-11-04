@@ -1,10 +1,32 @@
 <?php
 
-define ('_VERSIONPROG','Publicare 2.8.7 - 21/06/2011');
+define ('_VERSIONPROG','Publicare 2.8.8 - 09/12/2011');
 
 
 
 /*
+	versao: 2.8.8 - Corrigido bug ao criar tabela temporaria. Não estava criando as colunas corretamente. Erro no switch.
+					- dblayer_adodb.class.php - linhas 277 - 303
+					Adicionado o tipo Texto Avançado para buscas que utilizam tabela temporária
+					- dblayer_adodb.class.php - linhas 103, 114, 124, 301-304
+					Adicionada a palavra ILIKE para ser aceita na condição do publicare
+					- adminobjeto.class.php - linha 357
+					* Diogo Corazolla 23/11/2011
+					
+					Adicionado tipo de coluna Obj. ref para tabela temporária, utilizando mesmo tipo de dado de string.
+					-  dblayer_adodb.class.php - linhas 292
+					* Diogo Corazolla 25/11/2011
+					
+					Alterado publicare para utilizaçãod e tabelas temporárias, em vez de tabelas fisicas. Desta forma a busca fica mais rápida.
+					* Diogo Corazolla 02/11/2011
+					
+					Corrigido Problema ao apagar classe, não estava apagando os relacionamentos, classexfilhos e classexobjeto.
+					- administracao.class.php - ApagarClasse() - linhas: 2674 - 2686
+					Retirada a tabela tempcontrole do publicare. Tabela não é mais necessária. Apagada do banco e removida do dblayer.
+					- dblayer_adodb.class.php - linha 57
+					
+					* Diogo Corazolla 09/12/2011
+
 	versao: 2.8.7 - Corrigido bug ao excluir propriedade de uma classe
 					- administracao.class.php - linhas 2540 - 2544
 					

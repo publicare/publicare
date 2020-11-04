@@ -3,6 +3,9 @@ if (!isset($_SESSION)) session_start();
 
 include("funcoes.php");
 
+//$_POST = _antiSqlInjection($_POST);
+//$_GET = _antiSqlInjection($_GET);
+
 // Definindo timezone
 date_default_timezone_set("America/Sao_Paulo");
 
@@ -57,6 +60,7 @@ require ("usuario.class.php");
 require ("parse.class.php");
 require ("rss.class.php");
 require ("data.php");
+require_once ("versao.php");
 
 // inclusao da classe jpcache se for necessario
 //if (JPCACHE) include ('jpcache2.pinc');

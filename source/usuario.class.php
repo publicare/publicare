@@ -241,8 +241,6 @@ class Usuario
 
 	function Menu(&$_page)
 	{
-		
-		
 		//if (!is_array($this->acao))
 		{
 			foreach ($_SESSION['perfil'][$this->cod_perfil] as $perfil)

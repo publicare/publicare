@@ -10,14 +10,28 @@ global $PORTAL_NAME, $cod_objeto, $_page;
 	$NewBrowser = DetectaBrowser();	
 	echo "<link href=\"/html/css/publicare_".$NewBrowser[0].".css\" rel=\"stylesheet\" type=\"text/css\">\n";
 	
+	$versao_php = phpversion();
+	
+	if (strpos($versao_php, '-')) $versao_php = substr($versao_php, 0, strpos($versao_php, '-'));
+	
 	$URLACTION = $_GET;
     $URLCOMMON = $_SERVER['PHP_SELF'];
-    $tmpPosURL = strrpos($URLCOMMON,"/");
-    $URLCOMMON = substr($URLCOMMON,0,$tmpPosURL);
-    $tmpPosURL = strrpos($URLCOMMON,"new_");
+	
+	if (strnatcmp($versao_php, '5.3.6') > 0)
+	{
+		$tmpPosURL = strrpos($URLCOMMON,"/");
+		$URLCOMMON = substr($URLCOMMON,0,$tmpPosURL);
+	}
+	else
+	{
+		$tmpPosURL = strrpos($URLCOMMON,"/") - 10;
+		$URLCOMMON = substr($URLCOMMON,10,$tmpPosURL);
+	}
+	
+	$tmpPosURL = strrpos($URLCOMMON,"new_");
+	
     if (!$tmpPosURL===false)
-    	$URLCOMMON = "criando_arquivo";
-    	
+        $URLCOMMON = "criando_arquivo";  	
     	
    // Determinando variaveis dinamicas utilizadas pelo JavaScript
     echo "<script language=\"JavaScript1.2\" type=\"text/javascript\">\n";

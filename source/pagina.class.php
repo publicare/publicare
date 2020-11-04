@@ -7,6 +7,7 @@ define ('_OPERACAO_OBJETO_EDITAR',2);
 define ('_OPERACAO_OBJETO_CRIAR',1);
 	
 $_OPERACAO_OBJETO = array('','Criar','Editar','Apagar','Recuperar');
+$header_admin = false;
 
 class Pagina
 {
@@ -51,6 +52,10 @@ class Pagina
 
 	function Executar($acao,$incluirheader=false, $irpararaiz=false)
 	{
+
+//   echo "<pre>";
+//var_dump($acao);
+//exit();
 		if (strpos($acao,"/do/")!==false)
 		{
 			if ($this->_usuario->PodeExecutar($this, $acao))
@@ -405,7 +410,7 @@ class Pagina
 			}
 			else 
 			{
-				if (!$header_admin)
+				if (!isset($header_admin) || !$header_admin)
 					include ("header_publicare.php");
 					
 			}

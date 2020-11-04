@@ -307,7 +307,7 @@ class AdminObjeto
                             $result[$array_nomes[$key]]['valor']=$dados[$array_nomes[$key].'_arquivo'];
 							$result[$array_nomes[$key]]['cod_blob']=$dados[$array_nomes[$key].'_cod_blob'];
 							$result[$array_nomes[$key]]['tamanho_blob']=$dados[$array_nomes[$key].'_tamanho'];
-							$result[$array_nomes[$key]]['tipo_blob']=preg_replace('/\A.*?\./is','',$dados[$array_nomes[$key].'_arquivo']);
+							$result[$array_nomes[$key]]['tipo_blob']=PegaExtensaoArquivo($dados[$array_nomes[$key].'_arquivo']);
 							break;
 						case 'date':
 							$result[$array_nomes[$key]]['valor']=ConverteData($dados[$array_nomes[$key]],5);
@@ -353,8 +353,7 @@ class AdminObjeto
 		foreach ($array_exp as $exp)
 		{
 
-			/* MUDEI - INCLUI O LIKE E O % PARA LIBERAÇÃO COMO CARACTER VÁLIDO DENTRO DA CONDIÇÃO  - RODRIGO 20/03/2009 */
-			if (preg_match("%(.+?)(>=|<=|<>|=|<|>|LIKE|\%)(.+)%is",$exp,$passo_dois))
+			if (preg_match("%(.+?)(>=|<=|<>|=|<|>|LIKE|ILIKE|\%)(.+)%is",$exp,$passo_dois))
 			{
 				$passo_dois[1] = trim ($passo_dois[1]);
 				$passo_dois[2] = trim ($passo_dois[2]);
@@ -380,13 +379,13 @@ class AdminObjeto
 				switch ($exp)
 				{
 					case "&&":
-					$result[]="AND";
-					break;
+						$result[]="AND";
+						break;
 					case "||":
-					$result[]="OR";
-					break;
+						$result[]="OR";
+						break;
 					default:
-					$_page->AdicionarAviso("Operador ".$exp." desconhecido.",true);
+						$_page->AdicionarAviso("Operador ".$exp." desconhecido.",true);
 				}
 			}
 		}
@@ -608,6 +607,8 @@ class AdminObjeto
 
 	function _LocalizarObjetosComTabelaTemporaria (&$_page, $classes, $array_qry, $array_ordem, $default_where, $pai_join)
 	{
+	
+
 		$tbl = $_page->_db->GetTempTable();
 		
 		// Variavel para controlar a criacao dos campos na tabela temporaria //
@@ -615,6 +616,8 @@ class AdminObjeto
 		$campo_incluido=array();
 		$campo_incluido_natabela=array();
 		$ordem_temporaria=array();
+		
+		$sqls_insert = array();
 		
 		foreach ($classes as $cod_classe)
 		{
@@ -631,7 +634,7 @@ class AdminObjeto
 					$info = $this->CriaSQLPropriedade($_page, $item['campo'],$item['orientacao'],$cod_classe);
 					if (!in_array($info['field'],$campo_incluido_natabela))
 					{
-						$_page->_db->AddFieldToTempTable($tbl,$info);
+						$tbl["colunas"][] = $_page->_db->AddFieldToTempTable($tbl,$info);
 						$campo_incluido_natabela[]=$info['field'];
 					}
 					if (!in_array($info['field'],$campo_incluido))
@@ -661,18 +664,17 @@ class AdminObjeto
 				{
 	                if ($this->EMetadado($_page, $condicao[0]))
 	                {
-				if (preg_match('/floor/',$condicao[0])) {
-					$condicao[0]=str_replace('objeto.','',$condicao[0]);
-				}
+						if (preg_match('/floor/',$condicao[0])) {
+							$condicao[0]=str_replace('objeto.','',$condicao[0]);
+						}
 	                    $temp_where[]=' ('.$condicao[0].$condicao[1]."'".$condicao[2]."')";
 	                }
 	                else
 	                {
-
-				$info = $this->CriaSQLPropriedade($_page, $condicao[0],"", $cod_classe);
+						$info = $this->CriaSQLPropriedade($_page, $condicao[0],"", $cod_classe);
 	                    if (!in_array($info['field'],$campo_incluido_natabela))
 	                    {
-	                        $_page->_db->AddFieldToTempTable($tbl,$info);
+							$tbl["colunas"][] = $_page->_db->AddFieldToTempTable($tbl,$info);
 	                        $campo_incluido_natabela[]=$info['field'];
 	                    }
 	                    if (!in_array($info['field'],$campo_incluido))
@@ -682,8 +684,8 @@ class AdminObjeto
 	                        $temp_where[]=$info['where'];
 	                        $campo_incluido[]=$info['field'];
 	                    }
-			/*	MUDEI - COLOQUEI UM ESPAÇO ENTRE OS OS CAMPOS E O DELIMITADOR - DANILO 17/04/2009 */
-			$temp_where[]= ' ('.$info['field']." ".$condicao[1]." ".$info['delimitador'].$condicao[2].$info['delimitador'].')';                   
+			
+						$temp_where[]= ' ('.$info['field']." ".$condicao[1]." ".$info['delimitador'].$condicao[2].$info['delimitador'].')';                   
 	                }
                 }
 			}
@@ -691,16 +693,29 @@ class AdminObjeto
 			$campos=','.implode($temp_campos,',');
 			$from = implode($temp_from,' ');
 			$where = implode($temp_where,' and ');
-
-			$sql = 'insert into '.$tbl.
+			
+			$sqls_insert[] = 'insert into '.$tbl["nome"].
 				" select ".$_page->_db->sqlobjsel.$campos.$_page->_db->sqlobjfrom.$pai_join.$from.' where (1=1) and '.$where.$default_where;
-			$_page->_db->ExecSQL($sql);
+			//$_page->_db->ExecSQL($sql);
 
+		}
+		
+		$sqlCreate = $_page->_db->tipodados["temp"]." ".$_page->_db->tipodados["temp2"].$tbl["nome"]." (".implode(", ", $tbl["colunas"]).")";
+		$_page->_db->ExecSQL($sqlCreate);
+		
+		foreach($sqls_insert as $sqls)
+		{
+			$_page->_db->ExecSQL($sqls);
 		}
 
 
-		$result['tbl']=$tbl;
+		$result['tbl']=$tbl["nome"];
 		$result['ordem']=' order by '.implode($ordem_temporaria,',');
+		
+		// echo "<pre>";
+		// echo "<pre>";
+		// var_dump($result);
+		// exit();
 			
 		return $result;
 	}
@@ -791,7 +806,10 @@ class AdminObjeto
 					$out['condicao'][]=$condicao[0];
 					/*	MUDEI - COLOQUEI UM ESPAÇO ENTRE OS OS CAMPOS E O DELIMITADOR - RODRIGO 20/03/2009 */
 					//original - $out['where'] .= ' ('.$temp['where'].' AND '.$temp['field'].$condicao[1].$temp['delimitador'].$condicao[2].$temp['delimitador'].')';
+
 					$out['where'] .= ' ('.$temp['where'].' AND '.$temp['field']." ".$condicao[1]." ".$temp['delimitador'].$condicao[2].$temp['delimitador'].')';
+
+
 				}
 			}
 		}
@@ -1129,6 +1147,7 @@ class AdminObjeto
 
 	function CriaSQLPais(&$_page, $pai, $niveis, $campo="objeto.cod_pai")
 	{
+		$return = "";
 		if ($pai!=-1)
 		{
 		 	$return = " inner join parentesco ".$_page->_db->nomes_tabelas["parentesco"]." 

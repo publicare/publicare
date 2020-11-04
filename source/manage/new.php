@@ -26,6 +26,7 @@ global $_page, $cod_objeto;
 <?
 	$lista=$_page->_administracao->ListaDeClassesPermitidas($_page, $_page->_objeto->Valor($_page, "cod_classe"));
 	$lista2=$_page->_administracao->ListaDeClassesPermitidasNoObjeto($_page, $_page->_objeto->Valor($_page, "cod_objeto"));
+	
 	$lista=array_merge($lista,$lista2);
 	foreach($lista as $row)
 	{

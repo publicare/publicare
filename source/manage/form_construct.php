@@ -1,7 +1,8 @@
 <?php
 global $_page, $action;
 
-include_once ($_SERVER['DOCUMENT_ROOT']."/FCKeditor/fckeditor.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/ckeditor/ckeditor.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/ckfinder/ckfinder.php");
 		
 // Variaveis de definicao para estrutura de formulario
 $DatadeHoje = date("j/n/Y"); 
@@ -310,11 +311,22 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 						case 8:
 							if ($prop['seguranca'] >= $_SESSION['usuario']['perfil'])
 							{
-								$f = new FCKeditor('property:'. $prop['nome']);
-								if ($edit)
-								$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
-								$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
-								$f->Create();
+								$f = new CKEditor();
+								$nomeCk = 'property:'. $prop['nome'];
+								$valorCk = ($edit)?$_page->_objeto->ValorParaEdicao($_page, $prop['nome']):"";
+								$f->returnOutput = true;
+								$f->basePath = '/ckeditor/';
+								$f->config['width'] = 520;
+								$f->config['height'] = 350;
+								CKFinder::SetupCKEditor($f, '/ckfinder/');
+								//$f->textareaAttributes = array("cols" => 60, "rows" => 20);
+								$campo = $f->editor($nomeCk, $valorCk);
+								echo $campo;
+								//$f = new FCKeditor('property:'. $prop['nome']);
+								//if ($edit)
+								//$f->Value = $_page->_objeto->ValorParaEdicao($_page, $prop['nome']);
+								//$f->Config['CustomConfigurationsPath'] = '/html/javascript/fckeditor-config.js' ;
+								//$f->Create();
 							}
 							break;
 						case 6: // CAMPO REFERENCIA A UM OBJETO (RefObj)
@@ -419,6 +431,10 @@ $dadosPai = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $_page->_objeto-
 		
 	?>
 	</P>
+	<p>
+	TAGS deste Objeto<br>
+	<textarea class="pblInputForm" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" mmTranslatedValueHiliteColor="HILITECOLOR='No Color'" name="tags" cols=45 rows=4><? if ($edit) echo $_page->_objeto->ValorParaEdicao($_page, "tags") ?></textarea>
+	</p>
 	<input type="hidden" value="<?=isset($strPropriedadeSegura)?$strPropriedadeSegura:"";?>" name="propriedadesegura" readonly>
 	</td>
 	</tr>

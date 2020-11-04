@@ -62,11 +62,10 @@ class DBLayer
 		"tbl_objref"=>"t25", 
 		"tbl_string"=>"t26", 
 		"tbl_text"=>"t27", 
-		"tempcontrole"=>"t28", 
-		"tipodado"=>"t29", 
-		"unlock_table"=>"t30", 
-		"usuario"=>"t31", 
-		"usuarioxobjetoxperfil"=>"t32");
+		"tipodado"=>"t28", 
+		"unlock_table"=>"t29", 
+		"usuario"=>"t30", 
+		"usuarioxobjetoxperfil"=>"t31");
 		
 	// definindo campos que sao metadados do objeto
 		$this->metadados = array ('cod_objeto',
@@ -100,8 +99,11 @@ class DBLayer
 			"inteirogde"=>"bigint",
 			"inteiropqn"=>"smallint",
 			"float"=>"float",
-			"texto"=>"varchar(255)", 
-			"coluna"=>"column");
+			"texto"=>"character varying(255)", 
+			"textogde"=>"text", 
+			"coluna"=>"column",
+			"temp"=>"CREATE TEMPORARY TABLE",
+			"temp2"=>"");
 			break;
 	// MySQL
 		case "mysql":
@@ -110,7 +112,10 @@ class DBLayer
 			"inteiropqn"=>"tinyint",
 			"float"=>"float",
 			"texto"=>"varchar(255)", 
-			"coluna"=>"");
+			"textogde"=>"text", 
+			"coluna"=>"",
+			"temp"=>"CREATE TEMPORARY TABLE",
+			"temp2"=>"");
 			break;
 	// MICROSOFT SQL SERVER
 		case "mssql":
@@ -119,7 +124,10 @@ class DBLayer
 			"inteiropqn"=>"[tinyint]",
 			"float"=>"[numeric](18, 5)",
 			"texto"=>"[varchar](255)", 
-			"coluna"=>"");
+			"textogde"=>"[text]", 
+			"coluna"=>"",
+			"temp"=>"CREATE TABLE",
+			"temp2"=>"#");
 			break;
 		}
 		
@@ -156,7 +164,7 @@ class DBLayer
 		
 		try {
 				$this->con = ADONewConnection($this->server);
-//				$this->con->debug = true;
+				//$this->con->debug = true;
 				switch ($this->server)
 				{
 					case "postgres":
@@ -194,6 +202,35 @@ class DBLayer
 	{
 		$tablename = "temp_".mt_rand(1,300).date("U");
 		
+		$tabelaTemp = array();
+		$tabelaTemp["nome"] = $tablename;
+		
+		$tabelaTemp["colunas"] = array("cod_objeto ".$this->tipodados["inteiro"]." NOT NULL",
+										"cod_pai ".$this->tipodados["inteiro"]." NULL",
+										"cod_classe ".$this->tipodados["inteiro"]." NULL",
+										"classe ".$this->tipodados["texto"]." NULL",
+										"temfilhos ".$this->tipodados["inteiro"]." NULL",
+										"prefixoclasse ".$this->tipodados["texto"]." NULL",
+										"cod_usuario ".$this->tipodados["inteiro"]." NULL",
+										"cod_pele ".$this->tipodados["inteiro"]." NULL",
+										"pele ".$this->tipodados["texto"]." NULL",
+										"prefixopele ".$this->tipodados["texto"]." NULL",
+										"cod_status ".$this->tipodados["inteiro"]." NULL",
+										"status ".$this->tipodados["texto"]." NULL",
+										"titulo ".$this->tipodados["texto"]." NULL",
+										"descricao ".$this->tipodados["texto"]." NULL",
+										"data_publicacao ".$this->tipodados["inteirogde"]." NULL",
+										"data_validade ".$this->tipodados["inteirogde"]." NULL",
+										"script_exibir ".$this->tipodados["texto"]." NULL",
+										"apagado ".$this->tipodados["inteiropqn"]." NULL",
+										"objetosistema ".$this->tipodados["inteiropqn"]." NULL",
+										"peso ".$this->tipodados["inteiro"]." NULL");
+/*										
+		echo "<pre>";
+		var_dump($tabelaTemp);
+		exit();
+	*/
+	/*
 		$sql = "CREATE TABLE ".$tablename." (
 			cod_objeto ".$this->tipodados["inteiro"]." NOT NULL ,
 			cod_pai ".$this->tipodados["inteiro"]." NULL ,
@@ -216,8 +253,9 @@ class DBLayer
 			objetosistema ".$this->tipodados["inteiropqn"]." NULL ,
 			peso ".$this->tipodados["inteiro"]." NULL)";
 		$this->ExecSQL($sql);		
+		*/
 		
-		return $tablename;
+		return $tabelaTemp;
 	}
 		
 	function ExecSQL($sql, $start=-1, $limit=-1)
@@ -267,36 +305,55 @@ class DBLayer
 	function AddFieldToTempTable($tbl, $field)
 	{
 		
-//		var_dump($field);
-		
 		if (strpos($field['field'],'.')!==false)
 		{
 			$field['field']=substr($field['field'],0,strpos($field['field'],'.'));
 		}
-		
-		switch ($field['type'])
+				
+		switch (trim($field['type']))
 		{
-			case 'data' || 'Data':
+			case 'data':
+			case 'Data':
 				$txt = $field['field'].' '.$this->tipodados["inteirogde"].' NULL';
 				break;
-			case 'nï¿½mero preciso' || 'Nï¿½mero Preciso':
+			case 'número preciso':
+			case 'Número Preciso':
 				$txt = $field['field'].' '.$this->tipodados["float"].' NULL';
 				break;
-			case 'nï¿½mero' || 'Nï¿½mero':
+			case 'número':
+			case 'Número':
 				$txt = $field['field'].' '.$this->tipodados["inteiro"].' NULL';
 				break;
-			case 'ref_objeto' || 'Ref. Objeto':
-				break;
-			case 'string' || 'String':
+			case 'ref_objeto':
+			case 'Ref. Objeto':
+			case 'string':
+			case 'String':
 				$txt = $field['field'].' '.$this->tipodados["texto"].' NULL';
 				break;
-			case 'boolean' || 'Booleano':
+			case 'texto avanc.':
+			case 'Texto Avanc.':
+				$txt = $field['field'].' '.$this->tipodados["textogde"].' NULL';
+				break;
+			case 'boolean':
+			case 'Booleano':
 				$txt = $field['field'].' '.$this->tipodados["inteiropqn"].' NULL';
 				break;
 							
 		}
-		$sql = "alter table ".$tbl." add ".$this->tipodados["coluna"]." ".$txt;
-		$this->Query($sql);
+		
+//		x($field['type']);
+//		x($txt);
+		//$sql = "alter table ".$tbl." add ".$this->tipodados["coluna"]." ".$txt;
+		/*
+		echo "<pre>";
+		var_dump($field);
+		var_dump($tbl);
+		echo ">>".$sql."<br>";
+		echo "</pre>";
+			*/
+		//$this->Query($sql);
+		
+		return $txt;
 	}
 		
 	function SpecialChars($array)
