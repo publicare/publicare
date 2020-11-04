@@ -615,6 +615,7 @@ class Parse
 												.'if ($_OBJ_->TamanhoBlob($_page, <#P:nome#>)) {'."\n"
 												.'$_BLOBTAMANHO = $_OBJ_->TamanhoBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBLINK = $_OBJ_->LinkBlob($_page, <#P:nome#>);'."\n"
+//												.'$_BLOBLINK = $_OBJ_->DownloadBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBDOWNLOAD = $_OBJ_->DownloadBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBVIEW = $_OBJ_->ExibirBlob($_page, <#P:nome#>);'."\n"
 												.'$_BLOBTIPO = $_OBJ_->TipoBlob($_page, <#P:nome#>);'."\n"
@@ -690,12 +691,7 @@ class Parse
 										.'{'."\n"
 										.'    echo "<img src=\"".$_OBJ_->IconeBlob($_page, "conteudo")."\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
 										.'} else {'."\n"
-										.'    if (file_exists($_SERVER["DOCUMENT_ROOT"]."/upd_blob/classes/".$ic_classe)) '."\n"
-										.'    {	'."\n"
-										.'        echo "<img src=\"/upd_blob/classes/".$ic_classe."\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
-										.'    } else {'."\n"
-										.'        echo "<img src=\"/upd_blob/classes/ic_default.gif\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
-										.'    }'."\n"
+										.'    echo "<img src=\"/html/objects/_viewblob.php?tipo=classe&nome=".$_OBJ_->Valor($_page, "prefixoclasse")."\" border=\"0\" align=\"absmiddle\" title=\"".$_OBJ_->Valor($_page, "classe")."\" />";'."\n"
 										.'}?>'."\n",
 									'parameters'=> false,
 									),
@@ -1150,3 +1146,4 @@ exit;*/
 }
 
 
+?>

@@ -1215,7 +1215,7 @@ class AdminObjeto
 	function EnviaEmailSolicitacao(&$_page, $cod_chefia, $cod_objeto,$mensagemsubmetida)
 	{
 		global $PORTAL_NAME;
-	  include('email.class.pinc');
+	  include('email.class.php');
 	  $arrInfoUsuario = $_page->_administracao->PegaInformacaoUsuario($_page, $cod_chefia);
 	  $arrInfoDadosObjeto = $_page->_adminobjeto->PegaDadosObjetoPeloID($_page, $cod_objeto);
 	  
@@ -1239,20 +1239,18 @@ class AdminObjeto
 		 <br><br><br><br>
 		 <b>Esta mensagem &eacute; autom&aacute;tica e n&atilde;o deve ser respondida.</b>
 		 <br><br>
-		 <center>Coordena&ccedil;&atilde;o Geral de Tecnologia da Informa&ccedil;&atilde;o - <b>CGTI</b></center></font>";
+		 <center>"._PORTAL_NAME."</center></font>";
 	  
 	  $destinatario = $arrInfoUsuario['nome']." <".$arrInfoUsuario['email'].">";
-	  $remetente =  "$PORTAL_NAME <$PORTAL_EMAIL>";
-	  $email = new Email($destinatario,	//** to address(es).
-										$remetente,						//** from address.
-										"Solicitacao de Publicacao");	//** subject.
+	  $remetente =  _PORTAL_EMAIL;
 	
-	  $email->TextOnly = false;
-	  $email->Content = "<html><body style='margin:0; padding:0;'>".
+	  $conteudoCompleto = "<html><body style='margin:0; padding:0;'>".
 						"<center>".
 						"<BR>Caro Sr(a), ".$arrInfoUsuario['nome']."<BR><BR>".
 						"$texConteudo".
 						"<BR></body></html>";
+	  
+	  $email = new Email($remetente ,$destinatario, "Solicitacao de Publicacao" , $conteudoCompleto);
 	
 	//** send a copy of this file in the email. (n�o nescess�rio)
 	  //$email->Attach(__FILE__, "text/plain");
@@ -1336,3 +1334,4 @@ class AdminObjeto
 
 }
 
+?>

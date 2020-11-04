@@ -276,7 +276,7 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 						"$texConteudo".
 						"<BR></body></html>";
 	  
-	  $email = new Email($remetente, $destinatario, $subject, $corpo);
+	  $email = new Email($remetente, $destinatario, $subject, $corpo, $headers);
 	
 	  $wassent = $email->envia();
 	  return $wassent;
@@ -307,23 +307,38 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	
 	/**
     * Retira acentos, espaços e caracteres especiais da string
-    * @author Marcos Rodrigo Ribeiro
     * @param  $str - string que ira ser tratada
     * @return string
     */
     function limpaString($str)
 	{
-		//$str = html_entity_decode(utf8_decode($str));
-		//retira acentos e substitui espaço em branco por underscores
-		$arr1 = array("á", "à", "â", "ã", "ä", "é", "è", "ê", "ë", "í", "ì", "î", "ï", "ó", "ò", "ô", "õ", "ö", "ú", "ù", "û", "ü", "ç", "Á", "À", "Â", "Ã", "Ä", "É", "È", "Ê", "Ë", "Í", "Ì", "Î", "Ï", "Ó", "Ò", "Ô", "Õ", "Ö", "Ú", "Ù", "Û", "Ü", "Ç", " ", "_", ".", "'", "/", ",", "\\", "\"");
-		$arr2 = array("a", "a", "a", "a", "a", "e", "e", "e", "e", "i", "i", "i", "i", "o", "o", "o", "o", "o", "u", "u", "u", "u", "c", "A", "A", "A", "A", "A", "E", "E", "E", "E", "I", "I", "I", "I", "O", "O", "O", "O", "O", "U", "U", "U", "U", "C", "-", "", "", "", "", "", "", "");
-		$strAlterado = str_replace( $arr1, $arr2, $str );					    
 		
-		//transformas as letras em minúsulas
-		$strAlterado = strtolower($strAlterado); 
+		$acentos = array(
+					'A' => '/&Agrave;|&Aacute;|&Acirc;|&Atilde;|&Auml;|&Aring;/',
+					'a' => '/&agrave;|&aacute;|&acirc;|&atilde;|&auml;|&aring;/',
+					'C' => '/&Ccedil;/',
+					'c' => '/&ccedil;/',
+					'E' => '/&Egrave;|&Eacute;|&Ecirc;|&Euml;/',
+					'e' => '/&egrave;|&eacute;|&ecirc;|&euml;/',
+					'I' => '/&Igrave;|&Iacute;|&Icirc;|&Iuml;/',
+					'i' => '/&igrave;|&iacute;|&icirc;|&iuml;/',
+					'N' => '/&Ntilde;/',
+					'n' => '/&ntilde;/',
+					'O' => '/&Ograve;|&Oacute;|&Ocirc;|&Otilde;|&Ouml;/',
+					'o' => '/&ograve;|&oacute;|&ocirc;|&otilde;|&ouml;/',
+					'U' => '/&Ugrave;|&Uacute;|&Ucirc;|&Uuml;/',
+					'u' => '/&ugrave;|&uacute;|&ucirc;|&uuml;/',
+					'Y' => '/&Yacute;/',
+					'y' => '/&yacute;|&yuml;/',
+					'_' => '/&amp;| |-|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|\.|,|\$|\?|\"|\'|\*|\:/');
+
+		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_NOQUOTES, "ISO-8859-1"));
 		
-		return $strAlterado;
+//		echo ">>".$palavra;
+
+
+//		return $str;		
+		return $palavra;
 
 	}
 	
-	?>

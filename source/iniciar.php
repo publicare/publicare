@@ -1,7 +1,7 @@
 <?php
-
 session_start();
-require ("funcoes.php");
+
+include("funcoes.php");
 
 // Definindo timezone
 date_default_timezone_set("America/Sao_Paulo");
@@ -14,12 +14,12 @@ if (strpos($_SERVER['SERVER_SOFTWARE'],"Apache")===false)
 	$DOCUMENT_ROOT = $docroot;
 }
 //incluido a possibilidade de colcoar o titulo na URL (incluido: /(\w+)\ )
-if (preg_match('/index\.php(\/.+)\/(\d+)\/(\w.+)\.html.*$/', $_SERVER['REQUEST_URI'], $matches))
+if (preg_match('/index\.php(\/.+)\/(\d+)\/(\w+)\.html.*$/', $_SERVER['REQUEST_URI'], $matches))
 {
 	$action=$matches[1];
 	$cod_objeto=$matches[2];
 }
-//código antigo, para que URL sem o titulo continue funcionando
+//c&#243;digo antigo, para que URL sem o titulo continue funcionando
 elseif(preg_match('/index\.php(\/.+)\/(\d+)\.html.*$/', $_SERVER['REQUEST_URI'], $matches))
 {
 	$action=$matches[1];
@@ -33,10 +33,8 @@ else
 	}
 }
 
-
-
 // Se nao conseguir pegar no padrao "index.php/action/cod_objeto" 
-// tenta pegar por $_GET, se nao conseguir define valor padrao
+// tenta pegar por $_GET, se n&#195;&#163;o conseguir define valor padrao
 if (!isset($action)) {
 	if (isset($_GET["action"])) $action = $_GET["action"];
 	elseif (isset($_POST["action"])) $action = $_POST["action"];
@@ -46,10 +44,6 @@ if (!isset($cod_objeto)) {
 	if (isset($_GET["cod_objeto"])) $cod_objeto = $_GET["cod_objeto"];
 	else $cod_objeto = _ROOT;
 }
-
-//echo $action."<br>";
-//echo $cod_objeto;
-//exit();
 
 // inclusao das classes publicare
 require ('Zend/Search/Lucene.php');
@@ -67,9 +61,11 @@ require ("data.php");
 // inclusao da classe jpcache se for necessario
 //if (JPCACHE) include ('jpcache2.pinc');
 //require ("imagem_lib2.pinc");
-if (ATIVA_CACHE==true && !isset($_SESSION['usuario']["cod_usuario"]) && !isset($_SESSION['sessUsuarioPBQP']))
+if ($cod_objeto != _ROOT && ATIVA_CACHE==true && !isset($_SESSION['usuario']["cod_usuario"]) && !isset($_SESSION['sessUsuarioPBQP']))
 	require ("quickcache.php");
 
 $_db = new DBLayer();
+
 $_page = new Pagina($_db, $cod_objeto);
+
 ?>

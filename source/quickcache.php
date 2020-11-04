@@ -1,5 +1,4 @@
 <?php
-
 $QUICKCACHE_VERSION="v2.1.1rc1";
 
 $QUICKCACHE_DIR = _dirTempCache;

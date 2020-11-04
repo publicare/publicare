@@ -329,19 +329,20 @@ global $_page;
 <?
 if (isset($_GET['cod_classe']) && !empty($_GET['cod_classe']) && $_GET['cod_classe']>0)
 {
-    if (file_exists($_SERVER["DOCUMENT_ROOT"]."/upd_blob/classes/ic_".$classinfo["classe"]["prefixo"].".gif"))
+    if (file_exists(_BLOBDIR."classes/ic_".$classinfo["classe"]["prefixo"].".gif"))
     {
-	$arquivo_exibir = "ic_".$classinfo["classe"]["prefixo"].".gif";
-	$mensagem = $arquivo_exibir." <input type=\"checkbox\" name=\"apagar_icone\" id=\"apagar_icone\" value=\"apagar\" /> Apagar &iacute;cone.";
+		$arquivo_exibir = "ic_".$classinfo["classe"]["prefixo"].".gif";
+		$mensagem = $arquivo_exibir." <input type=\"checkbox\" name=\"apagar_icone\" id=\"apagar_icone\" value=\"apagar\" /> Apagar &iacute;cone.";
     } else {
-	$arquivo_exibir = "ic_default.gif";
-	$mensagem = "&Iacute;cone n&atilde;o definido";
+		$arquivo_exibir = "ic_default.gif";
+		$mensagem = "&Iacute;cone n&atilde;o definido";
     }
 } else {
     $arquivo_exibir = "ic_default.gif";
     $mensagem = "&Iacute;cone n&atilde;o definido";
 }
-echo "<img src=\"/upd_blob/classes/".$arquivo_exibir."\" border=\"0\" align=\"absmiddle\" /> ".$mensagem."<br />";
+echo "<img src=\"/html/objects/_viewblob.php?tipo=classe&nome=".$classinfo["classe"]["prefixo"]."\" border=\"0\" align=\"absmiddle\" /> ".$mensagem."<br />";
+//echo "<img src=\"/upd_blob/classes/".$arquivo_exibir."\" border=\"0\" align=\"absmiddle\" /> ".$mensagem."<br />";
 ?>
 <input type="file" id="ic_classe" name="ic_classe" class="pblInputForm">
                			</td>

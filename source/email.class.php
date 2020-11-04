@@ -31,6 +31,11 @@ class Email
 		$this->_headers .= "Return-Path: $this->_remetente".EmailNewLine;
 	}
 	
+	function Send()
+	{
+		$this->envia();
+	}
+	
 	function envia()
 	{
 		if (mail($this->_destinatario, $this->_assunto, $this->_corpo, $this->_headers))
@@ -40,4 +45,4 @@ class Email
 	}
 
 }
-
+?>

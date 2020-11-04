@@ -216,17 +216,17 @@ global $_page;
 
 	if (isset($_POST["apagar_icone"]) && $_POST["apagar_icone"]=="apagar")
 	{
-	    unlink($_SERVER["DOCUMENT_ROOT"]."/upd_blob/classes/ic_".$_POST['prefixo'].".gif");
-        }
+	    unlink(_BLOBDIR."classes/ic_".$_POST['prefixo'].".gif");
+     }
 
 	if (isset($_FILES["ic_classe"]["name"]) && !empty($_FILES["ic_classe"]["name"]) && $_FILES["ic_classe"]["type"]=="image/gif")
 	{
-	    if (!$resultado=is_dir($_SERVER["DOCUMENT_ROOT"]."/upd_blob/classes/"))
+	    if (!$resultado=is_dir(_BLOBDIR."classes/"))
 	    {
-		mkdir($_SERVER["DOCUMENT_ROOT"]."/upd_blob/classes/", 0700);
+			mkdir(_BLOBDIR."classes/", 0700);
 	    }
-	    $nome_arquivo = "ic_".$_POST['prefixo'].".gif";
-	    copy($_FILES["ic_classe"]["tmp_name"], $_SERVER["DOCUMENT_ROOT"]."/upd_blob/classes/".$nome_arquivo);
+	    	$nome_arquivo = "ic_".$_POST['prefixo'].".gif";
+	    	copy($_FILES["ic_classe"]["tmp_name"], _BLOBDIR."classes/".$nome_arquivo);
         } 
 
 //	exit();
