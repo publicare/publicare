@@ -12,8 +12,8 @@ global $PORTAL_NAME, $cod_objeto, $_page;
 	
 	$URLACTION = $_GET;
     $URLCOMMON = $_SERVER['PHP_SELF'];
-    $tmpPosURL = strrpos($URLCOMMON,"/") - 10;
-    $URLCOMMON = substr($URLCOMMON,10,$tmpPosURL);
+    $tmpPosURL = strrpos($URLCOMMON,"/");
+    $URLCOMMON = substr($URLCOMMON,0,$tmpPosURL);
     $tmpPosURL = strrpos($URLCOMMON,"new_");
     if (!$tmpPosURL===false)
     	$URLCOMMON = "criando_arquivo";

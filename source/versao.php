@@ -1,10 +1,37 @@
 <?php
 
-define ('_VERSIONPROG','Publicare 2.8.6 - 19/07/2010');
+define ('_VERSIONPROG','Publicare 2.8.7 - 21/06/2011');
 
 
 
 /*
+	versao: 2.8.7 - Corrigido bug ao excluir propriedade de uma classe
+					- administracao.class.php - linhas 2540 - 2544
+					
+					Alterada funcao limpaString() para nao dar mais problema de enconding
+					- funcoes.php - linhas 313 - 339
+					
+					Adicionada segurança no _download_blob.php -> Verifica se está sob onjeto protegido e não permite download
+					Adicionados mime types ao arquivo (flv, ogx, ogg, oga, ogv, spx, flac, anx, axa, axv, xspf)
+					- portal_instalar/html/objects/_download_blob.php
+					
+					Pastas upd_blob e upd_thumb retiradas da public_html
+					- portal_instalar/html/objects/_viewblob.php - adicionada visualização de ícones de classes
+					- manage/classes.php - adicionada chamada para _viewblob.php e corrigida logica do icone
+					- manage/classe_post.php - corrigido local de gravação do ícone da classe
+					- parse.class.php - alterada funcao iconeclasse para exibir corretamente o icone e alterada chamada linkblob para executar downloadblob
+					
+					Corrigido arquivo header_publicare.php - linhas 13 a 17
+					- Novo php trata de forma diferente a global $_SERVER["PHP_SELF"]
+					
+					Corrigido arquivo administracao.class.php - linha 1423
+					- Alterado formato da data para gravacao na coluna data_exclusao da tabela objeto
+					
+					Corrigido problema de charset para utilização do postgres
+					- Adicionada sentença  SET CLIENT_ENCODING TO 'LATIN1' no dblayer, quando for utilizado pgsql
+					
+					* Diogo Corazolla - 21/06/2011
+
 
 	versão: 2.8.6 - Removida a verificação por cod_perfil em Administracao->SubmeterObjeto na linha 854
 					- Alterado "administracao.class.php" (linha 854)

@@ -1420,7 +1420,7 @@
 
 					
 
-					$sql = "update objeto set apagado=1, data_exclusao='".date("Y-m-d H:i:s")."' ";
+					$sql = "update objeto set apagado=1, data_exclusao='".date("YmdHis")."' ";
 
 					if ($row['cod_status']==_STATUS_SUBMETIDO)
 

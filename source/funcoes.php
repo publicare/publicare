@@ -330,9 +330,9 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 					'u' => '/&ugrave;|&uacute;|&ucirc;|&uuml;/',
 					'Y' => '/&Yacute;/',
 					'y' => '/&yacute;|&yuml;/',
-					'_' => '/&amp;| |-|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|\.|,|\$|\?|\"|\'|\*|\:/');
+					'_' => '/&amp;| |-|&uml;|&ordf;|&ordm;|&deg;|&gt;|&lt;|&nbsp;|\.|,|\$|\?|\"|\'|\*|\:|\!|&ldquo;|\`|&rdquo;/');
 
-		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_NOQUOTES, "ISO-8859-1"));
+		$palavra =  preg_replace($acentos, array_keys($acentos), htmlentities($str, ENT_QUOTES, "ISO-8859-1"));
 		
 //		echo ">>".$palavra;
 
