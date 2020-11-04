@@ -281,4 +281,49 @@ function calendario($url, $cor='', $titulo='', $ano='', $mes='',$showdays=true,$
 	  $wassent = $email->envia();
 	  return $wassent;
 	}
+	
+	
+	/*FUNÇÃO ÚTIL PARA DEBUG*/
+	function xd($obj)
+	{
+		echo "<div style='background-color:#DFDFDF; border:1px #666666 solid'>";
+			echo "<pre>";
+				print_r($obj);
+			echo "</pre>";
+		echo "</div>";
+		die();
+	}
+	
+	/*FUNÇÃO ÚTIL PARA DEBUG SEM  DIE*/
+	function x($obj)
+	{
+		echo "<div style='background-color:#DFDFDF; border:1px #666666 solid'>";
+			echo "<pre>";
+				print_r($obj);
+			echo "</pre>";
+		echo "</div>";
+	}
+	
+	
+	/**
+    * Retira acentos, espaços e caracteres especiais da string
+    * @author Marcos Rodrigo Ribeiro
+    * @param  $str - string que ira ser tratada
+    * @return string
+    */
+    function limpaString($str)
+	{
+		//$str = html_entity_decode(utf8_decode($str));
+		//retira acentos e substitui espaço em branco por underscores
+		$arr1 = array("á", "à", "â", "ã", "ä", "é", "è", "ê", "ë", "í", "ì", "î", "ï", "ó", "ò", "ô", "õ", "ö", "ú", "ù", "û", "ü", "ç", "Á", "À", "Â", "Ã", "Ä", "É", "È", "Ê", "Ë", "Í", "Ì", "Î", "Ï", "Ó", "Ò", "Ô", "Õ", "Ö", "Ú", "Ù", "Û", "Ü", "Ç", " ", "_", ".", "'", "/", ",", "\\", "\"");
+		$arr2 = array("a", "a", "a", "a", "a", "e", "e", "e", "e", "i", "i", "i", "i", "o", "o", "o", "o", "o", "u", "u", "u", "u", "c", "A", "A", "A", "A", "A", "E", "E", "E", "E", "I", "I", "I", "I", "O", "O", "O", "O", "O", "U", "U", "U", "U", "C", "-", "", "", "", "", "", "", "");
+		$strAlterado = str_replace( $arr1, $arr2, $str );					    
+		
+		//transformas as letras em minúsulas
+		$strAlterado = strtolower($strAlterado); 
+		
+		return $strAlterado;
+
+	}
+	
 	?>

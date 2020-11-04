@@ -13,7 +13,7 @@ global $PORTAL_EMAIL, $_DBSERVERTYPE, $_DBHOST, $_DB;
 		<td width="150" class="pblFormTitle" valign="top" align="left">Nome do Site:</td>
 		<td class="pblFormText" valign="top" align="left">
 		<?php
-		 echo "<b>PORTAL MCT</b> [<i>"._LANGUAGE."</i>]";
+		 echo "<b>"._PORTAL_NAME."</b> [<i>"._LANGUAGE."</i>]";
 
 		 ?>
 		 </td>

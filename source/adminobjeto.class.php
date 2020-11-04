@@ -405,7 +405,7 @@ class AdminObjeto
 		return false;
 	}
 
-	function LocalizarObjetos(&$_page, $classe, $qry, $ordem='', $inicio=-1, $limite=-1, $pai=-1, $niveis=-1, $apagados=false, $likeas='', $tags='')
+	function LocalizarObjetos(&$_page, $classe, $qry, $ordem='', $inicio=-1, $limite=-1, $pai=-1, $niveis=-1, $apagados=false, $likeas='', $likenocase='', $tags='')
 	{
 		if (!isset($classe) || $classe==null || $classe=='') {
 			return false;
@@ -451,6 +451,11 @@ class AdminObjeto
 		if(!$likeas=='')
 		{
 			$like_as = " and ".$_page->_db->nomes_tabelas['objeto'].".titulo LIKE '".$likeas."'";
+		}
+      // Além de perguntar sobre 'ilike', também garante que só um LIKE será usado na Query (caso programador tente usar LIKE e iLIKE na mesma chamada)
+		if((!$likenocase=='') || ((!$likeas=='') && (!$likenocase=='')))
+		{
+			$like_as = " and ".$_page->_db->nomes_tabelas['objeto'].".titulo ILIKE '".strtolower($likenocase)."'";
 		}
 
 		/******** TESTA SE TEM PROPRIEDADE NA ORDEM ***********/
@@ -1290,7 +1295,44 @@ class AdminObjeto
 			return $_SERVER['DOCUMENT_ROOT']."/html/execscript/exec_".$ClasseUtilizada['prefixo']."_depois.php";
 		}
 	}
-	
+
+        function estaSobAreaProtegida(&$_page, $cod_objeto)
+        {
+            $_page->IncluirAdmin();
+            $protegido = false;
+            $caminho = $_page->_adminobjeto->RecursivaCaminhoObjeto($_page, $cod_objeto);
+            $caminho = explode(",", $caminho);
+            $caminho[] = $cod_objeto;
+
+            $objBlob = new Objeto($_page, $cod_objeto);
+
+            // pegando permissao do usuario no objeto
+            $permissao = $_page->_administracao->PegaPerfilDoUsuarioNoObjeto($_page, $_SESSION['usuario']["cod_usuario"], $cod_objeto);
+
+            // verificando se o objeto está publicado
+            if ($objBlob->metadados["cod_status"]!="2" && !$permissao)
+            {
+               return false;
+            }
+
+            // verificando se tem objeto protegido no parentesco
+            foreach ($caminho as $obj)
+            {
+                $objeto = new Objeto($_page, $obj);
+                if (preg_match("/_protegido.*/", $objeto->metadados["script_exibir"]))
+                {
+                    $protegido = true;
+                    break;
+                }
+            }
+
+            if ($protegido && (!$permissao || $permissao>_PERFIL_MILITARIZADO))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
 }
 
-?>

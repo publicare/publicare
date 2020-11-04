@@ -79,8 +79,9 @@
 </td></tr>
 </table> 
 <?php
-	echo "<div id=\"divGuiaC\" style=\"height: 0%; visibility: hidden;\">";
+	//echo "<div id=\"divGuiaC\" style=\"height: 0%; visibility: hidden;\">";
 ?>
+	<div id="divGuiaC" style="height: 0%; display: none;">
 	<div class="pblAlinhamentoTabelas mercurio">
 	<TABLE WIDTH=570 BORDER=0 CELLPADDING=0 CELLSPACING=8 class="pblTabelaGeral">
 	<TR>

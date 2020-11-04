@@ -161,6 +161,7 @@ class DBLayer
 				{
 					case "postgres":
 						$this->con->Connect("host=".$this->host." port=".$this->port." user=".$this->user." password=".$this->password." dbname=".$this->db) or die("Erro ao tentar conectar banco de dados");
+						$this->con->Execute("SET CLIENT_ENCODING TO 'LATIN1'");
 						break;
 
 					case "mysql":
@@ -405,4 +406,3 @@ class DBLayer
 
 
 
-?>

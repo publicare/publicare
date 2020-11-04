@@ -25,10 +25,8 @@ class Pagina
 	function __construct(&$_db, $cod_objeto=_ROOT)
 	{
 		$this->cod_objeto = $cod_objeto;
+		$this->_db = $_db;
 		$this->_adminobjeto = new AdminObjeto();
-        $this->_db = $_db;
-        //echo "<pre>";
-        //var_dump($_db);
 		$this->_objeto = new Objeto($this, $cod_objeto);
 		$this->_usuario = new Usuario($this);
 		$this->_parser = new Parse();
@@ -44,9 +42,9 @@ class Pagina
 
 	function IncluirAdmin()
 	{
-		include ('administracao.class.php');
-		include ('classelog.class.php');
-		include ('index2.class.php');
+		include_once ('administracao.class.php');
+		include_once ('classelog.class.php');
+		include_once ('index2.class.php');
 		$this->_administracao = new Administracao($this);
 		$this->_log = new ClasseLog($this);
 	}

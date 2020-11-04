@@ -23,6 +23,7 @@ class Parse
 
 	function Initialize()
 	{
+		
 		$this->InitCmd = '<?'."\n"
 						.'global $_page;'."\n"
 						.'$_PAGINATIONSTACK_=array();'."\n"
@@ -35,9 +36,10 @@ class Parse
 						.'list($usec, $sec) = explode(" ", microtime());'."\n"
 						.'$_seed=(float) $sec + ((float) $usec * 100000);'."\n"
 						.'mt_srand($_seed);'."\n"
+						.'//x($_OBJ_->Valor($_page, "cod_status"));'."\n"
 						.'$_GETARRAY=$_GET;'."\n"
 						.'?>';
-
+		
 		$this->debug=0;
 		$this->operands = array ('=','>','<','<=','>=','!=');
 
@@ -372,7 +374,7 @@ class Parse
 							"localizar" => array (
 									'opentag'=>'localizar',
 									'regex' => '|(.*)|',
-									'output' => '<? <#P:nome#>_array = $_page->_adminobjeto->LocalizarObjetos($_page, <#P:classes#>,<#P:condicao#>,<#P:ordem#>,<#P:inicio#>,<#P:limite#>,<#P:pai#>,<#P:niveis#>,false,<#P:like#>,<#P:tags#>);
+									'output' => '<? <#P:nome#>_array = $_page->_adminobjeto->LocalizarObjetos($_page, <#P:classes#>,<#P:condicao#>,<#P:ordem#>,<#P:inicio#>,<#P:limite#>,<#P:pai#>,<#P:niveis#>,false,<#P:like#>,<#P:ilike#>,<#P:tags#>);
 													if (<#P:nome#>_max = count(<#P:nome#>_array)) {'."\n"
 													.'array_push($_LOOPSTACK_,$_LOOP_);'."\n"
 													.'$_LOOP_=array();'."\n"
@@ -388,7 +390,7 @@ class Parse
 													.'?>'."\n"
 												,
 									'parameters'=> 1,
-									'helptext' => 'O comando <strong>Localizar</strong> deve ser escrito assim: <strong>&lt;@localizar nome=[{variavel}] classes=[{string}] ordem=[{string}] niveis=[{numero}] like=[{string},{string}] tags=[{string},{string}] @&gt;</strong>',
+									'helptext' => 'O comando <strong>Localizar</strong> deve ser escrito assim: <strong>&lt;@localizar nome=[{variavel}] classes=[{string}] ordem=[{string}] niveis=[{numero}] like=[{string},{string}] ilike=[{string_minuscula},{string_minuscula}] tags=[{string},{string}] @&gt;</strong>',
 									'paramitens' => array (
 											'nome' 	  => 'v',
 											'condicao' => 's',
@@ -399,6 +401,7 @@ class Parse
 											'pai'=>'n',
 											'niveis'=>'n',
 											'like'=>'s',
+											'ilike'=>'s',
 											'tags'=>'s',
 										),
 									'paramforce' => false,
@@ -506,8 +509,6 @@ class Parse
 									'parameters'=> false,
 									'helptext' => 'O comando <strong>\filhos </strong> deve ser escrito assim: <strong>&lt;@\filhos@&gt;</strong>',
 									),
-
-
 
 
 							"usarobjeto" => array (
@@ -644,6 +645,7 @@ class Parse
 									'helptext' => 'O comando <strong>\usarblob</strong> deve ser escrito assim: <strong>&lt;@\usarblob@&gt;</strong>',
 									),
 
+
 							"linkblob" => array (
 									'regex' => '',
 									'output' => '<? echo $_BLOBLINK; ?>'."\n",
@@ -716,6 +718,47 @@ class Parse
 
 								   'output' => '<? include_once ($_SERVER["DOCUMENT_ROOT"]."/html/objects/<#P:objeto#>.php");'."\n"
 								  			  .'eval ("object_<#P:objeto#>(\'".<#P:parametros#>."\');");'."\n?>"
+									),
+
+							
+							"iconesadmin" => array (
+									'regex' => '|(.*)|',
+									'output' => '<? '."\n"
+												.'$strTitulo = $_OBJ_->Valor($_page, "titulo");'."\n"
+												.'$cod_objeto = $_OBJ_->Valor($_page, "cod_objeto");'."\n"
+												.'$cod_status = $_OBJ_->Valor($_page, "cod_status");'."\n"
+												.'$bln_temfilhos = $_OBJ_->Valor($_page, "temfilhos");'."\n"
+												.'$str_classeNovoObj = <#P:classe#>;'."\n"
+												.''."\n"
+												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icNovo)){$icNovo="<img src="._icNovo." border=\"0\" align=\"absmiddle\" alt=\"Inserir novos itens em ".$strTitulo."\" title=\"Inserir novos itens em ".$strTitulo."\">";}else{$icNovo="Novo&nbsp;|&nbsp;";} '."\n"
+												.''."\n"
+												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icAlterar)){$icAlterar="<img src="._icAlterar." border=\"0\" align=\"absmiddle\" alt=\"Editar o conte&uacute;do de ".$strTitulo."\" title=\"Editar o conte&uacute;do de ".$strTitulo."\">";}else{$icAlterar="|&nbsp;Editar&nbsp;|&nbsp;";} '."\n"
+												.''."\n"
+												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icPublicar)){$icPublicar="<img src="._icPublicar." border=\"0\" align=\"absmiddle\" alt=\"Publicar o conte&uacute;do de ".$strTitulo."\" title=\"Publicar o conte&uacute;do de ".$strTitulo."\">";}else{$icPublicar=" - a publicar&nbsp;";} '."\n"
+												.''."\n"
+												.'if(file_exists($_SERVER["DOCUMENT_ROOT"]._icExcluir)){$icExcluir="<img src="._icExcluir." border=\"0\" align=\"absmiddle\" alt=\"Excluir ".$strTitulo."\" title=\"Excluir ".$strTitulo."\">";}else{$icExcluir="Excluir&nbsp;";} '."\n"
+												.''."\n"
+												.'if($bln_temfilhos==1 && $str_classeNovoObj != ""){ $str_classeNovoObj = "_".$str_classeNovoObj;}'."\n"
+												.''."\n"
+												.'if($_page->_usuario->EstaLogado(_PERFIL_AUTOR)){'."\n"
+												.'	echo "&nbsp;"; '."\n"
+												.'	if($cod_status!=2) {'."\n"
+												.'		echo "&nbsp;<span><a href=\"/index.php/do/publicar/".$cod_objeto.".html\"><font color=\"red\">$icPublicar</font></a></span>"; '."\n"
+												.'	}'."\n"
+												.'	echo "<span><a href=\"/index.php/manage/edit/".$cod_objeto.".html\">$icAlterar</a></span>"; '."\n"
+												.'	if($bln_temfilhos==1) {'."\n"
+												.'		echo "<span><a href=\"/index.php/manage/new".$str_classeNovoObj."/".$cod_objeto.".html\">$icNovo</a></span>"; '."\n"
+												.'	}'."\n"
+												.'	echo "<span><a href=\"/index.php/do/delete/".$cod_objeto.".html\">$icExcluir</a></span>&nbsp;"; '."\n"
+												.'}'."\n"
+												.'?>'."\n"
+												,
+									'parameters'=> 1,
+									'helptext' => 'O comando <strong>iconesadmin</strong> deve ser escrito assim: <strong>&lt;@iconesadmin classe=[{string}]@&gt;</strong>',
+									'paramitens' => array (
+											'classe'  => 's'
+										),
+									'paramforce'=>false,
 									),
 							)
 							;
@@ -1107,4 +1150,3 @@ exit;*/
 }
 
 
-?>

@@ -1,20 +1,24 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2005 Frederico Caldeira Knabben
- * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
- * 
- * For further information visit:
- * 		http://www.fckeditor.net/
- * 
- * "Support Open Source software. What about a donation today?"
- * 
- * File Name: lt.js
- * 	Lithuanian language file.
- * 
- * File Authors:
- * 		Tauras Paliulis (tauras.paliulis@tauras.com)
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2009 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * Lithuanian language file.
  */
 
 var FCKLang =
@@ -40,7 +44,9 @@ RemoveFormat		: "Panaikinti formatą",
 InsertLinkLbl		: "Nuoroda",
 InsertLink			: "Įterpti/taisyti nuorodą",
 RemoveLink			: "Panaikinti nuorodą",
+VisitLink			: "Atidaryti nuorodą",
 Anchor				: "Įterpti/modifikuoti žymę",
+AnchorDelete		: "Naikinti žymę",
 InsertImageLbl		: "Vaizdas",
 InsertImage			: "Įterpti/taisyti vaizdą",
 InsertFlashLbl		: "Flash",
@@ -66,6 +72,10 @@ RightJustify		: "Lygiuoti dešinę",
 BlockJustify		: "Lygiuoti abi puses",
 DecreaseIndent		: "Sumažinti įtrauką",
 IncreaseIndent		: "Padidinti įtrauką",
+Blockquote			: "Citata",
+CreateDiv			: "Sukurti Div elementą",
+EditDiv				: "Reaguoti Div elementą",
+DeleteDiv			: "Šalinti Div elementą",
 Undo				: "Atšaukti",
 Redo				: "Atstatyti",
 NumberedListLbl		: "Numeruotas sąrašas",
@@ -85,6 +95,8 @@ Find				: "Rasti",
 Replace				: "Pakeisti",
 SpellCheck			: "Rašybos tikrinimas",
 UniversalKeyboard	: "Universali klaviatūra",
+PageBreakLbl		: "Puslapių skirtukas",
+PageBreak			: "Įterpti puslapių skirtuką",
 
 Form			: "Forma",
 Checkbox		: "Žymimasis langelis",
@@ -96,16 +108,29 @@ Button			: "Mygtukas",
 SelectionField	: "Atrankos laukas",
 ImageButton		: "Vaizdinis mygtukas",
 
+FitWindow		: "Padidinti redaktorių",
+ShowBlocks		: "Rodyti blokus",
+
 // Context Menu
 EditLink			: "Taisyti nuorodą",
-InsertRow			: "Įterpti eilutę",
+CellCM				: "Langelis",
+RowCM				: "Eilutė",
+ColumnCM			: "Stulpelis",
+InsertRowAfter		: "Įterpti eilutę po",
+InsertRowBefore		: "Įterpti eilutę prieš",
 DeleteRows			: "Šalinti eilutes",
-InsertColumn		: "Įterpti stulpelį",
+InsertColumnAfter	: "Įterpti stulpelį po",
+InsertColumnBefore	: "Įterpti stulpelį prieš",
 DeleteColumns		: "Šalinti stulpelius",
-InsertCell			: "Įterpti langelį",
+InsertCellAfter		: "Įterpti langelį po",
+InsertCellBefore	: "Įterpti langelį prieš",
 DeleteCells			: "Šalinti langelius",
 MergeCells			: "Sujungti langelius",
-SplitCell			: "Skaidyti langelius",
+MergeRight			: "Sujungti su dešine",
+MergeDown			: "Sujungti su apačia",
+HorizontalSplitCell	: "Skaidyti langelį horizontaliai",
+VerticalSplitCell	: "Skaidyti langelį vertikaliai",
+TableDelete			: "Šalinti lentelę",
 CellProperties		: "Langelio savybės",
 TableProperties		: "Lentelės savybės",
 ImageProperties		: "Vaizdo savybės",
@@ -133,7 +158,10 @@ UnknownToolbarItem	: "Nežinomas mygtukų juosta elementas \"%1\"",
 UnknownCommand		: "Nežinomas komandos vardas \"%1\"",
 NotImplemented		: "Komanda nėra įgyvendinta",
 UnknownToolbarSet	: "Mygtukų juostos rinkinys \"%1\" neegzistuoja",
-NoActiveX			: "You browser's security settings could limit some features of the editor. You must enable the option \"Run ActiveX controls and plug-ins\". You may experience errors and notice missing features.",	//MISSING
+NoActiveX			: "Jūsų naršyklės saugumo nuostatos gali riboti kai kurias redaktoriaus savybes. Jūs turite aktyvuoti opciją \"Run ActiveX controls and plug-ins\". Kitu atveju Jums bus pranešama apie klaidas ir trūkstamas savybes.",
+BrowseServerBlocked : "Neįmanoma atidaryti naujo naršyklės lango. Įsitikinkite, kad iškylančių langų blokavimo programos neveiksnios.",
+DialogBlocked		: "Neįmanoma atidaryti dialogo lango. Įsitikinkite, kad iškylančių langų blokavimo programos neveiksnios.",
+VisitLinkBlocked	: "Neįmanoma atidaryti naujo lango. Įsitikinkite, kad iškylančių langų blokavimo programos neveiksnios.",
 
 // Dialogs
 DlgBtnOK			: "OK",
@@ -141,12 +169,12 @@ DlgBtnCancel		: "Nutraukti",
 DlgBtnClose			: "Uždaryti",
 DlgBtnBrowseServer	: "Naršyti po serverį",
 DlgAdvancedTag		: "Papildomas",
-DlgOpOther			: "&lt;Kita&gt;",
+DlgOpOther			: "<Kita>",
 DlgInfoTab			: "Informacija",
 DlgAlertUrl			: "Prašome įrašyti URL",
 
 // General Dialogs Labels
-DlgGenNotSet		: "&lt;nėra nustatyta&gt;",
+DlgGenNotSet		: "<nėra nustatyta>",
 DlgGenId			: "Id",
 DlgGenLangDir		: "Teksto kryptis",
 DlgGenLangDirLtr	: "Iš kairės į dešinę (LTR)",
@@ -210,12 +238,12 @@ DlgLnkTypeURL		: "URL",
 DlgLnkTypeAnchor	: "Žymė šiame puslapyje",
 DlgLnkTypeEMail		: "El.paštas",
 DlgLnkProto			: "Protokolas",
-DlgLnkProtoOther	: "&lt;kitas&gt;",
+DlgLnkProtoOther	: "<kitas>",
 DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Pasirinkite žymę",
 DlgLnkAnchorByName	: "Pagal žymės vardą",
 DlgLnkAnchorById	: "Pagal žymės Id",
-DlgLnkNoAnchors		: "&lt;Šiame dokumente žymių nėra&gt;",
+DlgLnkNoAnchors		: "(Šiame dokumente žymių nėra)",
 DlgLnkEMail			: "El.pašto adresas",
 DlgLnkEMailSubject	: "Žinutės tema",
 DlgLnkEMailBody		: "Žinutės turinys",
@@ -223,8 +251,8 @@ DlgLnkUpload		: "Siųsti",
 DlgLnkBtnUpload		: "Siųsti į serverį",
 
 DlgLnkTarget		: "Paskirties vieta",
-DlgLnkTargetFrame	: "&lt;kadras&gt;",
-DlgLnkTargetPopup	: "&lt;išskleidžiamas langas&gt;",
+DlgLnkTargetFrame	: "<kadras>",
+DlgLnkTargetPopup	: "<išskleidžiamas langas>",
 DlgLnkTargetBlank	: "Naujas langas (_blank)",
 DlgLnkTargetParent	: "Pirminis langas (_parent)",
 DlgLnkTargetSelf	: "Tas pats langas (_self)",
@@ -248,6 +276,7 @@ DlgLnkPopTop		: "Viršutinė pozicija",
 DlnLnkMsgNoUrl		: "Prašome įvesti nuorodos URL",
 DlnLnkMsgNoEMail	: "Prašome įvesti el.pašto adresą",
 DlnLnkMsgNoAnchor	: "Prašome pasirinkti žymę",
+DlnLnkMsgInvPopName	: "Iššokančio lango pavadinimas privalo prasidėti lotyniška raide ir negali turėti tarpų",
 
 // Color Dialog
 DlgColorTitle		: "Pasirinkite spalvą",
@@ -278,6 +307,12 @@ DlgTableHeight		: "Aukštis",
 DlgTableCellSpace	: "Tarpas tarp langelių",
 DlgTableCellPad		: "Trapas nuo langelio rėmo iki teksto",
 DlgTableCaption		: "Antraštė",
+DlgTableSummary		: "Santrauka",
+DlgTableHeaders		: "Antraštės",
+DlgTableHeadersNone		: "Nėra",
+DlgTableHeadersColumn	: "Pirmas stulpelis",
+DlgTableHeadersRow		: "Pirma eilutė",
+DlgTableHeadersBoth		: "Abu",
 
 // Table Cell Dialog
 DlgCellTitle		: "Langelio savybės",
@@ -300,11 +335,17 @@ DlgCellVerAlignTop	: "Viršų",
 DlgCellVerAlignMiddle	: "Vidurį",
 DlgCellVerAlignBottom	: "Apačią",
 DlgCellVerAlignBaseline	: "Apatinę liniją",
+DlgCellType		: "Langelio tipas",
+DlgCellTypeData		: "Duomenys",
+DlgCellTypeHeader	: "Antraštė",
 DlgCellRowSpan		: "Eilučių apjungimas",
 DlgCellCollSpan		: "Stulpelių apjungimas",
 DlgCellBackColor	: "Fono spalva",
 DlgCellBorderColor	: "Rėmelio spalva",
 DlgCellBtnSelect	: "Pažymėti...",
+
+// Find and Replace Dialog
+DlgFindAndReplaceTitle	: "Surasti ir pakeisti",
 
 // Find Dialog
 DlgFindTitle		: "Paieška",
@@ -321,18 +362,16 @@ DlgReplaceReplAllBtn	: "Pakeisti viską",
 DlgReplaceWordChk		: "Atitikti pilną žodį",
 
 // Paste Operations / Dialog
-PasteErrorPaste	: "Jūsų naršyklės saugumo nustatymai neleidžia redaktoriui automatiškai įvykdyti įdėjimo operacijų. Tam prašome naudoti klaviatūrą (Ctrl+V).",
 PasteErrorCut	: "Jūsų naršyklės saugumo nustatymai neleidžia redaktoriui automatiškai įvykdyti iškirpimo operacijų. Tam prašome naudoti klaviatūrą (Ctrl+X).",
 PasteErrorCopy	: "Jūsų naršyklės saugumo nustatymai neleidžia redaktoriui automatiškai įvykdyti kopijavimo operacijų. Tam prašome naudoti klaviatūrą (Ctrl+C).",
 
 PasteAsText		: "Įdėti kaip gryną tekstą",
 PasteFromWord	: "Įdėti iš Word",
 
-DlgPasteMsg2	: "Žemiau esančiame įvedimo lauke įdėkite tekstą, naudodami klaviatūrą (<STRONG>Ctrl+V</STRONG>) ir spūstelkite mygtuką <STRONG>OK</STRONG>.",
+DlgPasteMsg2	: "Žemiau esančiame įvedimo lauke įdėkite tekstą, naudodami klaviatūrą (<STRONG>Ctrl+V</STRONG>) ir paspauskite mygtuką <STRONG>OK</STRONG>.",
+DlgPasteSec		: "Dėl jūsų naršyklės saugumo nustatymų, redaktorius negali tiesiogiai pasiekti laikinosios atminties. Jums reikia nukopijuoti dar kartą į šį langą.",
 DlgPasteIgnoreFont		: "Ignoruoti šriftų nustatymus",
 DlgPasteRemoveStyles	: "Pašalinti stilių nustatymus",
-DlgPasteCleanBox		: "Trinti įvedimo lauką",
-
 
 // Color Picker
 ColorAutomatic	: "Automatinis",
@@ -364,8 +403,11 @@ DlgSpellManyChanges		: "Rašybos tikrinimas baigtas: Pakeista %1 žodžių",
 IeSpellDownload			: "Rašybos tikrinimas neinstaliuotas. Ar Jūs norite jį dabar atsisiųsti?",
 
 // Button Dialog
-DlgButtonText	: "Tekstas (Reikšmė)",
-DlgButtonType	: "Tipas",
+DlgButtonText		: "Tekstas (Reikšmė)",
+DlgButtonType		: "Tipas",
+DlgButtonTypeBtn	: "Mygtukas",
+DlgButtonTypeSbm	: "Siųsti",
+DlgButtonTypeRst	: "Išvalyti",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Vardas",
@@ -414,9 +456,10 @@ DlgHiddenValue	: "Reikšmė",
 // Bulleted List Dialog
 BulletedListProp	: "Suženklinto sąrašo savybės",
 NumberedListProp	: "Numeruoto sąrašo savybės",
+DlgLstStart			: "Pradėti nuo",
 DlgLstType			: "Tipas",
 DlgLstTypeCircle	: "Apskritimas",
-DlgLstTypeDisc		: "Disc",	//MISSING
+DlgLstTypeDisc		: "Diskas",
 DlgLstTypeSquare	: "Kvadratas",
 DlgLstTypeNumbers	: "Skaičiai (1, 2, 3)",
 DlgLstTypeLCase		: "Mažosios raidės (a, b, c)",
@@ -436,6 +479,15 @@ DlgDocLangDirLTR	: "Iš kairės į dešinę (LTR)",
 DlgDocLangDirRTL	: "Iš dešinės į kairę (RTL)",
 DlgDocLangCode		: "Kalbos kodas",
 DlgDocCharSet		: "Simbolių kodavimo lentelė",
+DlgDocCharSetCE		: "Centrinės Europos",
+DlgDocCharSetCT		: "Tradicinės kinų (Big5)",
+DlgDocCharSetCR		: "Kirilica",
+DlgDocCharSetGR		: "Graikų",
+DlgDocCharSetJP		: "Japonų",
+DlgDocCharSetKR		: "Korėjiečių",
+DlgDocCharSetTR		: "Turkų",
+DlgDocCharSetUN		: "Unikodas (UTF-8)",
+DlgDocCharSetWE		: "Vakarų Europos",
 DlgDocCharSetOther	: "Kita simbolių kodavimo lentelė",
 
 DlgDocDocType		: "Dokumento tipo antraštė",
@@ -465,11 +517,23 @@ DlgTemplatesTitle	: "Turinio šablonai",
 DlgTemplatesSelMsg	: "Pasirinkite norimą šabloną<br>(<b>Dėmesio!</b> esamas turinys bus prarastas):",
 DlgTemplatesLoading	: "Įkeliamas šablonų sąrašas. Prašome palaukti...",
 DlgTemplatesNoTpl	: "(Šablonų sąrašas tuščias)",
+DlgTemplatesReplace	: "Pakeisti dabartinį turinį pasirinktu šablonu",
 
 // About Dialog
 DlgAboutAboutTab	: "Apie",
 DlgAboutBrowserInfoTab	: "Naršyklės informacija",
+DlgAboutLicenseTab	: "Licenzija",
 DlgAboutVersion		: "versija",
-DlgAboutLicense		: "Licencijuota pagal GNU mažesnės atsakomybės pagrindinės viešos licencijos sąlygas",
-DlgAboutInfo		: "Papildomą informaciją galima gauti"
-}
+DlgAboutInfo		: "Papildomą informaciją galima gauti",
+
+// Div Dialog
+DlgDivGeneralTab	: "Bendros savybės",
+DlgDivAdvancedTab	: "Papildomos savybės",
+DlgDivStyle		: "Stilius",
+DlgDivInlineStyle	: "Stilius kode",
+
+ScaytTitle			: "SCAYT",	//MISSING
+ScaytTitleOptions	: "Options",	//MISSING
+ScaytTitleLangs		: "Languages",	//MISSING
+ScaytTitleAbout		: "About"	//MISSING
+};

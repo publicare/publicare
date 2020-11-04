@@ -238,6 +238,7 @@ CREATE TABLE objeto (
     titulo character varying(255),
     descricao text,
     data_publicacao bigint,
+    data_exclusao bigint,
     data_validade bigint,
     script_exibir character varying(255),
     apagado smallint DEFAULT 0 NOT NULL,

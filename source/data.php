@@ -686,4 +686,4 @@ function mostra_diasdasemana($dataset)
 	return $return;
 }
 	
-?>
+

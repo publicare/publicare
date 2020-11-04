@@ -709,7 +709,7 @@
 						$this->index->delete_index($row["cod_objeto"]);
 					}
 					
-					$sql = "update objeto set apagado=1 ";
+					$sql = "update objeto set apagado=1, data_exclusao='".date("Y-m-d H:i:s")."' ";
 					if ($row['cod_status']==_STATUS_SUBMETIDO)
 					{
 						$_page->_db->ExecSQL("delete from pendencia where cod_objeto=".$row["cod_objeto"]);
@@ -1411,13 +1411,17 @@
 			}
 		}
 
-		function PegaListaDeApagados(&$_page)
+		function PegaListaDeApagados(&$_page, $start=-1, $limit=-1)
 		{
 			$out=array();
-			$sql = "select cod_objeto,titulo,cod_usuario,classe.nome as classe from objeto
+			$sql = "select cod_objeto,data_exclusao,titulo,cod_usuario,classe.nome as classe from objeto
 					left join classe on classe.cod_classe=objeto.cod_classe
-					where apagado=1";
-			$rs = $_page->_db->ExecSQL($sql);
+					where apagado=1 order by data_exclusao desc";
+                        if ($limit!=-1 && $start!=-1){
+                            $rs = $_page->_db->ExecSQL($sql, $start, $limit);
+                        }else{
+                            $rs = $_page->_db->ExecSQL($sql);
+                        }
 			$row = $rs->GetRows();
 			for ($l=0; $l<sizeof($row); $l++){
 				$row[$l]['exibir']="/index.php/content/view/".$row[$l]['cod_objeto'].".html";
@@ -1681,4 +1685,3 @@
 		}
 	}
 	
-?>

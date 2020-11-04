@@ -1,202 +1,182 @@
 <?php
-/**
-* Criacao da view Lista Todos Ajax
-*
-* @author Danilo Moreira Lisboa
-* @version * <pre>
-*   <b>1.0</b>
-*    Data: 25/11/2008
-*    Autor: Danilo Moreira Lisboa
-*    Descricao: Versao inicial
-*   <hr>
-* </pre>  
-* @name view_listatodos_ajax
-* @package html/template
-* @access public
-*/ 
+    /**
+    * Criacao da view Lista Todos Ajax
+    *
+    * @author Danilo Moreira Lisboa
+    * @version * <pre>
+    *   <b>1.0</b>
+    *    Data: 25/11/2008
+    *    Autor: Danilo Moreira Lisboa
+    *    Descricao: Versao inicial
+    *   <hr>
+    * </pre> 
+    * @name view_listatodos_ajax
+    * @package html/template
+    * @access public
+    */
+	if($_GET['execview'] == 'listatodos_ajax'){
+		header("Content-type: text/html; charset=ISO-8859-1");//charset=iso-8859-1
+		header("Cache-Control: no-store, no-cache, must-revalidate");
+		header("Cache-Control: post-check=0, pre-check=0", false);
+	}
+    /* ======================================================= */
+    /* === lista todos os filhos de um objeto menos os selecionados na va variavel classes selecionadas  === */
 
-/* ======================================================= */
-/* === lista todos os filhos de um objeto menos os selecionados na va variavel classes selecionadas  === */
-
-	global $_page,$PERFIL,$CLASSESSELECIONADAS,$PAI,$SUBDIV,$SUBCOD,$TEMFILHOS,$CODCLASSE,$REDIRECIONA;
-	//carrega o perfil do usuario q esta acessando o site na variavel global $perfil
+    global $_page,$PERFIL,$CLASSESSELECIONADAS,$DIV,$COD,$PAI,$SUBDIV,$SUBCOD,$TEMFILHOS,$CODCLASSE;
+    //carrega o perfil do usuario q esta acessando o site na variavel global $perfil
     $PERFIL = $_page->_usuario->cod_perfil;
-	$blnRegistroEncontrado = false;
-	
-//	include_once($_SERVER['DOCUMENT_ROOT']."/html/objects/variavelClassesSelecionadas.php");
+    $blnRegistroEncontrado = false;
+   
+    //    include_once($_SERVER['DOCUMENT_ROOT']."/html/objects/variavelClassesSelecionadas.php");
 ?>
-
+<div class="paddingBottom25 estruturaBasic">
 <@var $TITULOPAI=#titulo@>
 <@var $REDIRECIONA = #cod_objeto@>
-<@localizar classes=['arquivo,link,interlink,document,publicacao,iframe,fontesfinanciamento,publicacoeslegis'] pai=[#cod_objeto] niveis=[0] ordem=['peso,titulo']@>
+<@var $txt=#texto@>
+<@localizar classes=['folder,arquivo,document,link,interlink,agenciadenoticias,agenda'] pai=[#cod_objeto] niveis=[0] ordem=['peso,titulo']@>
 
-	<?php $blnRegistroEncontrado = true; ?>
-	<@var $CODCLASSE=#cod_classe@>
-	<@var $TEMFILHOS=#temfilhos@>
-	
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-	<?php
-				switch ($CODCLASSE) {
-					
-	/********** CASE - CLASSE -> ARQUIVO **********************************/
-				case 5:
+    <?php $blnRegistroEncontrado = true; ?>
+    <@var $CODCLASSE=#cod_classe@>
+    <@var $TEMFILHOS=#temfilhos@>
+    <@var $COD=#cod_objeto@>
+    <? $DIV="999".$COD;?>
+    <@se [%INDICE==1]@>
+	<?php 
+		if(!$_GET['execview'] == 'listatodos_ajax'){
 	?>
-					<@usarblob nome=['conteudo']@>
-					<td valign="top" class="listaTitulo1Nive2">
-						<div style="position:relative; width:100%;"> 
-	        				<div style="float:left; position:relative; width:5%;" align="right"> <@iconeclasse@> </div>
-	        				<div style="float:left; position:relative; width:95%;"> &nbsp;&nbsp;<a href="<@linkblob@>" title="Clique aqui para baixar o arquivo&nbsp;<@= strip_tags(#titulo)@>"><@= strip_tags(#titulo)@></a> 
-	         			 	<@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a publicar</a></span><@/se@> 
+        <div class="paddingBottom">
+            <@se [$txt!='']@>
+                <div class="mvTituloFundo">Veja Também</div>
+            <@/se@>
+		</div>
 	<?php
-						// === verifica se o usuario está logado e insere o icone de editar objeto===
-						if ($PERFIL <= _PERFIL_AUTOR)
-						{
+		}
 	?>
-	         				 <span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/site/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
-	<?php
-						}
-	?>
-	        			</div>
-	        			<div class="brod terra paddingLeft38" title="Resumo do objeto"><@= strip_tags(cortaTexto(#resumo, 300))@></div>
-	     			 	</div>
-					</td>
-					<@/usarblob@>
-					<td align="right" valign="top" class="listaTitulo1Nivel">&nbsp;</td>
-				</tr>
-	<?php
-				break;
-	/********** CASE - CLASSE ->LINK **********************************/
-				case 6:
-	?>
-					<td valign="top" class="listaTitulo1Nive2">
-					<div style="position:relative; width:100%;"> 
-	        			<div style="float:left; position:relative; width:5%;" align="right"> <@iconeclasse@></div>
-	       				<div style="float:left; position:relative; width:95%;"> &nbsp;&nbsp;<a href="<@= #endereco@>" target="_blank" title="<@= strip_tags(#titulo)@>"><@= strip_tags(#titulo)@></a> 
-	          			<@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a publicar</a></span><@/se@> 
-	<?php
-						// === verifica se o usuario está logado e insere o icone de editar objeto===
-						if ($PERFIL <= _PERFIL_AUTOR)
-						{
-	?>
-	          				<span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/site/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
-	<?php
-						}
-	?>
-		                </div>
-		                <div class="brod terra paddingLeft38" title="Resumo do objeto"><@= strip_tags(cortaTexto(#resumo, 300))@></div>
-		              </div>
-					</td>
-					<td align="right" valign="top" class="listaTitulo1Nivel">&nbsp;</td>
-				</tr>
-	<?php
-				break;
-	/********** CASE - CLASSE ->INTERLINK **********************************/
-				case 2:
-	?>
-					<td valign="top" class="listaTitulo1Nive2">
-					<div style="position:relative; width:100%;"> 
-	        			<div style="float:left; position:relative; width:5%;" align="right"> <@iconeclasse@> </div>
-	        			<div style="float:left; position:relative; width:95%;"> <a href="/index.php/content/view/<@= #endereco@>.html#ancora" title="<@= strip_tags(#titulo)@>">&nbsp;&nbsp;<@= strip_tags(#titulo)@></a> 
-	          			<@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a publicar</a></span><@/se@> 
-	<?php
-						// === verifica se o usuario está logado e insere o icone de editar objeto===
-						if ($PERFIL <= _PERFIL_AUTOR)
-						{
-	?>
-	          				<span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/site/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
-	<?php
-						}
-	?>
-	                </div>
-	                <div class="brod terra paddingLeft38" title="Resumo do objeto"><@= strip_tags(cortaTexto(#resumo, 300))@></div>
-	              </div>
-					</td>
-					<td align="right" valign="top" class="listaTitulo1Nivel">&nbsp;</td>
-				</tr>
-	<?php
-				break;
-	/******************************** DEFAULT **********************************/
-				default:
-	?>
-				<tr>
-					<td valign="top" class="listaTitulo1Nive2">
-					<div style="position:relative; width:100%;"> 
-	        			<div style="float:left; position:relative; width:5%;" align="right"> <@iconeclasse@> </div>
-	        			<div style="float:left; position:relative; width:95%;"> &nbsp;&nbsp;<a href="<@= #url@>" title="<@= strip_tags(#titulo)@>"><@= strip_tags(#titulo)@></a> 
-	          			<@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a publicar</a></span><@/se@> 
-	<?php
-						// === verifica se o usuario está logado e insere o icone de editar objeto===
-						if ($PERFIL <= _PERFIL_AUTOR)
-						{
-	?>
-	          				<span class="paddingLeft10"> &nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/site/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
-	<?php
-							if ($TEMFILHOS==1)
-							{
-	?>
-	              				&nbsp;<a href="/index.php/manage/new/<@= #cod_objeto@>.html"><img src="/html/imagens/site/ic-inserir.gif" title="Inserir outros objetos em&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
-	<?php
-							}
-	?>
-			                  </span> 
-	<?php
-						}
-	?>
-		                </div>
-		                <div class="brod terra paddingLeft38" title="Resumo do objeto"><@= strip_tags(cortaTexto(#resumo, 300))@></div>
-		            </div>
-					</td>
-	<?php
-						//}
-					}//FECHA SWITCH
-	?>
-			</table>
+		<div class="paddingBottom3">
+    <@/se@>
+   
+            <?php
+                switch ($CODCLASSE) {
+                   
+                /********** CASE - CLASSE -> FOLDER **********************************/
+                case 1:
+            ?>
+                        
+  <div style="position:relative; width:100%; line-height:25px;"> 
+    <div style="float:left; position:relative; width:95%; border-bottom:1px #cccccc dotted;"><@iconeclasse@>&nbsp;<a href="<@= #url@>"><@= strip_tags(#titulo)@></a> 
+      <@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a 
+      publicar</a></span><@/se@> 
+      <?php if ($PERFIL <= _PERFIL_AUTOR){ ?>
+      <span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
+      <@se [#temfilhos==1]@> <a href="/index.php/manage/new/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-inserir.gif" title="Inserir outros objetos em&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
+      <@/se@> 
+      <?php } ?>
+    </div>
+    <div style="float:left; position:relative; width:5%; border-bottom:1px #cccccc dotted; text-align:right;" class="listaTitulo1Nivel"> 
+      <a href="#lista" onclick="JSMostraFilhosComAjax(<?= $DIV?>,<?= $COD?>,'listatodos_ajax');"> 
+      <img src="/html/imagens/site/bullet-mais.gif" width="13" height="13" border="0" align="absmiddle" id="<?= $COD?>"> 
+      </a> </div>
+  </div>
+						<@se [#resumo!='']@> 
+						
+  <div style="position:relative; float:left; width:100%;" class="brod paddingLeft"><@= cortaTexto(#resumo, 300)@></div>
+						<@/se@>
+                        
+  <div style="position:relative; float:left; width:95%; padding-left:5%;">
+    <div id="<?= $DIV?>" style="display:none;"></div>
+  </div>
+            <?php
+                break;   
+                    /********** CASE - CLASSE -> ARQUIVO **********************************/
+                case 5:
+            ?>
+                    <@usarblob nome=['conteudo']@>
+                        
+  <div style="position:relative; width:100%; line-height:25px;"> 
+    <div style="float:left; position:relative; width:100%; <@se [#resumo=='']@><@= ' '@>border-bottom:1px #cccccc dotted;<@/se@>"><@iconeclasse@>&nbsp;<a href="<@linkblob@>" title="Clique aqui para baixar o arquivo&nbsp;<@= strip_tags(#titulo)@>"><@= strip_tags(#titulo)@></a> 
+      <@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a 
+      publicar</a></span><@/se@> 
+      <?php if ($PERFIL <= _PERFIL_AUTOR){ ?>
+      <span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
+      <@se [#temfilhos==1]@> <a href="/index.php/manage/new/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-inserir.gif" title="Inserir outros objetos em&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
+      <@/se@> 
+      <?php } ?>
+    </div>
+  </div>
+						<@se [#resumo!='']@> 
+						
+  <div style="position:relative; float:left; border-bottom:1px #cccccc dotted; width:100%;" class="brod paddingLeft"><@= cortaTexto(#resumo, 300)@></div>
+						<@/se@>
+                    <@/usarblob@>
+            <?php
+                break;
+                /********** CASE - CLASSE ->LINK **********************************/
+                case 6:
+            ?>
+                        
+  <div style="position:relative; width:100%; line-height:25px;"> 
+    <div style="float:left; position:relative; width:95%; border-bottom:1px #cccccc dotted;"><@iconeclasse@>&nbsp;<a href="<@= #endereco@>" target="_blank" title="<@= strip_tags(#titulo)@>"><@= strip_tags(#titulo)@></a> 
+      <@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a 
+      publicar</a></span><@/se@> 
+      <?php if ($PERFIL <= _PERFIL_AUTOR){ ?>
+      <span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
+      <@se [#temfilhos==1]@> <a href="/index.php/manage/new/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-inserir.gif" title="Inserir outros objetos em&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
+      <@/se@> 
+      <?php } ?>
+    </div>
+    <div style="float:left; position:relative; width:5%; border-bottom:1px #cccccc dotted; text-align:right;" class="listaTitulo1Nivel">&nbsp;</div>
+  </div>
+            <?php
+                break;
+                /********** CASE - CLASSE ->INTERLINK **********************************/
+                case 2:
+            ?>
+                        
+  <div style="position:relative; width:100%; line-height:25px;"> 
+    <div style="float:left; position:relative; width:95%; border-bottom:1px #cccccc dotted;"><@iconeclasse@><a href="/index.php/content/view/<@= #endereco@>.html#ancora" title="<@= strip_tags(#titulo)@>">&nbsp;&nbsp;<@= strip_tags(#titulo)@></a> 
+      <@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a 
+      publicar</a></span><@/se@> 
+      <?php if ($PERFIL <= _PERFIL_AUTOR){ ?>
+      <span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
+      <@se [#temfilhos==1]@> <a href="/index.php/manage/new/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-inserir.gif" title="Inserir outros objetos em&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
+      <@/se@> 
+      <?php } ?>
+    </div>
+    <div style="float:left; position:relative; width:5%; border-bottom:1px #cccccc dotted; text-align:right;" class="listaTitulo1Nivel">&nbsp;</div>
+  </div>
+            <?php
+                break;
+                /******************************** DEFAULT **********************************/
+                default:
+            ?>
+                        
+  <div style="position:relative; width:100%; line-height:25px;"> 
+    <div style="float:left; position:relative; width:95%; border-bottom:1px #cccccc dotted;"><@iconeclasse@>&nbsp;<a href="<@= #url@>" title="<@= strip_tags(#titulo)@>"><@= strip_tags(#titulo)@></a> 
+      <@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a 
+      publicar</a></span><@/se@> 
+      <?php if ($PERFIL <= _PERFIL_AUTOR){ ?>
+      <span class="paddingLeft10">&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a></span> 
+      <@se [#temfilhos==1]@> <a href="/index.php/manage/new/<@= #cod_objeto@>.html"><img src="/html/imagens/ic-inserir.gif" title="Inserir outros objetos em&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
+      <@/se@> 
+      <?php } ?>
+    </div>
+    <div style="float:left; position:relative; width:5%; border-bottom:1px #cccccc dotted; text-align:right;" class="listaTitulo1Nivel">&nbsp;</div>
+  </div>
+    <?php }//FECHA SWITCH ?>
+   <@se [%INDICE==%FIM]@>
+   </div>
+   <@/se@>
 <@/localizar@>
-
+<@naolocalizado@>
+<?php 
+	if($_GET['execview'] == 'listatodos_ajax'){
+?>
+<div style="position:relative; width:100%; line-height:22px;"> 
+  <div align="center" style="font-weight:bold; float:left; position:relative; width:100%;">Não 
+    há subníveis neste item. Clique no titulo para ver o conteúdo.</div>
+</div>
 <?php
-/******************************** TRAZ OS FILHOS FOLDER *******************************/
+	}
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<@localizar classes=['folder'] pai=[#cod_objeto] niveis=[0] ordem=['peso,data_publicacao']@>
-		<?php $blnRegistroEncontrado = true; ?>
-		<@var $SUBCOD=#cod_objeto@>
-		<?php $SUBDIV="888".$SUBCOD;?>
-		<tr>
-			<td valign="top" class="listaTitulo1Nive2">
-			<div style="position:relative; width:100%;"> 
-    			<div style="float:left; position:relative; width:5%;" align="right"> <@iconeclasse@> </div>
-    			<div style="float:left; position:relative; width:95%;"> &nbsp;&nbsp;<a href="<@= #url@>" title="<@= strip_tags(#titulo)@>"><@= strip_tags(#titulo)@></a> 
-      			<@se [#cod_status!=2]@><span class="apublicar"@>&nbsp;<a href="/index.php/do/publicar/<@= #cod_objeto@>.html" title="Publicar&nbsp;<@= strip_tags(#titulo)@>">a publicar</a></span><@/se@> 
-<?php
-				// === verifica se o usuario está logado e insere o icone de editar objeto===
-				if ($PERFIL <= _PERFIL_AUTOR){
-?>
-      				<span class="paddingLeft10"> 
-      					&nbsp;<a href="/index.php/manage/edit/<@= #cod_objeto@>.html"><img src="/html/imagens/site/ic-editar.gif" title="Editar&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
-          				&nbsp;<a href="/index.php/manage/new/<@= #cod_objeto@>.html"><img src="/html/imagens/site/ic-inserir.gif" title="Inserir outros objetos em&nbsp;<@= strip_tags(#titulo)@>" border="0" align="absmiddle"></a> 
-	                </span> 
-<?php				}
-?>
-                </div>
-            </div>
-			</td>
-			<td width="15" align="right" valign="top" class="listaTitulo1Nivel">
-				<a href="#lista" onclick="JSMostraFilhosComAjax(<?= $SUBDIV?>,<?= $SUBCOD?>,'listanetos_ajax');">
-					<img src="/html/imagens/site/bullet-mais.gif" width="13" height="13" border="0" align="absmiddle" id="<?= $SUBCOD?>">
-				</a> 
-			</td>
-		</tr>
-		<!-- TD QUE MSOTRA O RESULTADO DOS FILHOS -->
-		<tr>
-			<td colspan="2" valign="top"  style="display:none" id="<?= $SUBDIV?>" align="right"></td>
-		</tr>
-	<@/localizar@>
-</table>
-<?php if ($blnRegistroEncontrado == false) { ?>
-<div align="center">Voçê está sendo redirecionado para&nbsp;<@= $TITULOPAI@></div>
-<script>
-	window.location="/index.php/content/view/<@= $REDIRECIONA@>.html";
-</script>
-<?php } ?>
+<@/naolocalizado@>
 </div>

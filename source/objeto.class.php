@@ -5,18 +5,10 @@
 		public $quantidade=0;
 		public $CaminhoObjeto;
 		public $metadados;
-        public $ArrayMEtadados;
-
-        function Objeto(&$_page, $cod_objeto=-1)
-        {
-            $this->__construct($_page, $cod_objeto);
-        }
 
 		function __construct(&$_page, $cod_objeto=-1)
 		{
-//            echo "AQUI";
 			$this->ArrayMetadados=$_page->_db->metadados;
-//            var_dump($_page);
 			if ($cod_objeto!=-1)
 			{
 				if (is_numeric($cod_objeto))
@@ -46,7 +38,9 @@
 			$this->metadados=$dados;
 			$this->metadados['data_publicacao']=ConverteData($this->metadados['data_publicacao'],1);
 			$this->metadados['data_validade']=ConverteData($this->metadados['data_validade'],1);
-            $this->metadados['url']='/index.php/content/view/'.$this->metadados['cod_objeto'].".html";
+            //$this->metadados['url']='/index.php/content/view/'.$this->metadados['cod_objeto'].".html";
+            //INCLUIDO O TITULO DO OBJETO NO URL
+            $this->metadados['url']='/index.php/content/view/'.$this->metadados['cod_objeto']."/".limpaString($this->metadados['titulo']).".html";
             $this->metadados['tags']=$_page->_adminobjeto->PegaTags($_page, $this->metadados['cod_objeto']);
 //            echo "<pre>";
 //            var_dump($this->metadados);
@@ -237,6 +231,7 @@
 			//exit;
 			return $_page->_adminobjeto->EFilho($_page, $this->Valor("cod_objeto"), $cod_pai);
 		}
+                
 	}
 
 ?>
